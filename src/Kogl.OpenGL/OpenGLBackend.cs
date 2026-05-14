@@ -24,7 +24,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _vbo = _gl.GenBuffer();
         BindVboInternal(_vbo);
 
-        // Pre-allocate structural dynamic buffer
+        // pre-allocate structural dynamic buffer
         _gl.BufferData(
             BufferTargetARB.ArrayBuffer,
             (nuint)(8192 * sizeof(VertexData)),
@@ -41,7 +41,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             BufferUsageARB.DynamicDraw
         );
 
-        // Attribute Setup: Location 0 = Position
+        // attribute setup: location 0 = position
         _gl.EnableVertexAttribArray(0);
         _gl.VertexAttribPointer(
             0,
@@ -52,7 +52,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             (void*)0
         );
 
-        // Attribute Setup: Location 1 = TexCoord
+        // attribute setup: location 1 = texCoord
         _gl.EnableVertexAttribArray(1);
         _gl.VertexAttribPointer(
             1,
@@ -63,7 +63,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             (void*)12
         );
 
-        // Attribute Setup: Location 2 = Color
+        // attribute setup: location 2 = color
         _gl.EnableVertexAttribArray(2);
         _gl.VertexAttribPointer(
             2,

@@ -14,8 +14,6 @@ RenderApi.Begin(PrimitiveMode.Quads, texture, customShader);
 
 ## Automated State Caching
 
-State cache inside OpenGLBackend (or any future backends like Vulkan). Before executing a native binding command like glBindTexture or glUseProgram, check if the requested ID matches what is currently bound on the hardware. This completely eliminates redundant driver overhead during deep draw-call trees!
-
 ## Wire up StbImageSharp for Textures
 
 Yea...

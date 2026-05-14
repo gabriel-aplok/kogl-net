@@ -1,0 +1,133 @@
+using System.Numerics;
+using Kogl.Abstractions;
+
+namespace Kogl.Core;
+
+/// <summary>
+/// static frontend simulating the immediate mode OpenGL API.
+/// </summary>
+public static class RenderApi
+{
+    private static IGraphicsBackend _backend = null!;
+    private static DynamicBatcher _batcher = null!;
+    private static readonly MatrixStack _matrices = new();
+
+    private static TextureHandle _defaultTexture;
+    private static ShaderHandle _defaultShader;
+
+    // current state
+    private static Vector2 _currentTexCoord = Vector2.Zero;
+    private static Vector4 _currentColor = Vector4.One;
+    private static TextureHandle _currentTextureHandle;
+    private static ShaderHandle _currentShaderHandle;
+
+    public static void Initialize(IGraphicsBackend backend)
+    {
+        _backend = backend;
+        _backend.Initialize();
+        _batcher = new DynamicBatcher(_backend);
+
+        // generate 1x1 white texture
+        _defaultTexture = _backend.CreateTexture([255, 255, 255, 255], 1, 1, 4);
+        _currentTextureHandle = _defaultTexture;
+
+        // Define Default Shader
+        string vs =
+            "#version 330 core\nlayout(location=0) in vec3 aPos; layout(location=1) in vec2 aTex; layout(location=2) in vec4 aCol; out vec2 fTex; out vec4 fCol; uniform mat4 uMVP; void main() { gl_Position = uMVP * vec4(aPos, 1.0); fTex = aTex; fCol = aCol; }";
+        string fs =
+            "#version 330 core\nin vec2 fTex; in vec4 fCol; out vec4 FragColor; uniform sampler2D uTex; void main() { FragColor = texture(uTex, fTex) * fCol; }";
+
+        _defaultShader = _backend.CreateShader(vs, fs);
+        _currentShaderHandle = _defaultShader;
+    }
+
+    public static void MatrixMode(MatrixMode mode)
+    {
+        _matrices.CurrentMode = mode;
+    }
+
+    public static void PushMatrix()
+    {
+        _matrices.Push();
+    }
+
+    public static void PopMatrix()
+    {
+        _matrices.Pop();
+    }
+
+    public static void LoadIdentity()
+    {
+        _matrices.LoadIdentity();
+    }
+
+    public static void Translate(float x, float y, float z)
+    {
+        _matrices.Translate(x, y, z);
+    }
+
+    public static void Rotate(float angle, float x, float y, float z)
+    {
+        _matrices.Rotate(angle, x, y, z);
+    }
+
+    public static void Ortho(float l, float r, float b, float t, float n, float f)
+    {
+        _matrices.Ortho(l, r, b, t, n, f);
+    }
+
+    public static void Begin(PrimitiveMode mode)
+    {
+        _batcher.Begin(mode, _currentTextureHandle, _currentShaderHandle);
+    }
+
+    public static void End()
+    {
+        _batcher.End();
+    }
+
+    public static void Flush()
+    {
+        _backend.SetUniformMatrix4(
+            _currentShaderHandle,
+            "uMVP",
+            _matrices.ModelView * _matrices.Projection
+        );
+        _batcher.Flush();
+    }
+
+    public static void TexCoord2(float x, float y)
+    {
+        _currentTexCoord = new Vector2(x, y);
+    }
+
+    public static void Color4(float r, float g, float b, float a)
+    {
+        _currentColor = new Vector4(r, g, b, a);
+    }
+
+    public static void Vertex2(float x, float y)
+    {
+        Vertex3(x, y, 0);
+    }
+
+    public static void Vertex3(float x, float y, float z)
+    {
+        _batcher.AddVertex(
+            new Vector3(x, y, z),
+            _currentTexCoord,
+            _currentColor,
+            _matrices.ModelView
+        );
+    }
+
+    public static void Clear(float r, float g, float b, float a)
+    {
+        _backend.Clear(r, g, b, a);
+    }
+
+    public static void SetViewport(int x, int y, int w, int h)
+    {
+        _backend.SetViewport(x, y, w, h);
+    }
+}

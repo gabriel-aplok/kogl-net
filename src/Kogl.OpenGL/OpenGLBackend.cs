@@ -10,15 +10,21 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _vbo,
         _ebo;
 
+    private uint _cachedVao;
+    private uint _cachedVbo;
+    private uint _cachedEbo;
+    private uint _cachedTexture;
+    private uint _cachedShader;
+
     public void Initialize()
     {
         _vao = _gl.GenVertexArray();
-        _gl.BindVertexArray(_vao);
+        BindVaoInternal(_vao);
 
         _vbo = _gl.GenBuffer();
-        _gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
+        BindVboInternal(_vbo);
 
-        // pre-allocate buffer
+        // Pre-allocate structural dynamic buffer
         _gl.BufferData(
             BufferTargetARB.ArrayBuffer,
             (nuint)(8192 * sizeof(VertexData)),
@@ -27,7 +33,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         );
 
         _ebo = _gl.GenBuffer();
-        _gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _ebo);
+        BindEboInternal(_ebo);
         _gl.BufferData(
             BufferTargetARB.ElementArrayBuffer,
             (nuint)(8192 * 6 * sizeof(ushort)),
@@ -35,7 +41,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             BufferUsageARB.DynamicDraw
         );
 
-        // position
+        // Attribute Setup: Location 0 = Position
         _gl.EnableVertexAttribArray(0);
         _gl.VertexAttribPointer(
             0,
@@ -45,7 +51,8 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             (uint)sizeof(VertexData),
             (void*)0
         );
-        // texCoord
+
+        // Attribute Setup: Location 1 = TexCoord
         _gl.EnableVertexAttribArray(1);
         _gl.VertexAttribPointer(
             1,
@@ -55,7 +62,8 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             (uint)sizeof(VertexData),
             (void*)12
         );
-        // color
+
+        // Attribute Setup: Location 2 = Color
         _gl.EnableVertexAttribArray(2);
         _gl.VertexAttribPointer(
             2,
@@ -66,7 +74,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             (void*)20
         );
 
-        _gl.BindVertexArray(0);
+        BindVaoInternal(0);
 
         _gl.Enable(EnableCap.Blend);
         _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
@@ -74,7 +82,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
     public void UpdateVertexBuffer(ReadOnlySpan<VertexData> vertices)
     {
-        _gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vbo);
+        BindVboInternal(_vbo);
         fixed (VertexData* ptr = vertices)
         {
             _gl.BufferSubData(
@@ -88,7 +96,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
     public void UpdateIndexBuffer(ReadOnlySpan<ushort> indices)
     {
-        _gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _ebo);
+        BindEboInternal(_ebo);
         fixed (ushort* ptr = indices)
         {
             _gl.BufferSubData(
@@ -102,9 +110,9 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
     public void DrawBatch(in RenderBatch batch)
     {
-        _gl.BindVertexArray(_vao);
-        _gl.BindTexture(TextureTarget.Texture2D, batch.Texture.Id);
-        _gl.UseProgram(batch.Shader.Id);
+        BindVaoInternal(_vao);
+        BindTextureInternal(batch.Texture.Id);
+        BindShaderInternal(batch.Shader.Id);
 
         PrimitiveType glMode = batch.Mode switch
         {
@@ -113,7 +121,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             PrimitiveMode.Triangles => PrimitiveType.Triangles,
             PrimitiveMode.TriangleStrip => PrimitiveType.TriangleStrip,
             PrimitiveMode.TriangleFan => PrimitiveType.TriangleFan,
-            PrimitiveMode.Quads => PrimitiveType.Triangles, // mapped via indices
+            PrimitiveMode.Quads => PrimitiveType.Triangles, // handled beautifully via CPU triangulation indices
             _ => PrimitiveType.Triangles,
         };
 
@@ -190,7 +198,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         in System.Numerics.Matrix4x4 matrix
     )
     {
-        _gl.UseProgram(shader.Id);
+        BindShaderInternal(shader.Id);
         int loc = _gl.GetUniformLocation(shader.Id, name);
         if (loc != -1)
         {
@@ -214,17 +222,70 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
     public void BindTexture(TextureHandle texture)
     {
-        _gl.BindTexture(TextureTarget.Texture2D, texture.Id);
+        BindTextureInternal(texture.Id);
     }
 
     public void BindShader(ShaderHandle shader)
     {
-        _gl.UseProgram(shader.Id);
+        BindShaderInternal(shader.Id);
     }
 
     public void DeleteTexture(TextureHandle texture)
     {
+        if (_cachedTexture == texture.Id)
+        {
+            _cachedTexture = 0; // invalidate cache registration if active asset gets dropped
+        }
         _gl.DeleteTexture(texture.Id);
+    }
+
+    // ==========================================
+    // Cache
+    // ==========================================
+
+    private void BindVaoInternal(uint id)
+    {
+        if (_cachedVao != id)
+        {
+            _gl.BindVertexArray(id);
+            _cachedVao = id;
+        }
+    }
+
+    private void BindVboInternal(uint id)
+    {
+        if (_cachedVbo != id)
+        {
+            _gl.BindBuffer(BufferTargetARB.ArrayBuffer, id);
+            _cachedVbo = id;
+        }
+    }
+
+    private void BindEboInternal(uint id)
+    {
+        if (_cachedEbo != id)
+        {
+            _gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, id);
+            _cachedEbo = id;
+        }
+    }
+
+    private void BindTextureInternal(uint id)
+    {
+        if (_cachedTexture != id)
+        {
+            _gl.BindTexture(TextureTarget.Texture2D, id);
+            _cachedTexture = id;
+        }
+    }
+
+    private void BindShaderInternal(uint id)
+    {
+        if (_cachedShader != id)
+        {
+            _gl.UseProgram(id);
+            _cachedShader = id;
+        }
     }
 
     public void Dispose()

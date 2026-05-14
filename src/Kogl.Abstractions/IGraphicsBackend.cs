@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Kogl.Abstractions;
 
 public interface IGraphicsBackend : IDisposable
@@ -17,11 +19,13 @@ public interface IGraphicsBackend : IDisposable
 
     public ShaderHandle CreateShader(string vertexSrc, string fragmentSrc);
     public void BindShader(ShaderHandle shader);
-    public void SetUniformMatrix4(
-        ShaderHandle shader,
-        string name,
-        in System.Numerics.Matrix4x4 matrix
-    );
+
+    public void SetUniformInt(ShaderHandle shader, string name, int value);
+    public void SetUniformFloat(ShaderHandle shader, string name, float value);
+    public void SetUniformVec2(ShaderHandle shader, string name, in Vector2 value);
+    public void SetUniformVec3(ShaderHandle shader, string name, in Vector3 value);
+    public void SetUniformVec4(ShaderHandle shader, string name, in Vector4 value);
+    public void SetUniformMatrix4(ShaderHandle shader, string name, in Matrix4x4 matrix);
 
     public void UpdateVertexBuffer(ReadOnlySpan<VertexData> vertices);
     public void UpdateIndexBuffer(ReadOnlySpan<ushort> indices);

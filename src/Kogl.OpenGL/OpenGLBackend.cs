@@ -1,3 +1,4 @@
+using System.Numerics;
 using Kogl.Abstractions;
 using Silk.NET.OpenGL;
 
@@ -15,6 +16,8 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     private uint _cachedEbo;
     private uint _cachedTexture;
     private uint _cachedShader;
+
+    private readonly Dictionary<(uint, string), int> _uniformLocations = new();
 
     public void Initialize()
     {
@@ -173,18 +176,20 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
     public ShaderHandle CreateShader(string vertexSrc, string fragmentSrc)
     {
-        uint vs = _gl.CreateShader(ShaderType.VertexShader);
-        _gl.ShaderSource(vs, vertexSrc);
-        _gl.CompileShader(vs);
-
-        uint fs = _gl.CreateShader(ShaderType.FragmentShader);
-        _gl.ShaderSource(fs, fragmentSrc);
-        _gl.CompileShader(fs);
+        uint vs = CompileSingleShader(ShaderType.VertexShader, vertexSrc);
+        uint fs = CompileSingleShader(ShaderType.FragmentShader, fragmentSrc);
 
         uint prog = _gl.CreateProgram();
         _gl.AttachShader(prog, vs);
         _gl.AttachShader(prog, fs);
         _gl.LinkProgram(prog);
+
+        _gl.GetProgram(prog, ProgramPropertyARB.LinkStatus, out int status);
+        if (status == 0)
+        {
+            string log = _gl.GetProgramInfoLog(prog);
+            throw new Exception($"Shader Link Failed: {log}");
+        }
 
         _gl.DeleteShader(vs);
         _gl.DeleteShader(fs);
@@ -192,19 +197,80 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         return new ShaderHandle(prog);
     }
 
-    public void SetUniformMatrix4(
-        ShaderHandle shader,
-        string name,
-        in System.Numerics.Matrix4x4 matrix
-    )
+    private uint CompileSingleShader(ShaderType type, string src)
+    {
+        uint shader = _gl.CreateShader(type);
+        _gl.ShaderSource(shader, src);
+        _gl.CompileShader(shader);
+
+        _gl.GetShader(shader, ShaderParameterName.CompileStatus, out int status);
+        if (status == 0)
+        {
+            string log = _gl.GetShaderInfoLog(shader);
+            throw new Exception($"{type} Compilation Failed: {log}");
+        }
+        return shader;
+    }
+
+    private int GetUniformLocation(uint program, string name)
+    {
+        if (_uniformLocations.TryGetValue((program, name), out int loc))
+            return loc;
+
+        loc = _gl.GetUniformLocation(program, name);
+        _uniformLocations[(program, name)] = loc;
+        return loc;
+    }
+
+    public void SetUniformInt(ShaderHandle shader, string name, int value)
     {
         BindShaderInternal(shader.Id);
-        int loc = _gl.GetUniformLocation(shader.Id, name);
+        int loc = GetUniformLocation(shader.Id, name);
+        if (loc != -1)
+            _gl.Uniform1(loc, value);
+    }
+
+    public void SetUniformFloat(ShaderHandle shader, string name, float value)
+    {
+        BindShaderInternal(shader.Id);
+        int loc = GetUniformLocation(shader.Id, name);
+        if (loc != -1)
+            _gl.Uniform1(loc, value);
+    }
+
+    public void SetUniformVec2(ShaderHandle shader, string name, in Vector2 value)
+    {
+        BindShaderInternal(shader.Id);
+        int loc = GetUniformLocation(shader.Id, name);
+        if (loc != -1)
+            _gl.Uniform2(loc, value.X, value.Y);
+    }
+
+    public void SetUniformVec3(ShaderHandle shader, string name, in Vector3 value)
+    {
+        BindShaderInternal(shader.Id);
+        int loc = GetUniformLocation(shader.Id, name);
+        if (loc != -1)
+            _gl.Uniform3(loc, value.X, value.Y, value.Z);
+    }
+
+    public void SetUniformVec4(ShaderHandle shader, string name, in Vector4 value)
+    {
+        BindShaderInternal(shader.Id);
+        int loc = GetUniformLocation(shader.Id, name);
+        if (loc != -1)
+            _gl.Uniform4(loc, value.X, value.Y, value.Z, value.W);
+    }
+
+    public void SetUniformMatrix4(ShaderHandle shader, string name, in Matrix4x4 matrix)
+    {
+        BindShaderInternal(shader.Id);
+        int loc = GetUniformLocation(shader.Id, name);
         if (loc != -1)
         {
-            fixed (System.Numerics.Matrix4x4* ptr = &matrix)
+            fixed (float* ptr = &matrix.M11)
             {
-                _gl.UniformMatrix4(loc, 1, false, (float*)ptr);
+                _gl.UniformMatrix4(loc, 1, false, ptr);
             }
         }
     }

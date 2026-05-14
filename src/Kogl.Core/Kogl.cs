@@ -28,18 +28,42 @@ public static class RenderApi
         _batcher = new DynamicBatcher(_backend);
 
         // generate 1x1 white texture
-        _defaultTexture = _backend.CreateTexture([255, 255, 255, 255], 1, 1, 4);
+        ReadOnlySpan<byte> whitePixels = [255, 255, 255, 255];
+        _defaultTexture = _backend.CreateTexture(whitePixels, 1, 1, 4);
         _currentTextureHandle = _defaultTexture;
 
-        // Define Default Shader
-        string vs =
-            "#version 330 core\nlayout(location=0) in vec3 aPos; layout(location=1) in vec2 aTex; layout(location=2) in vec4 aCol; out vec2 fTex; out vec4 fCol; uniform mat4 uMVP; void main() { gl_Position = uMVP * vec4(aPos, 1.0); fTex = aTex; fCol = aCol; }";
-        string fs =
-            "#version 330 core\nin vec2 fTex; in vec4 fCol; out vec4 FragColor; uniform sampler2D uTex; void main() { FragColor = texture(uTex, fTex) * fCol; }";
+        // setup glsl fallback shaders matching structural CPU transform properties
+        string vertexSource =
+            @"#version 330 core
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec2 aTex;
+layout(location = 2) in vec4 aCol;
+out vec2 fTex;
+out vec4 fCol;
+uniform mat4 uMVP;
+void main() {
+    gl_Position = uMVP * vec4(aPos, 1.0);
+    fTex = aTex;
+    fCol = aCol;
+}";
 
-        _defaultShader = _backend.CreateShader(vs, fs);
+        string fragmentSource =
+            @"#version 330 core
+in vec2 fTex;
+in vec4 fCol;
+out vec4 FragColor;
+uniform sampler2D uTex;
+void main() {
+    FragColor = texture(uTex, fTex) * fCol;
+}";
+
+        _defaultShader = _backend.CreateShader(vertexSource, fragmentSource);
         _currentShaderHandle = _defaultShader;
     }
+
+    // ==========================================
+    // Matrix
+    // ==========================================
 
     public static void MatrixMode(MatrixMode mode)
     {
@@ -76,6 +100,15 @@ public static class RenderApi
         _matrices.Ortho(l, r, b, t, n, f);
     }
 
+    internal static Matrix4x4 GetProjectionMatrix()
+    {
+        return _matrices.Projection;
+    }
+
+    // ==========================================
+    // Rendering
+    // ==========================================
+
     public static void Begin(PrimitiveMode mode)
     {
         _batcher.Begin(mode, _currentTextureHandle, _currentShaderHandle);
@@ -88,13 +121,12 @@ public static class RenderApi
 
     public static void Flush()
     {
-        _backend.SetUniformMatrix4(
-            _currentShaderHandle,
-            "uMVP",
-            _matrices.ModelView * _matrices.Projection
-        );
-        _batcher.Flush();
+        _batcher.Flush(_matrices.Projection);
     }
+
+    // ==========================================
+    // Vertex
+    // ==========================================
 
     public static void TexCoord2(float x, float y)
     {
@@ -121,13 +153,82 @@ public static class RenderApi
         );
     }
 
+    // ==========================================
+    // Resources / States
+    // ==========================================
+
+    public static ShaderHandle CreateShader(string vsCode, string fsCode)
+    {
+        return _backend.CreateShader(vsCode, fsCode);
+    }
+
+    public static void UseShader(ShaderHandle shader)
+    {
+        _currentShaderHandle = shader.Id == 0 ? _defaultShader : shader;
+    }
+
+    public static void UseDefaultShader()
+    {
+        _currentShaderHandle = _defaultShader;
+    }
+
+    public static void UseTexture(TextureHandle texture)
+    {
+        _currentTextureHandle = texture.Id == 0 ? _defaultTexture : texture;
+    }
+
+    public static void UseDefaultTexture()
+    {
+        _currentTextureHandle = _defaultTexture;
+    }
+
     public static void Clear(float r, float g, float b, float a)
     {
         _backend.Clear(r, g, b, a);
     }
 
-    public static void SetViewport(int x, int y, int w, int h)
+    public static void SetViewport(int x, int y, int width, int height)
     {
-        _backend.SetViewport(x, y, w, h);
+        _backend.SetViewport(x, y, width, height);
+    }
+
+    // ==========================================
+    // Uniforms
+    // ==========================================
+
+    public static void SetUniform(string name, int value)
+    {
+        Flush();
+        _backend.SetUniformInt(_currentShaderHandle, name, value);
+    }
+
+    public static void SetUniform(string name, float value)
+    {
+        Flush();
+        _backend.SetUniformFloat(_currentShaderHandle, name, value);
+    }
+
+    public static void SetUniform(string name, in Vector2 value)
+    {
+        Flush();
+        _backend.SetUniformVec2(_currentShaderHandle, name, value);
+    }
+
+    public static void SetUniform(string name, in Vector3 value)
+    {
+        Flush();
+        _backend.SetUniformVec3(_currentShaderHandle, name, value);
+    }
+
+    public static void SetUniform(string name, in Vector4 value)
+    {
+        Flush();
+        _backend.SetUniformVec4(_currentShaderHandle, name, value);
+    }
+
+    public static void SetUniform(string name, in Matrix4x4 value)
+    {
+        Flush();
+        _backend.SetUniformMatrix4(_currentShaderHandle, name, value);
     }
 }

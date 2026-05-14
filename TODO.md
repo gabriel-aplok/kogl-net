@@ -2,17 +2,17 @@
 
 An extension on top of Kogl.Abstractions for signed distance field (SDF) or bitmap fonts. the system utilizes a high-performance batching engine, drawing an entire paragraph of text will automatically group into a single dynamic draw call as long as they share the same font atlas texture.
 
-## Custom Shader & Material Support
+## Texture Atlasing
 
-I willil add a basic Material system where users can pass custom shaders to Kogl.Begin().
+If you have multiple small sprites, putting them on one big texture will allow them to all be drawn in a single draw call, even if they are "different" images.
 
-```csharp
-var customShader = myBackend.CreateShader(vsCode, fsCode);
-// custom properties...
-RenderApi.Begin(PrimitiveMode.Quads, texture, customShader);
-```
+## Scissor Testing
 
-## Automated State Caching
+Adding a RenderApi.BeginScissor(x, y, w, h) for UI work.
+
+## Post-Processing
+
+Drawing the final frame to a Framebuffer instead of the screen, allowing to apply smth like "Bloom" shader to everything at once.
 
 ## Wire up StbImageSharp for Textures
 
@@ -24,3 +24,8 @@ public static TextureHandle LoadTexture(string path, IGraphicsBackend backend)
   ...
 }
 ```
+
+## Done
+
+- Custom Shader: Done
+- Automated State Caching: Done

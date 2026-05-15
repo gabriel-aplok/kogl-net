@@ -15,6 +15,7 @@
         <IlcTrimMetadata>true</IlcTrimMetadata>
 
         <!-- error handling for incompatible code -->
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <IllinkToAllSymbols>false</IllinkToAllSymbols>
     </PropertyGroup>
 

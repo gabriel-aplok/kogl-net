@@ -5,7 +5,8 @@
       "name": "C#: Samples Debug",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/Kogl.Samples/Kogl.Samples.csproj"
+      "projectPath": "${workspaceFolder}/src/Kogl.Samples/Kogl.Samples.csproj",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

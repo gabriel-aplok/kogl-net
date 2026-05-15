@@ -21,14 +21,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <TrimmerRootAssembly Include="Silk.NET.Windowing.Common" />
-        <TrimmerRootAssembly Include="Silk.NET.Core" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Content Include="assets\**\*.*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <TrimmerRootAssembly Include="Silk.NET.Windowing.Common" />
+        <TrimmerRootAssembly Include="Silk.NET.Core" />
     </ItemGroup>
 
     <ItemGroup>

@@ -8,7 +8,7 @@ internal class Cube3DExample
 {
     private static float _angle = 0f;
 
-    private static readonly bool _useFrustum = true;
+    private static readonly bool _useFrustum = false;
 
     public static void Start()
     {
@@ -49,7 +49,7 @@ internal class Cube3DExample
         RenderApi.LoadIdentity();
 
         // move the camera back 5 units
-        RenderApi.Translate(0, 0, -5);
+        RenderApi.Translate(0, -1, -10);
 
         // rotate the cube on multiple axes
         RenderApi.Rotate(_angle, 1, 1, 0);
@@ -101,6 +101,18 @@ internal class Cube3DExample
         RenderApi.Vertex3(-1, 1, 1);
         RenderApi.Vertex3(-1, 1, -1);
 
+        RenderApi.End();
+
+        // Draw a simple grid/floor
+        RenderApi.Begin(PrimitiveMode.Lines);
+        RenderApi.Color4(0.3f, 0.3f, 0.3f, 1.0f);
+        for (int i = -5; i <= 5; i++)
+        {
+            RenderApi.Vertex3(i, 0, -5);
+            RenderApi.Vertex3(i, 0, 5);
+            RenderApi.Vertex3(-5, 0, i);
+            RenderApi.Vertex3(5, 0, i);
+        }
         RenderApi.End();
 
         // final dispatch to GPU

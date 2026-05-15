@@ -50,6 +50,11 @@ public class MatrixStack
         CurrentMatrix = mat * CurrentMatrix;
     }
 
+    public void Scale(float x, float y, float z)
+    {
+        Multiply(Matrix4x4.CreateScale(x, y, z));
+    }
+
     public void Translate(float x, float y, float z)
     {
         Multiply(Matrix4x4.CreateTranslation(x, y, z));
@@ -63,11 +68,6 @@ public class MatrixStack
                 angleDeg * (MathF.PI / 180f)
             )
         );
-    }
-
-    public void Scale(float x, float y, float z)
-    {
-        Multiply(Matrix4x4.CreateScale(x, y, z));
     }
 
     public void Ortho(float left, float right, float bottom, float top, float zNear, float zFar)

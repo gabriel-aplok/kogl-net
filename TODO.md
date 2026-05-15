@@ -1,7 +1,3 @@
-## SDF (Signed Distance Fields)
-
-For crisp text scaling at any resolution
-
 ## Rich Text
 
 Implementing a simple markup parser (like <color=red>) by swapping RenderApi.Color4 mid-string
@@ -25,3 +21,4 @@ If you have multiple small sprites, putting them on one big texture will allow t
 - Texture Loading: Done
 - Orthographic, Perspective and Frustum Projection: Done
 - Text Rendering: Done
+- Signed Distance Fields: Done

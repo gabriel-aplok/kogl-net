@@ -39,7 +39,7 @@ public static class RenderApi
         _currentTextureHandle = _defaultTexture;
 
         // create default shader
-        string vertexSource =
+        string vs =
             @"#version 330 core
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec2 aTex;
@@ -53,7 +53,7 @@ void main() {
     fCol = aCol;
 }";
 
-        string fragmentSource =
+        string fs =
             @"#version 330 core
 in vec2 fTex;
 in vec4 fCol;
@@ -63,7 +63,7 @@ void main() {
     FragColor = texture(uTex, fTex) * fCol;
 }";
 
-        _defaultShader = _backend.CreateShader(vertexSource, fragmentSource);
+        _defaultShader = _backend.CreateShader(vs, fs);
         _currentShaderHandle = _defaultShader;
     }
 
@@ -142,12 +142,12 @@ void main() {
         _matrices.Frustum(l, r, b, t, zn, zf);
     }
 
-    internal static Matrix4x4 GetProjectionMatrix()
+    public static Matrix4x4 GetProjectionMatrix()
     {
         return _matrices.Projection;
     }
 
-    internal static Matrix4x4 GetModelViewMatrix()
+    public static Matrix4x4 GetModelViewMatrix()
     {
         return _matrices.ModelView;
     }

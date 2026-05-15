@@ -19,6 +19,7 @@ public unsafe class Font : Resource
 
     public int Size { get; }
     public TextureHandle AtlasTexture => _atlas.Texture;
+    public bool IsSdf { get; private set; }
 
     public int LineHeight => (int)((long)_face->size->metrics.height >> 6);
 
@@ -36,6 +37,13 @@ public unsafe class Font : Resource
         }
 
         return new Font(path, size);
+    }
+
+    public static Font LoadSdf(string path, uint size)
+    {
+        Font font = Load(path, size);
+        font.IsSdf = true;
+        return font;
     }
 
     private Font(string path, uint size)
@@ -67,9 +75,9 @@ public unsafe class Font : Resource
             return cachedGlyph;
 
         uint glyphIndex = FT_Get_Char_Index(_face, codepoint);
-
         FT_Load_Glyph(_face, glyphIndex, FT_LOAD_DEFAULT);
-        FT_Render_Glyph(_face->glyph, FT_RENDER_MODE_NORMAL);
+
+        FT_Render_Glyph(_face->glyph, IsSdf ? FT_RENDER_MODE_SDF : FT_RENDER_MODE_NORMAL);
 
         FT_GlyphSlotRec_* slot = _face->glyph;
         FT_Bitmap_ bitmap = slot->bitmap;

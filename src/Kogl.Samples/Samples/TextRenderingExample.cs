@@ -7,7 +7,8 @@ namespace Kogl.Samples.Samples;
 
 internal class TextRenderingExample
 {
-    private static Font _uiFont = null!;
+    private static Font _arialFont = null!;
+    private static Font _openSansFont = null!;
     private static Font _titleFont = null!;
     private static float _time;
 
@@ -17,7 +18,8 @@ internal class TextRenderingExample
 
         app.OnLoad += () =>
         {
-            _uiFont = Font.Load("assets/fonts/arial.ttf", 24);
+            _arialFont = Font.Load("assets/fonts/arial.ttf", 24);
+            _openSansFont = Font.LoadSdf("assets/fonts/regular.ttf", 24);
             _titleFont = Font.Load("assets/fonts/arial.ttf", 48);
         };
 
@@ -25,7 +27,8 @@ internal class TextRenderingExample
 
         app.OnUnload += () =>
         {
-            _uiFont?.Dispose();
+            _arialFont?.Dispose();
+            _openSansFont?.Dispose();
             _titleFont?.Dispose();
         };
 
@@ -46,9 +49,6 @@ internal class TextRenderingExample
         RenderApi.MatrixMode(MatrixMode.ModelView);
         RenderApi.LoadIdentity();
 
-        // standard drawing using the default shader
-        RenderApi.UseDefaultShader();
-
         // basic Text
         KoGLText.DrawText(
             _titleFont,
@@ -61,16 +61,35 @@ internal class TextRenderingExample
         string paragraph =
             "High-Performance Text Batching\nUnicode Supported: áéíóú 漢字\nDynamic Texture Atlas Generation";
         KoGLText.DrawText(
-            _uiFont,
+            _openSansFont,
             paragraph,
             new Vector2(50, 150),
             new Vector4(0.7f, 0.7f, 0.8f, 1.0f)
         );
 
+        // shadow
+        RenderApi.Color4(0, 0, 0, 0.5f);
+        KoGLText.DrawText(
+            _openSansFont,
+            "Sdf Shadow",
+            new Vector2(50, 300) + new Vector2(2, 2),
+            new Vector4(0, 0, 0, 1),
+            scale: 2.0f
+        );
+
+        // main text
+        KoGLText.DrawText(
+            _openSansFont,
+            "Sdf Shadow",
+            new Vector2(50, 300),
+            Vector4.One,
+            scale: 2.0f
+        );
+
         // transformation & alignment (floating animation)
         float bounceY = MathF.Sin(_time * 5f) * 10f;
         KoGLText.DrawText(
-            _uiFont,
+            _arialFont,
             "Center Aligned & Animated",
             new Vector2(400, 300 + bounceY),
             new Vector4(1, 0.5f, 0.2f, 1),

@@ -46,7 +46,7 @@ public class AppWindow
             OpenGLBackend backend = new(_gl);
             RenderApi.Initialize(backend);
 
-            SilkInputBackend inputBackend = new(_input);
+            InputBackend inputBackend = new(_input);
             Input.Input.Initialize(inputBackend);
 
             OnLoad?.Invoke();

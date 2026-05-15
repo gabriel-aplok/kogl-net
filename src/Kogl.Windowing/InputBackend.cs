@@ -4,13 +4,13 @@ using Silk.NET.Input;
 
 namespace Kogl.Windowing;
 
-internal class SilkInputBackend : IInputBackend
+internal class InputBackend : IInputBackend
 {
     private readonly IInputContext _input;
     private readonly IMouse? _mouse;
     private readonly IKeyboard? _keyboard;
 
-    public SilkInputBackend(IInputContext input)
+    public InputBackend(IInputContext input)
     {
         _input = input;
 #pragma warning disable CA1826
@@ -20,7 +20,7 @@ internal class SilkInputBackend : IInputBackend
 
         if (_keyboard != null)
         {
-            // Due to our 1:1 mapping design, we can cast directly for 0-overhead translation
+            // due to our 1:1 mapping design, cast directly for 0-overhead translation
             _keyboard.KeyDown += static (kb, key, arg3) =>
                 Input.Input.Internal_SetKeyState((Input.Key)key, true);
             _keyboard.KeyUp += static (kb, key, arg3) =>

@@ -1,15 +1,21 @@
 ﻿using Kogl.Abstractions;
 using Kogl.Core;
+using Kogl.FreeType;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
 
 internal class SimpleExample
 {
+    // private static Font _font = null!;
+
     public static void Start()
     {
         AppWindow app = new(800, 600, "KoGL - Hello World");
+
+        // app.OnLoad += () => _font = Font.Load("assets/fonts/arial.ttf", 24);
         app.OnRender += RenderLoop;
+        // app.OnUnload += () => _font?.Dispose();
 
         app.Run();
     }
@@ -27,6 +33,15 @@ internal class SimpleExample
 
         // draw a standard quad using the default shader
         RenderApi.UseDefaultShader();
+
+        // text
+        // KoGLText.DrawText(
+        //     _font,
+        //     "Close this window to see another example",
+        //     new System.Numerics.Vector2(50, 50),
+        //     new System.Numerics.Vector4(1, 1, 1, 1)
+        // );
+
         RenderApi.PushMatrix();
         RenderApi.Translate(200, 200, 0);
 

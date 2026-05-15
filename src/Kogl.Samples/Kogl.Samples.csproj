@@ -33,6 +33,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />
+        <ProjectReference Include="..\Kogl.FreeType\Kogl.FreeType.csproj" />
         <ProjectReference Include="..\Kogl.OpenGL\Kogl.OpenGL.csproj" />
         <ProjectReference Include="..\Kogl.Windowing\Kogl.Windowing.csproj" />
         <ProjectReference Include="..\Kogl.Math\Kogl.Math.csproj" />

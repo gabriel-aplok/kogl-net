@@ -16,6 +16,15 @@ public interface IGraphicsBackend : IDisposable
         int height,
         int channels
     );
+    public void UpdateTexture(
+        TextureHandle texture,
+        int xOffset,
+        int yOffset,
+        int width,
+        int height,
+        ReadOnlySpan<byte> pixelData,
+        int channels
+    );
     public void BindTexture(TextureHandle texture);
     public void DeleteTexture(TextureHandle texture);
 

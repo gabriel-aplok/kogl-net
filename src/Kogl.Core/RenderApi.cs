@@ -319,6 +319,20 @@ void main() {
         _currentTextureHandle = texture.Id == 0 ? _defaultTexture : texture;
     }
 
+    public static void UpdateTexture(
+        TextureHandle handle,
+        int x,
+        int y,
+        int width,
+        int height,
+        ReadOnlySpan<byte> data,
+        int channels
+    )
+    {
+        Flush();
+        _backend.UpdateTexture(handle, x, y, width, height, data, channels);
+    }
+
     public static void DeleteTexture(TextureHandle handle)
     {
         if (_currentTextureHandle.Id == handle.Id)
@@ -382,7 +396,7 @@ void main() {
         _backend.SetUniformMatrix4(_currentShaderHandle, name, value);
     }
 
-    internal static IGraphicsBackend GetBackend()
+    public static IGraphicsBackend GetBackend()
     {
         return _backend;
     }

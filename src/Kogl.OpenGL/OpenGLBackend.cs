@@ -1,7 +1,5 @@
 using System.Numerics;
-
 using Kogl.Abstractions;
-
 using Silk.NET.OpenGL;
 
 namespace Kogl.OpenGL;
@@ -450,6 +448,19 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             _gl.Enable(EnableCap.DepthTest);
         else
             _gl.Disable(EnableCap.DepthTest);
+    }
+
+    public void SetBlending(bool enabled)
+    {
+        if (enabled)
+        {
+            _gl.Enable(EnableCap.Blend);
+            _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        }
+        else
+        {
+            _gl.Disable(EnableCap.Blend);
+        }
     }
 
     public void SetScissor(int x, int y, int width, int height)

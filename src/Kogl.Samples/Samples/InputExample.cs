@@ -62,6 +62,7 @@ internal class InputExample
         // render world
         RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
         RenderApi.EnableDepthTest();
+        RenderApi.DisableBlending();
 
         RenderApi.BeginCamera(_camera);
         DrawWorld();
@@ -70,16 +71,17 @@ internal class InputExample
         // TODO: fix the text rendering, cuz the text appears with the clear background that eliminates the 3D world behind it, lol
         // TODO: maybe I just need to add more states to the renderApi to enable transparency and other important stuff
         // render ui
-        // RenderApi.DisableDepthTest();
+        RenderApi.DisableDepthTest();
+        RenderApi.EnableBlending();
 
-        // // match screen coords (0,0 is top-left)
-        // RenderApi.MatrixMode(MatrixMode.Projection);
-        // RenderApi.LoadIdentity();
-        // RenderApi.Ortho(0, 800, 600, 0, -1, 1);
-        // RenderApi.MatrixMode(MatrixMode.ModelView);
-        // RenderApi.LoadIdentity();
+        // match screen coords (0,0 is top-left)
+        RenderApi.MatrixMode(MatrixMode.Projection);
+        RenderApi.LoadIdentity();
+        RenderApi.Ortho(0, 800, 600, 0, -1, 1);
+        RenderApi.MatrixMode(MatrixMode.ModelView);
+        RenderApi.LoadIdentity();
 
-        // DrawUI();
+        DrawUI();
 
         RenderApi.Flush();
     }

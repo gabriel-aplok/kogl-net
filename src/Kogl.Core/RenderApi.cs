@@ -355,6 +355,18 @@ void main() {
         _backend.SetDepthTest(false);
     }
 
+    public static void EnableBlending()
+    {
+        Flush();
+        _backend.SetBlending(true);
+    }
+
+    public static void DisableBlending()
+    {
+        Flush();
+        _backend.SetBlending(false);
+    }
+
     #endregion
 
     #region Uniforms

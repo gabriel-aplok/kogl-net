@@ -47,6 +47,7 @@ public interface IGraphicsBackend : IDisposable
 
     // States
     public void SetDepthTest(bool enabled);
+    public void SetBlending(bool enabled);
 
     // Scissors
     public void SetScissor(int x, int y, int width, int height);

@@ -155,14 +155,6 @@ internal class InputExample
 
     private static void DrawUI()
     {
-        // draw shadow/background for text
-        KoGLText.DrawText(
-            _uiFont,
-            "CONTROLS: WASD to Move | ESC to Toggle Mouse",
-            new Vector2(12, 12),
-            new Vector4(0, 0, 0, 0.5f)
-        );
-
         // draw main text
         KoGLText.DrawText(
             _uiFont,

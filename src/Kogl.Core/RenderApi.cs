@@ -1,5 +1,6 @@
 using System.Numerics;
 using Kogl.Abstractions;
+using Kogl.Core.Resources;
 
 namespace Kogl.Core;
 
@@ -15,6 +16,7 @@ public static class RenderApi
     private static TextureHandle _defaultTexture;
     private static ShaderHandle _defaultShader;
 
+    private static Material? _currentMaterial;
     private static Vector2 _currentTexCoord = Vector2.Zero;
     private static Vector4 _currentColor = Vector4.One;
     private static TextureHandle _currentTextureHandle;
@@ -300,6 +302,20 @@ void main() {
     #endregion
 
     #region Resources Management
+
+    public static void ApplyMaterial(Material material)
+    {
+        if (_currentMaterial == material)
+            return;
+
+        Flush();
+
+        _currentMaterial = material;
+        _currentShaderHandle = material.Shader.Handle;
+
+        material.Apply();
+        GlobalUniforms.ApplyTo(material.Shader);
+    }
 
     public static void UseDefaultShader()
     {

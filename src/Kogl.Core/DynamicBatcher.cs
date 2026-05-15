@@ -28,7 +28,6 @@ internal class DynamicBatcher(IGraphicsBackend backend)
     {
         if (_isBuildingBatch)
         {
-            // operational parameters haven't changed, we can safely continue accumulating geometry
             if (
                 _currentMode == mode
                 && _currentTexture.Id == texture.Id
@@ -37,8 +36,6 @@ internal class DynamicBatcher(IGraphicsBackend backend)
             {
                 return;
             }
-
-            // state changed mid-draw stream without an explicit end loop. finalize current segment first
             End();
         }
 
@@ -46,7 +43,6 @@ internal class DynamicBatcher(IGraphicsBackend backend)
         _currentTexture = texture;
         _currentShader = shader;
         _isBuildingBatch = true;
-
         StartNewBatch();
     }
 

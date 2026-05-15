@@ -1,0 +1,124 @@
+using System.Numerics;
+using Kogl.Abstractions;
+
+namespace Kogl.Core.Resources;
+
+public class Material : Resource
+{
+    public Shader Shader { get; }
+
+    // Pipeline state
+    public bool DepthTest { get; set; } = true;
+    public bool Blending { get; set; } = true;
+
+    private readonly Dictionary<string, object> _parameters = [];
+    private readonly Material? _parent;
+
+    public Material(Shader shader)
+    {
+        Shader = shader;
+    }
+
+    protected Material(Material parent)
+    {
+        _parent = parent;
+        Shader = parent.Shader;
+        DepthTest = parent.DepthTest;
+        Blending = parent.Blending;
+    }
+
+    public Material CreateInstance()
+    {
+        return new Material(this);
+    }
+
+    public void SetInt(string name, int value)
+    {
+        _parameters[name] = value;
+    }
+
+    public void SetFloat(string name, float value)
+    {
+        _parameters[name] = value;
+    }
+
+    public void SetVector2(string name, Vector2 value)
+    {
+        _parameters[name] = value;
+    }
+
+    public void SetVector3(string name, Vector3 value)
+    {
+        _parameters[name] = value;
+    }
+
+    public void SetVector4(string name, Vector4 value)
+    {
+        _parameters[name] = value;
+    }
+
+    public void SetMatrix4(string name, Matrix4x4 value)
+    {
+        _parameters[name] = value;
+    }
+
+    public void SetTexture(string name, Texture texture)
+    {
+        _parameters[name] = texture;
+    }
+
+    public object? GetParameter(string name)
+    {
+        if (_parameters.TryGetValue(name, out object? value))
+            return value;
+        return _parent?.GetParameter(name);
+    }
+
+    public void Apply()
+    {
+        IGraphicsBackend backend = RenderApi.GetBackend();
+        backend.BindShader(Shader.Handle);
+        backend.SetDepthTest(DepthTest);
+        backend.SetBlending(Blending);
+
+        foreach (ShaderProperty prop in Shader.Properties)
+        {
+            object? val = GetParameter(prop.Name);
+            if (val == null)
+                continue;
+
+            switch (prop.Type)
+            {
+                case ShaderPropertyType.Int:
+                    backend.SetUniformInt(Shader.Handle, prop.Name, (int)val);
+                    break;
+                case ShaderPropertyType.Float:
+                    backend.SetUniformFloat(Shader.Handle, prop.Name, (float)val);
+                    break;
+                case ShaderPropertyType.Vec2:
+                    backend.SetUniformVec2(Shader.Handle, prop.Name, (Vector2)val);
+                    break;
+                case ShaderPropertyType.Vec3:
+                    backend.SetUniformVec3(Shader.Handle, prop.Name, (Vector3)val);
+                    break;
+                case ShaderPropertyType.Vec4:
+                    backend.SetUniformVec4(Shader.Handle, prop.Name, (Vector4)val);
+                    break;
+                case ShaderPropertyType.Mat4:
+                    backend.SetUniformMatrix4(Shader.Handle, prop.Name, (Matrix4x4)val);
+                    break;
+                case ShaderPropertyType.Texture2D:
+                    Texture tex = (Texture)val;
+                    // Logic for automatic binding to slots
+                    backend.BindTexture(tex.Handle); // Current backend only supports one binding at a time in current abstraction
+                    // In a multi-slot backend, we would use: backend.BindTexture(tex.Handle, textureSlot++);
+                    break;
+            }
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        Console.WriteLine("Material Disposed");
+    }
+}

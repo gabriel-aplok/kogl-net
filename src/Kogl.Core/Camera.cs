@@ -88,9 +88,10 @@ public class Camera
         return Matrix4x4.CreateLookAt(Position, finalTarget, Vector3.UnitY);
     }
 
-    public Matrix4x4 GetProjectionMatrix(float aspectRatio)
+    public Matrix4x4 GetProjectionMatrix(float? aspectRatio = null)
     {
-        float aspect = aspectRatio <= 0.0001f ? 1.0f : aspectRatio;
+        // float aspect = aspectRatio <= 0.0001f ? 1.0f : aspectRatio;
+        float aspect = aspectRatio ?? (16f / 9f);
 
         return Projection switch
         {

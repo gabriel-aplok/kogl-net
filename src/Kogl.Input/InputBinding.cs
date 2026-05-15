@@ -15,8 +15,8 @@ public readonly struct InputBinding(BindingType type, int code)
     {
         return Type switch
         {
-            BindingType.Key => Input.IsKeyDown((Key)Code),
-            BindingType.MouseButton => Input.IsMouseButtonDown((MouseButton)Code),
+            BindingType.Key => InputManager.IsKeyDown((Key)Code),
+            BindingType.MouseButton => InputManager.IsMouseButtonDown((MouseButton)Code),
             _ => false,
         };
     }
@@ -25,8 +25,8 @@ public readonly struct InputBinding(BindingType type, int code)
     {
         return Type switch
         {
-            BindingType.Key => Input.IsKeyPressed((Key)Code),
-            BindingType.MouseButton => Input.IsMouseButtonPressed((MouseButton)Code),
+            BindingType.Key => InputManager.IsKeyPressed((Key)Code),
+            BindingType.MouseButton => InputManager.IsMouseButtonPressed((MouseButton)Code),
             _ => false,
         };
     }
@@ -35,8 +35,8 @@ public readonly struct InputBinding(BindingType type, int code)
     {
         return Type switch
         {
-            BindingType.Key => Input.IsKeyReleased((Key)Code),
-            BindingType.MouseButton => Input.IsMouseButtonReleased((MouseButton)Code),
+            BindingType.Key => InputManager.IsKeyReleased((Key)Code),
+            BindingType.MouseButton => InputManager.IsMouseButtonReleased((MouseButton)Code),
             _ => false,
         };
     }

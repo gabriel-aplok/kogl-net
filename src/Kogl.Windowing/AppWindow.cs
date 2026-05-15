@@ -47,7 +47,7 @@ public class AppWindow
             RenderApi.Initialize(backend);
 
             InputBackend inputBackend = new(_input);
-            Input.Input.Initialize(inputBackend);
+            Input.InputManager.Initialize(inputBackend);
 
             OnLoad?.Invoke();
         };
@@ -61,7 +61,7 @@ public class AppWindow
 
             _controller?.Render();
 
-            Input.Input.Update();
+            Input.InputManager.Update();
         };
 
         _window.FramebufferResize += s => RenderApi.SetViewport(0, 0, s.X, s.Y);

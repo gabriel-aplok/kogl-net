@@ -22,22 +22,22 @@ internal class InputBackend : IInputBackend
         {
             // due to our 1:1 mapping design, cast directly for 0-overhead translation
             _keyboard.KeyDown += static (kb, key, arg3) =>
-                Input.Input.Internal_SetKeyState((Input.Key)key, true);
+                InputManager.Internal_SetKeyState((Input.Key)key, true);
             _keyboard.KeyUp += static (kb, key, arg3) =>
-                Input.Input.Internal_SetKeyState((Input.Key)key, false);
-            _keyboard.KeyChar += static (kb, ch) => Input.Input.Internal_OnKeyChar(ch);
+                InputManager.Internal_SetKeyState((Input.Key)key, false);
+            _keyboard.KeyChar += static (kb, ch) => InputManager.Internal_OnKeyChar(ch);
         }
 
         if (_mouse != null)
         {
             _mouse.MouseMove += static (m, pos) =>
-                Input.Input.Internal_SetMousePosition(new Vector2(pos.X, pos.Y));
+                InputManager.Internal_SetMousePosition(new Vector2(pos.X, pos.Y));
             _mouse.MouseDown += static (m, btn) =>
-                Input.Input.Internal_SetMouseButton((Input.MouseButton)btn, true);
+                InputManager.Internal_SetMouseButton((Input.MouseButton)btn, true);
             _mouse.MouseUp += static (m, btn) =>
-                Input.Input.Internal_SetMouseButton((Input.MouseButton)btn, false);
+                InputManager.Internal_SetMouseButton((Input.MouseButton)btn, false);
             _mouse.Scroll += static (m, wheel) =>
-                Input.Input.Internal_SetMouseScroll(new Vector2(wheel.X, wheel.Y));
+                InputManager.Internal_SetMouseScroll(new Vector2(wheel.X, wheel.Y));
         }
     }
 

@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace Kogl.Input;
 
-public static class Input
+public static class InputManager
 {
     private static IInputBackend _backend = null!;
 

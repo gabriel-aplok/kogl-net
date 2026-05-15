@@ -31,7 +31,7 @@ internal class InputExample
             InputMap.Bind("ToggleMouse", Key.Escape);
 
             // lock cursor into raw windowed context
-            Input.Input.CursorMode = CursorMode.Locked;
+            InputManager.CursorMode = CursorMode.Locked;
         };
 
         app.OnRender += RenderLoop;
@@ -43,14 +43,16 @@ internal class InputExample
         // state toggling
         if (InputMap.IsActionPressed("ToggleMouse"))
         {
-            Input.Input.CursorMode =
-                Input.Input.CursorMode == CursorMode.Locked ? CursorMode.Normal : CursorMode.Locked;
+            InputManager.CursorMode =
+                InputManager.CursorMode == CursorMode.Locked
+                    ? CursorMode.Normal
+                    : CursorMode.Locked;
         }
 
         // raw delta mouse look
-        if (Input.Input.CursorMode == CursorMode.Locked)
+        if (InputManager.CursorMode == CursorMode.Locked)
         {
-            Vector2 mouseDelta = Input.Input.MouseDelta;
+            Vector2 mouseDelta = InputManager.MouseDelta;
             float sensitivity = 0.1f;
             _yaw -= mouseDelta.X * sensitivity;
             _pitch -= mouseDelta.Y * sensitivity;

@@ -152,6 +152,30 @@ void main() {
         return _matrices.ModelView;
     }
 
+    public static void BeginCamera(Camera camera)
+    {
+        Flush();
+
+        MatrixMode(Core.MatrixMode.Projection);
+        LoadIdentity();
+        Multiply(camera.GetProjectionMatrix(GetAspectRatio()));
+
+        MatrixMode(Core.MatrixMode.ModelView);
+        LoadIdentity();
+        Multiply(camera.GetViewMatrix());
+    }
+
+    public static void EndCamera()
+    {
+        Flush();
+
+        MatrixMode(Core.MatrixMode.Projection);
+        LoadIdentity();
+
+        MatrixMode(Core.MatrixMode.ModelView);
+        LoadIdentity();
+    }
+
     #endregion
 
     #region Viewport

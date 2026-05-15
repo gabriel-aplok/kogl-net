@@ -11,6 +11,7 @@ internal class Program
         Console.WriteLine();
 
         SimpleExample.Start();
+        CameraExample.Start();
         Cube3DExample.Start();
         TextureLoadingExample.Start();
         ScissorExample.Start();

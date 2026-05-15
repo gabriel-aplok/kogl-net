@@ -1,61 +1,69 @@
+using System.Numerics;
 using Kogl.Abstractions;
 using Kogl.Core;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
 
-internal class Cube3DExample
+internal class CameraExample
 {
-    private static float _angle = 0f;
-
-    private static readonly bool _useFrustum = false;
+    private static readonly Camera _camera = new();
+    private static float _time;
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - 3D Rotating Cube");
+        AppWindow app = new(800, 600, "KoGL - Camera Example");
+
+        _camera.Position = new Vector3(0, 3, 8);
+        _camera.Projection = CameraProjection.Perspective;
+        _camera.Fov = 60f;
+
         app.OnRender += RenderLoop;
         app.Run();
     }
 
     private static void RenderLoop(double dt)
     {
-        _angle += (float)dt * 45f;
+        _time += (float)dt;
 
-        RenderApi.Clear(0.1f, 0.1f, 0.12f, 1.0f);
-
-        // enable depth test
+        RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
         RenderApi.EnableDepthTest();
 
-        // projection matrix (perspective)
-        RenderApi.MatrixMode(MatrixMode.Projection);
-        RenderApi.LoadIdentity();
+        // orbit the camera in a circle, constantly looking at the center (0,0,0)
+        _camera.Position.X = MathF.Sin(_time) * 8f;
+        _camera.Position.Z = MathF.Cos(_time) * 8f;
+        _camera.LookAt(Vector3.Zero);
 
-        if (_useFrustum)
-        {
-            float left = -0.05f;
-            float right = 0.15f;
-            float bottom = -0.05f;
-            float top = 0.05f;
-
-            RenderApi.Frustum(left, right, bottom, top, 0.1f, 100.0f);
-        }
-        else
-        {
-            RenderApi.Perspective(45.0f, RenderApi.GetAspectRatio(), 0.1f, 100.0f);
-        }
-
-        // modelView matrix (camera & object)
-        RenderApi.MatrixMode(MatrixMode.ModelView);
-        RenderApi.LoadIdentity();
-
-        // move the camera back 5 units
-        RenderApi.Translate(0, -1, -10);
-
-        // rotate the cube on multiple axes
-        RenderApi.Rotate(_angle, 1, 1, 0);
-
+        // apply projection and view matrices
+        RenderApi.BeginCamera(_camera);
         RenderApi.UseDefaultShader();
 
+        // draw a reference grid (lines)
+        RenderApi.Begin(PrimitiveMode.Lines);
+        RenderApi.Color4(0.3f, 0.3f, 0.3f, 1.0f);
+        for (int i = -5; i <= 5; i++)
+        {
+            RenderApi.Vertex3(i, 0, -5);
+            RenderApi.Vertex3(i, 0, 5);
+            RenderApi.Vertex3(-5, 0, i);
+            RenderApi.Vertex3(5, 0, i);
+        }
+        RenderApi.End();
+
+        // draw a central object (cube)
+        RenderApi.PushMatrix();
+        RenderApi.Translate(0, 0.5f, 0);
+        DrawCube();
+        RenderApi.PopMatrix();
+
+        // flush and reset matrices back to Identity
+        RenderApi.EndCamera();
+
+        RenderApi.DisableDepthTest();
+    }
+
+    private static void DrawCube()
+    {
         // draw the cube using 6 quads
         RenderApi.Begin(PrimitiveMode.Quads);
 
@@ -102,11 +110,5 @@ internal class Cube3DExample
         RenderApi.Vertex3(-1, 1, -1);
 
         RenderApi.End();
-
-        // final dispatch to GPU
-        RenderApi.Flush();
-
-        // disable depth test
-        RenderApi.DisableDepthTest();
     }
 }

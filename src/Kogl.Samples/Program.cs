@@ -6,6 +6,10 @@ internal class Program
 {
     private static void Main()
     {
+        Console.WriteLine("KoGL - Samples");
+        Console.WriteLine("==============");
+        Console.WriteLine();
+
         SimpleExample.Start();
         Cube3DExample.Start();
         TextureLoadingExample.Start();

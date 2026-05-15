@@ -4,6 +4,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+        <!-- native & trimming settings -->
+        <IsTrimmable>true</IsTrimmable>
+        <TrimMode>full</TrimMode>
+
+        <!-- optimization settings -->
+        <OptimizationPreference>Speed</OptimizationPreference>
+        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+        <IlcTrimMetadata>true</IlcTrimMetadata>
+
+        <!-- error handling for incompatible code -->
+        <IllinkToAllSymbols>false</IllinkToAllSymbols>
     </PropertyGroup>
 
     <ItemGroup>

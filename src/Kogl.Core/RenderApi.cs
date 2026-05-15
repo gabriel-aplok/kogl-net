@@ -1,6 +1,5 @@
 using System.Numerics;
 using Kogl.Abstractions;
-using StbImageSharp;
 
 namespace Kogl.Core;
 

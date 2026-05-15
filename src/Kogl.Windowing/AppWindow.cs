@@ -1,5 +1,6 @@
 using Kogl.Core;
 using Kogl.OpenGL;
+
 using Silk.NET.Input;
 using Silk.NET.Input.Glfw;
 using Silk.NET.OpenGL;

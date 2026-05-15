@@ -1,6 +1,7 @@
 using System.Numerics;
 using Kogl.Abstractions;
 using Kogl.Core;
+using Kogl.FreeType;
 using Kogl.Input;
 using Kogl.Windowing;
 
@@ -9,6 +10,9 @@ namespace Kogl.Samples.Samples;
 internal class InputExample
 {
     private static readonly Camera _camera = new();
+    private static readonly Camera _uiCamera = new();
+    private static Font _uiFont = null!;
+
     private static float _yaw = 0f;
     private static float _pitch = 0f;
 
@@ -18,9 +22,19 @@ internal class InputExample
 
         app.OnLoad += () =>
         {
+            // scene camera
             _camera.Position = new Vector3(0, 1, 5);
 
-            // register input map actions
+            // ui camera
+            _uiCamera.Projection = CameraProjection.Orthographic;
+            _uiCamera.OrthoSize = 600;
+            _uiCamera.Near = -1;
+            _uiCamera.Far = 1;
+
+            // font
+            _uiFont = Font.Load("assets/fonts/arial.ttf", 20);
+
+            // input mapping
             InputMap.Bind("MoveLeft", Key.A);
             InputMap.Bind("MoveRight", Key.D);
             InputMap.Bind("MoveForward", Key.W);
@@ -30,17 +44,48 @@ internal class InputExample
             InputMap.Bind("Shoot", MouseButton.Left);
             InputMap.Bind("ToggleMouse", Key.Escape);
 
-            // lock cursor into raw windowed context
+            // lock mouse
             InputManager.CursorMode = CursorMode.Locked;
         };
 
         app.OnRender += RenderLoop;
+
+        app.OnUnload += () => _uiFont?.Dispose();
+
         app.Run();
     }
 
     private static void RenderLoop(double dt)
     {
-        // state toggling
+        UpdateInput((float)dt);
+
+        // render world
+        RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        RenderApi.EnableDepthTest();
+
+        RenderApi.BeginCamera(_camera);
+        DrawWorld();
+        RenderApi.EndCamera();
+
+        // TODO: fix the text rendering, cuz the text appears with the clear background that eliminates the 3D world behind it, lol
+        // TODO: maybe I just need to add more states to the renderApi to enable transparency and other important stuff
+        // render ui
+        // RenderApi.DisableDepthTest();
+
+        // // match screen coords (0,0 is top-left)
+        // RenderApi.MatrixMode(MatrixMode.Projection);
+        // RenderApi.LoadIdentity();
+        // RenderApi.Ortho(0, 800, 600, 0, -1, 1);
+        // RenderApi.MatrixMode(MatrixMode.ModelView);
+        // RenderApi.LoadIdentity();
+
+        // DrawUI();
+
+        RenderApi.Flush();
+    }
+
+    private static void UpdateInput(float dt)
+    {
         if (InputMap.IsActionPressed("ToggleMouse"))
         {
             InputManager.CursorMode =
@@ -49,66 +94,41 @@ internal class InputExample
                     : CursorMode.Locked;
         }
 
-        // raw delta mouse look
         if (InputManager.CursorMode == CursorMode.Locked)
         {
             Vector2 mouseDelta = InputManager.MouseDelta;
-            float sensitivity = 0.1f;
-            _yaw -= mouseDelta.X * sensitivity;
-            _pitch -= mouseDelta.Y * sensitivity;
-
+            _yaw -= mouseDelta.X * 0.1f;
+            _pitch -= mouseDelta.Y * 0.1f;
             _pitch = Math.Clamp(_pitch, -89f, 89f);
             _camera.Rotation = new Vector3(_pitch, _yaw, 0);
         }
 
-        // keyboard movement
         Vector2 inputDir = InputMap.GetVector(
             "MoveLeft",
             "MoveRight",
             "MoveBackward",
             "MoveForward"
         );
-        float speed = 5.0f * (float)dt;
-
-        // update camera
         _camera.GetViewMatrix();
 
-        // horizontal movement
         Vector3 horizontalFront = Vector3.Normalize(
             new Vector3(_camera.Front.X, 0, _camera.Front.Z)
         );
+        _camera.Position += horizontalFront * inputDir.Y * 5.0f * dt;
+        _camera.Position += _camera.Right * inputDir.X * 5.0f * dt;
 
-        _camera.Position += horizontalFront * inputDir.Y * speed;
-        _camera.Position += _camera.Right * inputDir.X * speed;
-
-        // input pressed checks
         if (InputMap.IsActionPressed("Jump") && _camera.Position.Y <= 1.0f)
-        {
             _camera.Position.Y = 3.0f;
-        }
-
-        // gravity
         if (_camera.Position.Y > 1.0f)
         {
-            _camera.Position.Y -= 5.0f * (float)dt;
+            _camera.Position.Y -= 5.0f * dt;
             if (_camera.Position.Y < 1.0f)
                 _camera.Position.Y = 1.0f;
         }
+    }
 
-        // output display
-        if (InputMap.IsActionDown("Shoot"))
-        {
-            RenderApi.Clear(0.8f, 0.2f, 0.2f, 1.0f);
-        }
-        else
-        {
-            RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
-        }
-
-        RenderApi.EnableDepthTest();
-        RenderApi.BeginCamera(_camera);
-
-        // draw reference grid
+    private static void DrawWorld()
+    {
         RenderApi.UseDefaultShader();
         RenderApi.Begin(PrimitiveMode.Lines);
         RenderApi.Color4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -120,18 +140,43 @@ internal class InputExample
             RenderApi.Vertex3(10, 0, i);
         }
         RenderApi.End();
+    }
 
-        // draw floor
-        RenderApi.UseDefaultShader();
-        RenderApi.Begin(PrimitiveMode.Quads);
-        RenderApi.Color4(0.3f, 0.3f, 0.3f, 1.0f);
-        RenderApi.Vertex3(-10, 0, -10);
-        RenderApi.Vertex3(10, 0, -10);
-        RenderApi.Vertex3(10, 0, 10);
-        RenderApi.Vertex3(-10, 0, 10);
-        RenderApi.End();
+    private static void DrawUI()
+    {
+        // draw shadow/background for text
+        KoGLText.DrawText(
+            _uiFont,
+            "CONTROLS: WASD to Move | ESC to Toggle Mouse",
+            new Vector2(12, 12),
+            new Vector4(0, 0, 0, 0.5f)
+        );
 
-        RenderApi.EndCamera();
-        RenderApi.Flush();
+        // draw main text
+        KoGLText.DrawText(
+            _uiFont,
+            "CONTROLS: WASD to Move | ESC to Toggle Mouse",
+            new Vector2(10, 10),
+            Vector4.One
+        );
+
+        // camera info
+        string posText =
+            $"XYZ: {_camera.Position.X:F2}, {_camera.Position.Y:F2}, {_camera.Position.Z:F2}";
+        KoGLText.DrawText(_uiFont, posText, new Vector2(10, 40), new Vector4(0.2f, 0.8f, 0.2f, 1f));
+
+        // crosshair
+        KoGLText.DrawText(_uiFont, "+", new Vector2(400, 300), Vector4.One, TextAlignment.Center);
+
+        if (InputMap.IsActionDown("Shoot"))
+        {
+            KoGLText.DrawText(
+                _uiFont,
+                "FIRING!",
+                new Vector2(400, 340),
+                new Vector4(1, 0, 0, 1),
+                TextAlignment.Center
+            );
+        }
     }
 }

@@ -9,7 +9,7 @@ public enum CameraProjection
     Frustum,
 }
 
-public struct Ray(Vector3 origin, Vector3 direction)
+public struct CameraRay(Vector3 origin, Vector3 direction)
 {
     public Vector3 Origin = origin;
     public Vector3 Direction = direction;
@@ -30,6 +30,7 @@ public class Camera
     public Vector3 Up { get; private set; } = Vector3.UnitY;
     public Vector3 Right { get; private set; } = Vector3.UnitX;
 
+    // TODO: update this when updating viewport
     public float ViewportWidth { get; set; } = 800;
     public float ViewportHeight { get; set; } = 600;
 
@@ -40,7 +41,7 @@ public class Camera
 
     private Vector3? _target;
 
-    public void LookAt(Vector3 target, Vector3 up = default)
+    public void LookAt(Vector3 target)
     {
         _target = target;
     }
@@ -123,7 +124,7 @@ public class Camera
         Rotation = Vector3.Lerp(Rotation, targetRot, alpha);
     }
 
-    public Ray GetScreenRay(Vector2 mousePosition, float aspectRatio)
+    public CameraRay GetScreenRay(Vector2 mousePosition, float aspectRatio)
     {
         Matrix4x4 view = GetViewMatrix();
         Matrix4x4 proj = GetProjectionMatrix(aspectRatio);
@@ -150,7 +151,7 @@ public class Camera
             farPoint.Z / farPoint.W
         );
 
-        return new Ray(rayStart, Vector3.Normalize(rayEnd - rayStart));
+        return new CameraRay(rayStart, Vector3.Normalize(rayEnd - rayStart));
     }
 
     public bool IsInView(Vector3 point, float radius)

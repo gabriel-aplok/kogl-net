@@ -1,7 +1,10 @@
 using System.Runtime.InteropServices;
+
 using FreeTypeSharp;
+
 using Kogl.Abstractions;
 using Kogl.Core.Resources;
+
 using static FreeTypeSharp.FT;
 using static FreeTypeSharp.FT_LOAD;
 using static FreeTypeSharp.FT_Render_Mode_;

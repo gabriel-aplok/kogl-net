@@ -45,6 +45,10 @@ public class AppWindow
 
             OpenGLBackend backend = new(_gl);
             RenderApi.Initialize(backend);
+
+            SilkInputBackend inputBackend = new(_input);
+            Input.Input.Initialize(inputBackend);
+
             OnLoad?.Invoke();
         };
 
@@ -56,6 +60,8 @@ public class AppWindow
             // ImGuiNET.ImGui.ShowDemoWindow();
 
             _controller?.Render();
+
+            Input.Input.Update();
         };
 
         _window.FramebufferResize += s => RenderApi.SetViewport(0, 0, s.X, s.Y);

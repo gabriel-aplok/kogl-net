@@ -27,6 +27,5 @@
     <ItemGroup>
         <ProjectReference Include="..\Kogl.Abstractions\Kogl.Abstractions.csproj" />
         <ProjectReference Include="..\Kogl.Input\Kogl.Input.csproj" />
-        <ProjectReference Include="..\Kogl.Math\Kogl.Math.csproj" />
     </ItemGroup>
 </Project>

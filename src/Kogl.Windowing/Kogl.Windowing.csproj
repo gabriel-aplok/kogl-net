@@ -27,6 +27,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Kogl.Abstractions\Kogl.Abstractions.csproj" />
         <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />
+        <ProjectReference Include="..\Kogl.Input\Kogl.Input.csproj" />
         <ProjectReference Include="..\Kogl.OpenGL\Kogl.OpenGL.csproj" />
     </ItemGroup>
 </Project>

@@ -13,12 +13,12 @@ internal class TextureLoadingExample
     {
         AppWindow app = new(800, 600, "KoGL - Texture Loading");
 
-        app.OnLoad += () =>
+        app.OnLoad += static () =>
         {
             _logo = ResourceManager.Load<Texture>("assets/logo.png");
         };
         app.OnRender += RenderLoop;
-        app.OnUnload += () =>
+        app.OnUnload += static () =>
         {
             ResourceManager.UnloadAll();
         };

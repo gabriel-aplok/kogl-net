@@ -11,6 +11,7 @@ internal class Program
         Console.WriteLine();
 
         SimpleExample.Start();
+        InputExample.Start();
         TextRenderingExample.Start();
         CameraExample.Start();
         Cube3DExample.Start();

@@ -16,7 +16,7 @@ internal class TextRenderingExample
     {
         AppWindow app = new(800, 600, "KoGL - FreeType Text Rendering");
 
-        app.OnLoad += () =>
+        app.OnLoad += static () =>
         {
             _arialFont = Font.Load("assets/fonts/arial.ttf", 24);
             _openSansFont = Font.LoadSdf("assets/fonts/regular.ttf", 24);
@@ -25,7 +25,7 @@ internal class TextRenderingExample
 
         app.OnRender += RenderLoop;
 
-        app.OnUnload += () =>
+        app.OnUnload += static () =>
         {
             _arialFont?.Dispose();
             _openSansFont?.Dispose();

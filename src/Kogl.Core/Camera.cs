@@ -12,7 +12,7 @@ public enum CameraProjection
 public class Camera
 {
     public Vector3 Position = Vector3.Zero;
-    public Vector3 Rotation = Vector3.Zero; // Euler angles in degrees (Pitch, Yaw, Roll)
+    public Vector3 Rotation = Vector3.Zero; // euler angles in degrees (pitch, yaw, roll)
 
     public CameraProjection Projection = CameraProjection.Perspective;
     public float Fov = 45f;
@@ -20,7 +20,7 @@ public class Camera
     public float Near = 0.1f;
     public float Far = 1000f;
 
-    // Frustum specifics (used only if Projection == Frustum)
+    // frustum specifics
     public float Left = -1f;
     public float Right = 1f;
     public float Bottom = -1f;
@@ -29,18 +29,12 @@ public class Camera
     private Vector3? _target;
     private Vector3 _up = Vector3.UnitY;
 
-    /// <summary>
-    /// Forces the camera to look at a specific target, overriding Euler rotation.
-    /// </summary>
     public void LookAt(Vector3 target, Vector3 up = default)
     {
         _target = target;
         _up = up == default ? Vector3.UnitY : up;
     }
 
-    /// <summary>
-    /// Clears the target tracking, returning control to the Rotation property.
-    /// </summary>
     public void ClearLookAt()
     {
         _target = null;
@@ -53,8 +47,8 @@ public class Camera
             return Matrix4x4.CreateLookAt(Position, _target.Value, _up);
         }
 
-        // View matrix is the inverse of the camera's transform.
-        // Translation is inverted, and rotations are inverted and applied in reverse order.
+        // view matrix is the inverse of the camera's transform.
+        // translation is inverted, and rotations are inverted and applied in reverse order.
         return Matrix4x4.CreateTranslation(-Position)
             * Matrix4x4.CreateRotationZ(-Rotation.Z * (MathF.PI / 180f))
             * Matrix4x4.CreateRotationX(-Rotation.X * (MathF.PI / 180f))

@@ -1,5 +1,6 @@
 using System.Numerics;
 using Kogl.Abstractions;
+using StbImageSharp;
 
 namespace Kogl.Core;
 
@@ -132,8 +133,10 @@ void main() {
     // Rendering / Post-Processing
     // ==========================================
 
-    public static RenderTarget CreateRenderTarget(int width, int height) =>
-        _backend.CreateRenderTarget(width, height);
+    public static RenderTarget CreateRenderTarget(int width, int height)
+    {
+        return _backend.CreateRenderTarget(width, height);
+    }
 
     public static void SetRenderTarget(RenderTarget? target)
     {
@@ -206,6 +209,29 @@ void main() {
     public static void UseDefaultTexture()
     {
         _currentTextureHandle = _defaultTexture;
+    }
+
+    public static TextureHandle LoadTexture(string path)
+    {
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException($"Texture file not found: {path}");
+        }
+
+        StbImage.stbi_set_flip_vertically_on_load(1);
+        using FileStream stream = File.OpenRead(path);
+        ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+
+        return _backend.CreateTexture(image.Data, image.Width, image.Height, 4);
+    }
+
+    public static void DeleteTexture(TextureHandle handle)
+    {
+        if (_currentTextureHandle.Id == handle.Id)
+        {
+            UseDefaultTexture();
+        }
+        _backend.DeleteTexture(handle);
     }
 
     public static void Clear(float r, float g, float b, float a)
@@ -283,5 +309,10 @@ void main() {
     {
         Flush();
         _backend.SetUniformMatrix4(_currentShaderHandle, name, value);
+    }
+
+    internal static IGraphicsBackend GetBackend()
+    {
+        return _backend;
     }
 }

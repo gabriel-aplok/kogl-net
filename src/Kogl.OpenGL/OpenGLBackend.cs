@@ -18,7 +18,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     private uint _cachedShader;
     private uint _cachedFbo;
 
-    private readonly Dictionary<(uint, string), int> _uniformLocations = new();
+    private readonly Dictionary<(uint, string), int> _uniformLocations = [];
 
     public void Initialize()
     {
@@ -407,7 +407,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     {
         if (_cachedTexture == texture.Id)
         {
-            _cachedTexture = 0; // invalidate cache registration if active asset gets dropped
+            _cachedTexture = 0;
         }
         _gl.DeleteTexture(texture.Id);
     }

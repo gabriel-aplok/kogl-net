@@ -6,23 +6,11 @@ An extension on top of Kogl.Abstractions for signed distance field (SDF) or bitm
 
 If you have multiple small sprites, putting them on one big texture will allow them to all be drawn in a single draw call, even if they are "different" images.
 
-## Scissor Testing
-
-Adding a RenderApi.BeginScissor(x, y, w, h) for UI work.
-
-## Wire up StbImageSharp for Textures
-
-Yea...
-
-```csharp
-public static TextureHandle LoadTexture(string path, IGraphicsBackend backend)
-{
-  ...
-}
-```
-
 ## Done
 
 - Custom Shader: Done
 - Automated State Caching: Done
 - Post-Processing: Done
+- Scissor Testing: Done
+- Resource Management: Done
+- Texture Loading: Done

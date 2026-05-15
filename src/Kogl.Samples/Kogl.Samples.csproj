@@ -7,6 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Content Include="assets\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />
         <ProjectReference Include="..\Kogl.OpenGL\Kogl.OpenGL.csproj" />
         <ProjectReference Include="..\Kogl.Windowing\Kogl.Windowing.csproj" />

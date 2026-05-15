@@ -1,6 +1,7 @@
 using Kogl.Core;
 using Kogl.OpenGL;
 using Silk.NET.Input;
+using Silk.NET.Input.Glfw;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
@@ -22,6 +23,7 @@ public class AppWindow
     public AppWindow(int width, int height, string title)
     {
         GlfwWindowing.RegisterPlatform();
+        GlfwInput.RegisterPlatform();
 
         WindowOptions options = WindowOptions.Default;
         options.Size = new Silk.NET.Maths.Vector2D<int>(width, height);

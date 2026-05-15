@@ -179,8 +179,16 @@ void main() {
 
     #region Viewport
 
+    /// <summary>
+    /// Clears the screen
+    /// </summary>
+    /// <param name="r">The red component</param>
+    /// <param name="g">The green component</param>
+    /// <param name="b">The blue component</param>
+    /// <param name="a">The alpha component</param>
     public static void Clear(float r, float g, float b, float a)
     {
+        ResetStates();
         _backend.Clear(r, g, b, a);
     }
 
@@ -345,22 +353,46 @@ void main() {
 
     #region States
 
+    /// <summary>
+    /// Resets all internal render states (Texture, Shader, Color, UVs) to their default values.
+    /// Prevents state-leaks between frames or major render passes.
+    /// </summary>
+    public static void ResetStates()
+    {
+        UseDefaultTexture();
+        UseDefaultShader();
+        _currentTexCoord = Vector2.Zero;
+        _currentColor = Vector4.One;
+    }
+
+    /// <summary>
+    /// Enables depth testing.
+    /// </summary>
     public static void EnableDepthTest()
     {
         _backend.SetDepthTest(true);
     }
 
+    /// <summary>
+    /// Disables depth testing.
+    /// </summary>
     public static void DisableDepthTest()
     {
         _backend.SetDepthTest(false);
     }
 
+    /// <summary>
+    /// Enables blending.
+    /// </summary>
     public static void EnableBlending()
     {
         Flush();
         _backend.SetBlending(true);
     }
 
+    /// <summary>
+    /// Disables blending.
+    /// </summary>
     public static void DisableBlending()
     {
         Flush();

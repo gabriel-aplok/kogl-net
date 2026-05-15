@@ -131,10 +131,6 @@ internal class InputExample
 
     private static void DrawWorld()
     {
-        RenderApi.UseDefaultShader();
-        RenderApi.UseDefaultTexture();
-        RenderApi.TexCoord2(0, 0);
-
         // draw reference grid
         RenderApi.Begin(PrimitiveMode.Lines);
         RenderApi.Color4(0.5f, 0.5f, 0.5f, 1.0f);

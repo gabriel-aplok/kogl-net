@@ -171,7 +171,7 @@ public static class Input
 
     public static void Internal_SetMousePosition(Vector2 pos)
     {
-        MouseDelta += (pos - MousePosition);
+        MouseDelta += pos - MousePosition;
         MousePosition = pos;
         MouseMoved?.Invoke(pos);
     }

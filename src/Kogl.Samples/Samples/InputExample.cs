@@ -59,8 +59,8 @@ internal class InputExample
             _camera.Rotation = new Vector3(_pitch, _yaw, 0);
         }
 
-        // input vector normalization
-        Vector2 movement = InputMap.GetVector(
+        // keyboard movement
+        Vector2 inputDir = InputMap.GetVector(
             "MoveLeft",
             "MoveRight",
             "MoveBackward",
@@ -68,35 +68,56 @@ internal class InputExample
         );
         float speed = 5.0f * (float)dt;
 
-        // matrix calculation for forward/right vectors based on yaw
-        float yawRad = _yaw * (MathF.PI / 180f);
-        Vector3 forward = new(MathF.Sin(yawRad), 0, MathF.Cos(yawRad));
-        Vector3 right = new(MathF.Cos(yawRad), 0, -MathF.Sin(yawRad));
+        // update camera
+        _camera.GetViewMatrix();
 
-        _camera.Position += forward * -movement.Y * speed;
-        _camera.Position += right * movement.X * speed;
+        // horizontal movement
+        Vector3 horizontalFront = Vector3.Normalize(
+            new Vector3(_camera.Front.X, 0, _camera.Front.Z)
+        );
+
+        _camera.Position += horizontalFront * inputDir.Y * speed;
+        _camera.Position += _camera.Right * inputDir.X * speed;
 
         // input pressed checks
         if (InputMap.IsActionPressed("Jump") && _camera.Position.Y <= 1.0f)
         {
-            _camera.Position.Y = 3.0f; // jump
+            _camera.Position.Y = 3.0f;
         }
 
+        // gravity
         if (_camera.Position.Y > 1.0f)
         {
-            _camera.Position.Y -= 5.0f * (float)dt; // gravity
+            _camera.Position.Y -= 5.0f * (float)dt;
             if (_camera.Position.Y < 1.0f)
                 _camera.Position.Y = 1.0f;
         }
 
         // output display
         if (InputMap.IsActionDown("Shoot"))
-            RenderApi.Clear(0.8f, 0.2f, 0.2f, 1.0f); // fire indicator
+        {
+            RenderApi.Clear(0.8f, 0.2f, 0.2f, 1.0f);
+        }
         else
+        {
             RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        }
 
         RenderApi.EnableDepthTest();
         RenderApi.BeginCamera(_camera);
+
+        // draw reference grid
+        RenderApi.UseDefaultShader();
+        RenderApi.Begin(PrimitiveMode.Lines);
+        RenderApi.Color4(0.5f, 0.5f, 0.5f, 1.0f);
+        for (int i = -10; i <= 10; i++)
+        {
+            RenderApi.Vertex3(i, 0, -10);
+            RenderApi.Vertex3(i, 0, 10);
+            RenderApi.Vertex3(-10, 0, i);
+            RenderApi.Vertex3(10, 0, i);
+        }
+        RenderApi.End();
 
         // draw floor
         RenderApi.UseDefaultShader();

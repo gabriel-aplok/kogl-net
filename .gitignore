@@ -8,7 +8,7 @@ artifacts/
 .idea/
 
 # VSCode
-.vscode/
+# .vscode/
 
 # Visual Studio
 .vs/
@@ -27,9 +27,6 @@ Thumbs.db
 *.nupkg
 packages/
 
-# Test Results
-TestResults/
-
 # Coverage
 coverage/
 *.coverage
@@ -39,17 +36,6 @@ coverage/
 Generated/
 Temp/
 Cache/
-
-# Publish
-publish/
-
-# Resource cache
-*.import
-*.tmp
-
-# Godot-style runtime cache
-*.res.cache
-*.tres.cache
 
 # JetBrains
 _ReSharper*/
@@ -63,6 +49,9 @@ BenchmarkDotNet.Artifacts/
 
 # Local settings
 appsettings.Development.json
+
+# C# Dev Kit
+*.lscache
 
 # lol
 files/**

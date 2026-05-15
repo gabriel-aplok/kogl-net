@@ -1,4 +1,4 @@
-# KoGL (Kolpa's OpenGL Abstraction Layer)
+# KoGL (Kolpa's Graphics Library)
 
 <div align="center">
 
@@ -8,11 +8,20 @@
 
 this stills a work in progress, but it's already usable for some things, if you want to contribute or report any issue, feel free.
 
-I am currently porting a library I created in pure C to C#.
+currently porting a library I created in pure C to C#.
 
 > [!WARNING]
-> **Status:** API is subject to change.
+> **status:** API is subject to change.
 
-### License
+## features
 
-This project is licensed under the zlib/libpng license, mirroring raylib.
+- modern backend with the opengl 1.1 immediate-mode style behind the scenes.
+- automatic dynamic batching.
+- shaders support.
+- resources management.
+- input management.
+- simd matrix transforms.
+
+### license
+
+this project is licensed under the zlib/libpng license, mirroring raylib.

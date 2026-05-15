@@ -7,11 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Silk.NET.Direct3D12" Version="2.23.0" />
-        <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Kogl.Abstractions\Kogl.Abstractions.csproj" />
     </ItemGroup>
 </Project>

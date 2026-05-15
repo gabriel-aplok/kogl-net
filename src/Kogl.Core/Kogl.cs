@@ -21,6 +21,10 @@ public static class RenderApi
     private static TextureHandle _currentTextureHandle;
     private static ShaderHandle _currentShaderHandle;
 
+    private static uint _cachedFboId = 0;
+    private static int _screenWidth = 800;
+    private static int _screenHeight = 600;
+
     public static void Initialize(IGraphicsBackend backend)
     {
         _backend = backend;
@@ -125,6 +129,28 @@ void main() {
     }
 
     // ==========================================
+    // Rendering / Post-Processing
+    // ==========================================
+
+    public static RenderTarget CreateRenderTarget(int width, int height) =>
+        _backend.CreateRenderTarget(width, height);
+
+    public static void SetRenderTarget(RenderTarget? target)
+    {
+        // dispatch all pending geometry before switching the destination!
+        Flush();
+
+        _backend.SetRenderTarget(target);
+        _cachedFboId = target?.FboId ?? 0;
+
+        // restore the window viewport if we just unbound the fbo
+        if (target == null)
+        {
+            _backend.SetViewport(0, 0, _screenWidth, _screenHeight);
+        }
+    }
+
+    // ==========================================
     // Vertex
     // ==========================================
 
@@ -189,6 +215,11 @@ void main() {
 
     public static void SetViewport(int x, int y, int width, int height)
     {
+        if (_cachedFboId == 0)
+        {
+            _screenWidth = width;
+            _screenHeight = height;
+        }
         _backend.SetViewport(x, y, width, height);
     }
 

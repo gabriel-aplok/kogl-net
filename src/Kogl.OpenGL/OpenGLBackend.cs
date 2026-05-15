@@ -16,6 +16,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     private uint _cachedEbo;
     private uint _cachedTexture;
     private uint _cachedShader;
+    private uint _cachedFbo;
 
     private readonly Dictionary<(uint, string), int> _uniformLocations = new();
 
@@ -172,6 +173,112 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         }
 
         return new TextureHandle(id);
+    }
+
+    public RenderTarget CreateRenderTarget(int width, int height)
+    {
+        // generate fbo
+        uint fbo = _gl.GenFramebuffer();
+        BindFramebufferInternal(fbo);
+
+        // generate and bind the Texture
+        uint tex = _gl.GenTexture();
+        BindTextureInternal(tex);
+
+        // allocate empty texture memory
+        _gl.TexImage2D(
+            TextureTarget.Texture2D,
+            0,
+            InternalFormat.Rgba,
+            (uint)width,
+            (uint)height,
+            0,
+            PixelFormat.Rgba,
+            PixelType.UnsignedByte,
+            (void*)0
+        );
+
+        _gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureMinFilter,
+            (int)TextureMinFilter.Linear
+        );
+        _gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureMagFilter,
+            (int)TextureMagFilter.Linear
+        );
+        _gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureWrapS,
+            (int)TextureWrapMode.ClampToEdge
+        );
+        _gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureWrapT,
+            (int)TextureWrapMode.ClampToEdge
+        );
+
+        // attach texture to fbo
+        _gl.FramebufferTexture2D(
+            FramebufferTarget.Framebuffer,
+            FramebufferAttachment.ColorAttachment0,
+            TextureTarget.Texture2D,
+            tex,
+            0
+        );
+
+        // generate renderbuffer for depth/stencil (required if draw 3d inside the fbo)
+        uint rbo = _gl.GenRenderbuffer();
+        _gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo);
+        _gl.RenderbufferStorage(
+            RenderbufferTarget.Renderbuffer,
+            InternalFormat.Depth24Stencil8,
+            (uint)width,
+            (uint)height
+        );
+        _gl.FramebufferRenderbuffer(
+            FramebufferTarget.Framebuffer,
+            FramebufferAttachment.DepthStencilAttachment,
+            RenderbufferTarget.Renderbuffer,
+            rbo
+        );
+
+        // if (
+        //     _gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer)
+        //     != FramebufferErrorCode.FramebufferComplete
+        // )
+        // {
+        //     throw new Exception("Framebuffer is not complete!");
+        // }
+
+        BindFramebufferInternal(0); // ynbind
+
+        return new RenderTarget(fbo, rbo, new TextureHandle(tex), width, height);
+    }
+
+    public void SetRenderTarget(RenderTarget? target)
+    {
+        if (target.HasValue)
+        {
+            BindFramebufferInternal(target.Value.FboId);
+            _gl.Viewport(0, 0, (uint)target.Value.Width, (uint)target.Value.Height);
+        }
+        else
+        {
+            BindFramebufferInternal(0);
+            // TODO: the frontend API will need to restore the screen viewport size
+        }
+    }
+
+    public void DeleteRenderTarget(RenderTarget target)
+    {
+        if (_cachedFbo == target.FboId)
+            _cachedFbo = 0;
+
+        _gl.DeleteFramebuffer(target.FboId);
+        _gl.DeleteRenderbuffer(target.RboId);
+        DeleteTexture(target.Texture);
     }
 
     public ShaderHandle CreateShader(string vertexSrc, string fragmentSrc)
@@ -351,6 +458,15 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         {
             _gl.UseProgram(id);
             _cachedShader = id;
+        }
+    }
+
+    private void BindFramebufferInternal(uint id)
+    {
+        if (_cachedFbo != id)
+        {
+            _gl.BindFramebuffer(FramebufferTarget.Framebuffer, id);
+            _cachedFbo = id;
         }
     }
 

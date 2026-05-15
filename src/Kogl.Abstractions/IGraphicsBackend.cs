@@ -17,6 +17,10 @@ public interface IGraphicsBackend : IDisposable
     public void BindTexture(TextureHandle texture);
     public void DeleteTexture(TextureHandle texture);
 
+    public RenderTarget CreateRenderTarget(int width, int height);
+    public void SetRenderTarget(RenderTarget? target);
+    public void DeleteRenderTarget(RenderTarget target);
+
     public ShaderHandle CreateShader(string vertexSrc, string fragmentSrc);
     public void BindShader(ShaderHandle shader);
 

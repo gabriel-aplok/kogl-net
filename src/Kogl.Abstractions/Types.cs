@@ -17,6 +17,14 @@ public readonly record struct TextureHandle(uint Id);
 
 public readonly record struct ShaderHandle(uint Id);
 
+public readonly record struct RenderTarget(
+    uint FboId,
+    uint RboId,
+    TextureHandle Texture,
+    int Width,
+    int Height
+);
+
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct VertexData(Vector3 pos, Vector2 uv, Vector4 color)
 {

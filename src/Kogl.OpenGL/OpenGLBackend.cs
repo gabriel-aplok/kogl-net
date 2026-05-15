@@ -175,6 +175,36 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         return new TextureHandle(id);
     }
 
+    public void UpdateTexture(
+        TextureHandle texture,
+        int xOffset,
+        int yOffset,
+        int width,
+        int height,
+        ReadOnlySpan<byte> pixelData,
+        int channels
+    )
+    {
+        BindTextureInternal(texture.Id);
+
+        PixelFormat pxFormat = channels == 4 ? PixelFormat.Rgba : PixelFormat.Rgb;
+
+        fixed (byte* ptr = pixelData)
+        {
+            _gl.TexSubImage2D(
+                TextureTarget.Texture2D,
+                0,
+                xOffset,
+                yOffset,
+                (uint)width,
+                (uint)height,
+                pxFormat,
+                PixelType.UnsignedByte,
+                ptr
+            );
+        }
+    }
+
     public RenderTarget CreateRenderTarget(int width, int height)
     {
         // generate fbo

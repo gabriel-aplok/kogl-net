@@ -1,6 +1,14 @@
-## High-Performance Text Rendering
+## SDF (Signed Distance Fields)
 
-An extension on top of Kogl.Abstractions for signed distance field (SDF) or bitmap fonts. the system utilizes a high-performance batching engine, drawing an entire paragraph of text will automatically group into a single dynamic draw call as long as they share the same font atlas texture.
+For crisp text scaling at any resolution
+
+## Rich Text
+
+Implementing a simple markup parser (like <color=red>) by swapping RenderApi.Color4 mid-string
+
+## World-Space UI
+
+Since it's integrated into the MatrixStack, maybe I can use RenderApi.Rotate or RenderApi.Scale to put text directly on 3D surfaces.
 
 ## Texture Atlasing
 
@@ -16,3 +24,4 @@ If you have multiple small sprites, putting them on one big texture will allow t
 - Resource Management: Done
 - Texture Loading: Done
 - Orthographic, Perspective and Frustum Projection: Done
+- Text Rendering: Done

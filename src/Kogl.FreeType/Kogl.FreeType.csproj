@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+        <!-- native & trimming settings -->
+        <IsTrimmable>true</IsTrimmable>
+        <TrimMode>full</TrimMode>
+
+        <!-- optimization settings -->
+        <OptimizationPreference>Speed</OptimizationPreference>
+        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+        <IlcTrimMetadata>true</IlcTrimMetadata>
+
+        <!-- error handling for incompatible code -->
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <IllinkToAllSymbols>false</IllinkToAllSymbols>
+    </PropertyGroup>
+
+    <ItemGroup></ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Kogl.Abstractions\Kogl.Abstractions.csproj" />
+        <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FreeTypeSharp" Version="3.1.0" />
+    </ItemGroup>
+</Project>

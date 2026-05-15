@@ -79,4 +79,9 @@ public class MatrixStack
     {
         Multiply(Matrix4x4.CreatePerspectiveFieldOfView(fovy, aspect, zNear, zFar));
     }
+
+    public void Frustum(float left, float right, float bottom, float top, float zNear, float zFar)
+    {
+        Multiply(Matrix4x4.CreatePerspectiveOffCenter(left, right, bottom, top, zNear, zFar));
+    }
 }

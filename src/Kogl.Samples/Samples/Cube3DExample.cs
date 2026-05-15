@@ -8,6 +8,8 @@ internal class Cube3DExample
 {
     private static float _angle = 0f;
 
+    private static readonly bool _useFrustum = true;
+
     public static void Start()
     {
         AppWindow app = new(800, 600, "KoGL - 3D Rotating Cube");
@@ -27,7 +29,20 @@ internal class Cube3DExample
         // projection matrix (perspective)
         RenderApi.MatrixMode(MatrixMode.Projection);
         RenderApi.LoadIdentity();
-        RenderApi.Perspective(45.0f, RenderApi.GetAspectRatio(), 0.1f, 100.0f);
+
+        if (_useFrustum)
+        {
+            float left = -0.05f;
+            float right = 0.15f;
+            float bottom = -0.05f;
+            float top = 0.05f;
+
+            RenderApi.Frustum(left, right, bottom, top, 0.1f, 100.0f);
+        }
+        else
+        {
+            RenderApi.Perspective(45.0f, RenderApi.GetAspectRatio(), 0.1f, 100.0f);
+        }
 
         // modelView matrix (camera & object)
         RenderApi.MatrixMode(MatrixMode.ModelView);

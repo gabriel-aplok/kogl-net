@@ -16,7 +16,6 @@ public static class RenderApi
     private static TextureHandle _defaultTexture;
     private static ShaderHandle _defaultShader;
 
-    // current state
     private static Vector2 _currentTexCoord = Vector2.Zero;
     private static Vector4 _currentColor = Vector4.One;
     private static TextureHandle _currentTextureHandle;
@@ -26,18 +25,20 @@ public static class RenderApi
     private static int _screenWidth = 800;
     private static int _screenHeight = 600;
 
+    #region Init
+
     public static void Initialize(IGraphicsBackend backend)
     {
         _backend = backend;
         _backend.Initialize();
         _batcher = new DynamicBatcher(_backend);
 
-        // generate 1x1 white texture
+        // create default texture
         ReadOnlySpan<byte> whitePixels = [255, 255, 255, 255];
         _defaultTexture = _backend.CreateTexture(whitePixels, 1, 1, 4);
         _currentTextureHandle = _defaultTexture;
 
-        // setup glsl fallback shaders matching structural CPU transform properties
+        // create default shader
         string vertexSource =
             @"#version 330 core
 layout(location = 0) in vec3 aPos;
@@ -66,9 +67,9 @@ void main() {
         _currentShaderHandle = _defaultShader;
     }
 
-    // ==========================================
-    // Matrix
-    // ==========================================
+    #endregion
+
+    #region Matrix
 
     public static void MatrixMode(MatrixMode mode)
     {
@@ -90,9 +91,29 @@ void main() {
         _matrices.LoadIdentity();
     }
 
+    public static void Multiply(Matrix4x4 matrix)
+    {
+        _matrices.Multiply(matrix);
+    }
+
+    public static void Scale(float x, float y, float z)
+    {
+        _matrices.Scale(x, y, z);
+    }
+
+    public static void Scale(float x, float y)
+    {
+        _matrices.Scale(x, y, 1);
+    }
+
     public static void Translate(float x, float y, float z)
     {
         _matrices.Translate(x, y, z);
+    }
+
+    public static void Translate(float x, float y)
+    {
+        _matrices.Translate(x, y, 0);
     }
 
     public static void Rotate(float angle, float x, float y, float z)
@@ -100,9 +121,14 @@ void main() {
         _matrices.Rotate(angle, x, y, z);
     }
 
-    public static void Ortho(float l, float r, float b, float t, float n, float f)
+    public static void Rotate(float angle, float x, float y)
     {
-        _matrices.Ortho(l, r, b, t, n, f);
+        _matrices.Rotate(angle, x, y, 0);
+    }
+
+    public static void Ortho(float l, float r, float b, float t, float zn, float zf)
+    {
+        _matrices.Ortho(l, r, b, t, zn, zf);
     }
 
     public static void Perspective(float fovy, float aspect, float zNear, float zFar)
@@ -111,9 +137,38 @@ void main() {
         _matrices.Perspective(fovRad, aspect, zNear, zFar);
     }
 
+    public static void Frustum(float l, float r, float b, float t, float zn, float zf)
+    {
+        _matrices.Frustum(l, r, b, t, zn, zf);
+    }
+
     internal static Matrix4x4 GetProjectionMatrix()
     {
         return _matrices.Projection;
+    }
+
+    internal static Matrix4x4 GetModelViewMatrix()
+    {
+        return _matrices.ModelView;
+    }
+
+    #endregion
+
+    #region Viewport
+
+    public static void Clear(float r, float g, float b, float a)
+    {
+        _backend.Clear(r, g, b, a);
+    }
+
+    public static void SetViewport(int x, int y, int width, int height)
+    {
+        if (_cachedFboId == 0)
+        {
+            _screenWidth = width;
+            _screenHeight = height;
+        }
+        _backend.SetViewport(x, y, width, height);
     }
 
     public static float GetAspectRatio()
@@ -121,9 +176,24 @@ void main() {
         return (float)_screenWidth / _screenHeight;
     }
 
-    // ==========================================
-    // Rendering
-    // ==========================================
+    public static void BeginScissor(int x, int y, int width, int height)
+    {
+        Flush();
+        _backend.SetScissorEnabled(true);
+
+        int flippedY = _screenHeight - (y + height);
+        _backend.SetScissor(x, flippedY, width, height);
+    }
+
+    public static void EndScissor()
+    {
+        Flush();
+        _backend.SetScissorEnabled(false);
+    }
+
+    #endregion
+
+    #region Rendering
 
     public static void Begin(PrimitiveMode mode)
     {
@@ -140,9 +210,9 @@ void main() {
         _batcher.Flush(_matrices.Projection);
     }
 
-    // ==========================================
-    // Rendering / Post-Processing
-    // ==========================================
+    #endregion
+
+    #region Post Processing
 
     public static RenderTarget CreateRenderTarget(int width, int height)
     {
@@ -151,26 +221,29 @@ void main() {
 
     public static void SetRenderTarget(RenderTarget? target)
     {
-        // dispatch all pending geometry before switching the destination!
         Flush();
 
         _backend.SetRenderTarget(target);
         _cachedFboId = target?.FboId ?? 0;
 
-        // restore the window viewport if we just unbound the fbo
         if (target == null)
         {
             _backend.SetViewport(0, 0, _screenWidth, _screenHeight);
         }
     }
 
-    // ==========================================
-    // Vertex
-    // ==========================================
+    #endregion
+
+    #region Vertex
 
     public static void TexCoord2(float x, float y)
     {
         _currentTexCoord = new Vector2(x, y);
+    }
+
+    public static void Color3(float r, float g, float b)
+    {
+        _currentColor = new Vector4(r, g, b, 1);
     }
 
     public static void Color4(float r, float g, float b, float a)
@@ -193,9 +266,14 @@ void main() {
         );
     }
 
-    // ==========================================
-    // Resources / States
-    // ==========================================
+    #endregion
+
+    #region Resources Management
+
+    public static void UseDefaultShader()
+    {
+        _currentShaderHandle = _defaultShader;
+    }
 
     public static ShaderHandle CreateShader(string vsCode, string fsCode)
     {
@@ -207,33 +285,14 @@ void main() {
         _currentShaderHandle = shader.Id == 0 ? _defaultShader : shader;
     }
 
-    public static void UseDefaultShader()
-    {
-        _currentShaderHandle = _defaultShader;
-    }
-
-    public static void UseTexture(TextureHandle texture)
-    {
-        _currentTextureHandle = texture.Id == 0 ? _defaultTexture : texture;
-    }
-
     public static void UseDefaultTexture()
     {
         _currentTextureHandle = _defaultTexture;
     }
 
-    public static TextureHandle LoadTexture(string path)
+    public static void UseTexture(TextureHandle texture)
     {
-        if (!File.Exists(path))
-        {
-            throw new FileNotFoundException($"Texture file not found: {path}");
-        }
-
-        StbImage.stbi_set_flip_vertically_on_load(1);
-        using FileStream stream = File.OpenRead(path);
-        ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-
-        return _backend.CreateTexture(image.Data, image.Width, image.Height, 4);
+        _currentTextureHandle = texture.Id == 0 ? _defaultTexture : texture;
     }
 
     public static void DeleteTexture(TextureHandle handle)
@@ -245,46 +304,10 @@ void main() {
         _backend.DeleteTexture(handle);
     }
 
-    public static void Clear(float r, float g, float b, float a)
-    {
-        _backend.Clear(r, g, b, a);
-    }
+    #endregion
 
-    public static void SetViewport(int x, int y, int width, int height)
-    {
-        if (_cachedFboId == 0)
-        {
-            _screenWidth = width;
-            _screenHeight = height;
-        }
-        _backend.SetViewport(x, y, width, height);
-    }
+    #region States
 
-    public static void BeginScissor(int x, int y, int width, int height)
-    {
-        // flush any pending geometry before changing the clipping region
-        Flush();
-
-        // enable the test
-        _backend.SetScissorEnabled(true);
-
-        // flip y for Top-left coordinate system
-        int flippedY = _screenHeight - (y + height);
-
-        _backend.SetScissor(x, flippedY, width, height);
-    }
-
-    public static void EndScissor()
-    {
-        // flush pending geometry drawn inside the scissor box
-        Flush();
-
-        _backend.SetScissorEnabled(false);
-    }
-
-    // ==========================================
-    // States
-    // ==========================================
     public static void EnableDepthTest()
     {
         _backend.SetDepthTest(true);
@@ -295,9 +318,9 @@ void main() {
         _backend.SetDepthTest(false);
     }
 
-    // ==========================================
-    // Uniforms
-    // ==========================================
+    #endregion
+
+    #region Uniforms
 
     public static void SetUniform(string name, int value)
     {
@@ -339,4 +362,6 @@ void main() {
     {
         return _backend;
     }
+
+    #endregion
 }

@@ -8,9 +8,11 @@ If you have multiple small sprites, putting them on one big texture will allow t
 
 ## Done
 
+- Automatic Batching: Done
 - Custom Shader: Done
 - Automated State Caching: Done
-- Post-Processing: Done
+- Post-Processing (Framebuffer): Done
 - Scissor Testing: Done
 - Resource Management: Done
 - Texture Loading: Done
+- Orthographic, Perspective and Frustum Projection: Done

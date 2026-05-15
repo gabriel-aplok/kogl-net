@@ -412,6 +412,19 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _gl.DeleteTexture(texture.Id);
     }
 
+    public void SetScissor(int x, int y, int width, int height)
+    {
+        _gl.Scissor(x, y, (uint)width, (uint)height);
+    }
+
+    public void SetScissorEnabled(bool enabled)
+    {
+        if (enabled)
+            _gl.Enable(EnableCap.ScissorTest);
+        else
+            _gl.Disable(EnableCap.ScissorTest);
+    }
+
     // ==========================================
     // Cache
     // ==========================================

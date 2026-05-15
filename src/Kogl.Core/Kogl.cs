@@ -223,6 +223,28 @@ void main() {
         _backend.SetViewport(x, y, width, height);
     }
 
+    public static void BeginScissor(int x, int y, int width, int height)
+    {
+        // flush any pending geometry before changing the clipping region
+        Flush();
+
+        // enable the test
+        _backend.SetScissorEnabled(true);
+
+        // flip y for Top-left coordinate system
+        int flippedY = _screenHeight - (y + height);
+
+        _backend.SetScissor(x, flippedY, width, height);
+    }
+
+    public static void EndScissor()
+    {
+        // flush pending geometry drawn inside the scissor box
+        Flush();
+
+        _backend.SetScissorEnabled(false);
+    }
+
     // ==========================================
     // Uniforms
     // ==========================================

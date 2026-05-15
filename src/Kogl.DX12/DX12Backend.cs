@@ -114,4 +114,14 @@ public sealed class DX12Backend : IGraphicsBackend
     {
         throw new NotImplementedException();
     }
+
+    public void SetScissor(int x, int y, int width, int height)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetScissorEnabled(bool enabled)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -7,6 +7,7 @@ internal class Program
     private static void Main()
     {
         SimpleExample.Start();
+        ScissorExample.Start();
         CustomShadersExample.Start();
         PostProcessingExample.Start();
     }

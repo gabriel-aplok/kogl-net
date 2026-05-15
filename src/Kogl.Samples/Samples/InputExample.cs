@@ -132,6 +132,10 @@ internal class InputExample
     private static void DrawWorld()
     {
         RenderApi.UseDefaultShader();
+        RenderApi.UseDefaultTexture();
+        RenderApi.TexCoord2(0, 0);
+
+        // draw reference grid
         RenderApi.Begin(PrimitiveMode.Lines);
         RenderApi.Color4(0.5f, 0.5f, 0.5f, 1.0f);
         for (int i = -10; i <= 10; i++)
@@ -141,6 +145,15 @@ internal class InputExample
             RenderApi.Vertex3(-10, 0, i);
             RenderApi.Vertex3(10, 0, i);
         }
+        RenderApi.End();
+
+        // draw floor
+        RenderApi.Begin(PrimitiveMode.Quads);
+        RenderApi.Color4(0.3f, 0.3f, 0.3f, 1.0f);
+        RenderApi.Vertex3(-10, 0, -10);
+        RenderApi.Vertex3(10, 0, -10);
+        RenderApi.Vertex3(10, 0, 10);
+        RenderApi.Vertex3(-10, 0, 10);
         RenderApi.End();
     }
 

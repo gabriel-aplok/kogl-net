@@ -3,7 +3,6 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
         <!-- native & trimming settings -->
         <IsTrimmable>true</IsTrimmable>
@@ -18,15 +17,4 @@
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <IllinkToAllSymbols>false</IllinkToAllSymbols>
     </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Silk.NET.Assimp" Version="2.23.0" />
-        <PackageReference Include="StbImageSharp" Version="2.30.15" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Kogl.Abstractions\Kogl.Abstractions.csproj" />
-        <ProjectReference Include="..\Kogl.Input\Kogl.Input.csproj" />
-        <ProjectReference Include="..\Kogl.Math\Kogl.Math.csproj" />
-    </ItemGroup>
 </Project>

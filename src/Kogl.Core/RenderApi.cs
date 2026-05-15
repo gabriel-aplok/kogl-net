@@ -105,9 +105,20 @@ void main() {
         _matrices.Ortho(l, r, b, t, n, f);
     }
 
+    public static void Perspective(float fovy, float aspect, float zNear, float zFar)
+    {
+        float fovRad = fovy * (MathF.PI / 180.0f);
+        _matrices.Perspective(fovRad, aspect, zNear, zFar);
+    }
+
     internal static Matrix4x4 GetProjectionMatrix()
     {
         return _matrices.Projection;
+    }
+
+    public static float GetAspectRatio()
+    {
+        return (float)_screenWidth / _screenHeight;
     }
 
     // ==========================================
@@ -269,6 +280,19 @@ void main() {
         Flush();
 
         _backend.SetScissorEnabled(false);
+    }
+
+    // ==========================================
+    // States
+    // ==========================================
+    public static void EnableDepthTest()
+    {
+        _backend.SetDepthTest(true);
+    }
+
+    public static void DisableDepthTest()
+    {
+        _backend.SetDepthTest(false);
     }
 
     // ==========================================

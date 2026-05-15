@@ -7,6 +7,7 @@ internal class Program
     private static void Main()
     {
         SimpleExample.Start();
+        Cube3DExample.Start();
         TextureLoadingExample.Start();
         ScissorExample.Start();
         CustomShadersExample.Start();

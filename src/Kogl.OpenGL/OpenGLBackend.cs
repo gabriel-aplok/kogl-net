@@ -385,7 +385,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     public void Clear(float r, float g, float b, float a)
     {
         _gl.ClearColor(r, g, b, a);
-        _gl.Clear((uint)ClearBufferMask.ColorBufferBit);
+        _gl.Clear((uint)(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
     }
 
     public void SetViewport(int x, int y, int w, int h)
@@ -410,6 +410,14 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             _cachedTexture = 0;
         }
         _gl.DeleteTexture(texture.Id);
+    }
+
+    public void SetDepthTest(bool enabled)
+    {
+        if (enabled)
+            _gl.Enable(EnableCap.DepthTest);
+        else
+            _gl.Disable(EnableCap.DepthTest);
     }
 
     public void SetScissor(int x, int y, int width, int height)

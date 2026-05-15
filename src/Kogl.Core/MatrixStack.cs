@@ -74,4 +74,9 @@ public class MatrixStack
     {
         Multiply(Matrix4x4.CreateOrthographicOffCenter(left, right, bottom, top, zNear, zFar));
     }
+
+    public void Perspective(float fovy, float aspect, float zNear, float zFar)
+    {
+        Multiply(Matrix4x4.CreatePerspectiveFieldOfView(fovy, aspect, zNear, zFar));
+    }
 }

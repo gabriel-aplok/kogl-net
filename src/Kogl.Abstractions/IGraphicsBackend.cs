@@ -36,6 +36,9 @@ public interface IGraphicsBackend : IDisposable
     public void SetUniformVec4(ShaderHandle shader, string name, in Vector4 value);
     public void SetUniformMatrix4(ShaderHandle shader, string name, in Matrix4x4 matrix);
 
+    // States
+    public void SetDepthTest(bool enabled);
+
     // Scissors
     public void SetScissor(int x, int y, int width, int height);
     public void SetScissorEnabled(bool enabled);

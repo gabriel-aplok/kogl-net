@@ -5,10 +5,10 @@ using Kogl.Core.Resources;
 namespace Kogl.Core;
 
 /// <summary>
-/// Here is where the magic happens, the render api.
-/// I need to figure out a better name
+/// This is the heart of the library.
+/// Old name was RenderAPI.
 /// </summary>
-public static class RenderApi
+public static class KoGL
 {
     private static IGraphicsBackend _backend = null!;
     private static Batcher _batcher = null!;

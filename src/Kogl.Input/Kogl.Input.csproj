@@ -3,18 +3,39 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
 
-        <!-- native & trimming settings -->
+    <!-- native AOT & trimming settings -->
+    <PropertyGroup>
         <IsTrimmable>true</IsTrimmable>
         <TrimMode>full</TrimMode>
-
-        <!-- optimization settings -->
-        <OptimizationPreference>Speed</OptimizationPreference>
-        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
-        <IlcTrimMetadata>true</IlcTrimMetadata>
-
-        <!-- error handling for incompatible code -->
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <IllinkToAllSymbols>false</IllinkToAllSymbols>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <!-- core performance enhancements -->
+        <OptimizationPreference>Speed</OptimizationPreference>
+        <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+
+        <!-- tiered compilation / JIT settings -->
+        <!-- disables background JIT re-compilation to prevent random frame stutter/hiccups -->
+        <TieredCompilation>false</TieredCompilation>
+
+        <!-- native AOT meta-stripping -->
+        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+        <IlcTrimMetadata>true</IlcTrimMetadata>
+        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+
+        <!-- strip string-heavy data (stack traces will show addresses, not method names) -->
+        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+
+        <!-- forces invariant culture -->
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
+
+        <!-- strips debug symbols out of the final compiled native binary completely -->
+        <StripSymbols>true</StripSymbols>
     </PropertyGroup>
 </Project>

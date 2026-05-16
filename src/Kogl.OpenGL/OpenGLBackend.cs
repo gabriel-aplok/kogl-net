@@ -4,6 +4,11 @@ using Silk.NET.OpenGL;
 
 namespace Kogl.OpenGL;
 
+/// <summary>
+/// The OpenGL backend
+/// </summary>
+/// <param name="glContext">The gl context</param>
+// TODO: add docs, reorganize and cleanup
 public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 {
     private readonly GL _gl = glContext;

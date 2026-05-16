@@ -60,30 +60,30 @@ internal class InputExample
         UpdateInput((float)dt);
 
         // render world
-        RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
-        RenderApi.EnableDepthTest();
-        RenderApi.DisableBlending();
+        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoGL.EnableDepthTest();
+        KoGL.DisableBlending();
 
-        RenderApi.BeginCamera(_camera);
+        KoGL.BeginCamera(_camera);
         DrawWorld();
-        RenderApi.EndCamera();
+        KoGL.EndCamera();
 
         // TODO: fix the text rendering, cuz the text appears with the clear background that eliminates the 3D world behind it, lol
         // TODO: maybe I just need to add more states to the renderApi to enable transparency and other important stuff
         // render ui
-        RenderApi.DisableDepthTest();
-        RenderApi.EnableBlending();
+        KoGL.DisableDepthTest();
+        KoGL.EnableBlending();
 
         // match screen coords (0,0 is top-left)
-        RenderApi.MatrixMode(MatrixStackMode.Projection);
-        RenderApi.LoadIdentity();
-        RenderApi.Ortho(0, 800, 600, 0, -1, 1);
-        RenderApi.MatrixMode(MatrixStackMode.ModelView);
-        RenderApi.LoadIdentity();
+        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.LoadIdentity();
+        KoGL.Ortho(0, 800, 600, 0, -1, 1);
+        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.LoadIdentity();
 
         DrawUI();
 
-        RenderApi.Flush();
+        KoGL.Flush();
     }
 
     private static void UpdateInput(float dt)
@@ -132,25 +132,25 @@ internal class InputExample
     private static void DrawWorld()
     {
         // draw reference grid
-        RenderApi.Begin(PrimitiveMode.Lines);
-        RenderApi.Color4(0.5f, 0.5f, 0.5f, 1.0f);
+        KoGL.Begin(PrimitiveMode.Lines);
+        KoGL.Color4(0.5f, 0.5f, 0.5f, 1.0f);
         for (int i = -10; i <= 10; i++)
         {
-            RenderApi.Vertex3(i, 0, -10);
-            RenderApi.Vertex3(i, 0, 10);
-            RenderApi.Vertex3(-10, 0, i);
-            RenderApi.Vertex3(10, 0, i);
+            KoGL.Vertex3(i, 0, -10);
+            KoGL.Vertex3(i, 0, 10);
+            KoGL.Vertex3(-10, 0, i);
+            KoGL.Vertex3(10, 0, i);
         }
-        RenderApi.End();
+        KoGL.End();
 
         // draw floor
-        RenderApi.Begin(PrimitiveMode.Quads);
-        RenderApi.Color4(0.3f, 0.3f, 0.3f, 1.0f);
-        RenderApi.Vertex3(-10, 0, -10);
-        RenderApi.Vertex3(10, 0, -10);
-        RenderApi.Vertex3(10, 0, 10);
-        RenderApi.Vertex3(-10, 0, 10);
-        RenderApi.End();
+        KoGL.Begin(PrimitiveMode.Quads);
+        KoGL.Color4(0.3f, 0.3f, 0.3f, 1.0f);
+        KoGL.Vertex3(-10, 0, -10);
+        KoGL.Vertex3(10, 0, -10);
+        KoGL.Vertex3(10, 0, 10);
+        KoGL.Vertex3(-10, 0, 10);
+        KoGL.End();
     }
 
     private static void DrawUI()

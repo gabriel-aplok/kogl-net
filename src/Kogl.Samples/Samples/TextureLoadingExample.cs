@@ -15,7 +15,7 @@ internal class TextureLoadingExample
 
         app.OnLoad += static () =>
         {
-            _logo = ResourceManager.Load<Texture>("assets/logo.png");
+            _logo = ResourceManager.Load<Texture>("assets/container.jpg");
         };
         app.OnRender += RenderLoop;
         app.OnUnload += static () =>
@@ -28,59 +28,59 @@ internal class TextureLoadingExample
 
     private static void RenderLoop(double dt)
     {
-        RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        RenderApi.MatrixMode(MatrixStackMode.Projection);
-        RenderApi.LoadIdentity();
-        RenderApi.Ortho(0, 800, 600, 0, -1, 1);
+        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.LoadIdentity();
+        KoGL.Ortho(0, 800, 600, 0, -1, 1);
 
-        RenderApi.MatrixMode(MatrixStackMode.ModelView);
-        RenderApi.LoadIdentity();
+        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.LoadIdentity();
 
         // draw a standard quad using the default shader
-        RenderApi.UseDefaultShader();
-        RenderApi.UseDefaultTexture();
+        KoGL.UseDefaultShader();
+        KoGL.UseDefaultTexture();
 
-        RenderApi.PushMatrix();
-        RenderApi.Translate(100, 100, 0);
+        KoGL.PushMatrix();
+        KoGL.Translate(100, 100, 0);
 
-        RenderApi.Begin(PrimitiveMode.Quads);
-        RenderApi.Color4(1, 0, 0, 1);
-        RenderApi.Vertex2(0, 0);
-        RenderApi.Color4(1, 1, 0, 1);
-        RenderApi.Vertex2(200, 0);
-        RenderApi.Color4(0, 1, 0, 1);
-        RenderApi.Vertex2(200, 200);
-        RenderApi.Color4(0, 0, 1, 1);
-        RenderApi.Vertex2(0, 200);
-        RenderApi.End();
+        KoGL.Begin(PrimitiveMode.Quads);
+        KoGL.Color4(1, 0, 0, 1);
+        KoGL.Vertex2(0, 0);
+        KoGL.Color4(1, 1, 0, 1);
+        KoGL.Vertex2(200, 0);
+        KoGL.Color4(0, 1, 0, 1);
+        KoGL.Vertex2(200, 200);
+        KoGL.Color4(0, 0, 1, 1);
+        KoGL.Vertex2(0, 200);
+        KoGL.End();
 
-        RenderApi.PopMatrix();
+        KoGL.PopMatrix();
 
         // draw the logo
         if (_logo != null)
         {
-            RenderApi.UseTexture(_logo.Handle);
+            KoGL.UseTexture(_logo.Handle);
 
-            RenderApi.PushMatrix();
-            RenderApi.Translate(400, 100, 0);
+            KoGL.PushMatrix();
+            KoGL.Translate(400, 100, 0);
 
-            RenderApi.Begin(PrimitiveMode.Quads);
-            RenderApi.Color4(1, 1, 1, 1);
-            RenderApi.TexCoord2(0, 0);
-            RenderApi.Vertex2(0, 0);
-            RenderApi.TexCoord2(1, 0);
-            RenderApi.Vertex2(200, 0);
-            RenderApi.TexCoord2(1, 1);
-            RenderApi.Vertex2(200, 200);
-            RenderApi.TexCoord2(0, 1);
-            RenderApi.Vertex2(0, 200);
-            RenderApi.End();
+            KoGL.Begin(PrimitiveMode.Quads);
+            KoGL.Color4(1, 1, 1, 1);
+            KoGL.TexCoord2(0, 0);
+            KoGL.Vertex2(0, 0);
+            KoGL.TexCoord2(1, 0);
+            KoGL.Vertex2(200, 0);
+            KoGL.TexCoord2(1, 1);
+            KoGL.Vertex2(200, 200);
+            KoGL.TexCoord2(0, 1);
+            KoGL.Vertex2(0, 200);
+            KoGL.End();
 
-            RenderApi.PopMatrix();
+            KoGL.PopMatrix();
         }
 
         // final dispatch to GPU
-        RenderApi.Flush();
+        KoGL.Flush();
     }
 }

@@ -21,14 +21,14 @@ internal class Cube3DExample
     {
         _angle += (float)dt * 45f;
 
-        RenderApi.Clear(0.1f, 0.1f, 0.12f, 1.0f);
+        KoGL.Clear(0.1f, 0.1f, 0.12f, 1.0f);
 
         // enable depth test
-        RenderApi.EnableDepthTest();
+        KoGL.EnableDepthTest();
 
         // projection matrix (perspective)
-        RenderApi.MatrixMode(MatrixStackMode.Projection);
-        RenderApi.LoadIdentity();
+        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.LoadIdentity();
 
         if (_useFrustum)
         {
@@ -37,76 +37,76 @@ internal class Cube3DExample
             float bottom = -0.05f;
             float top = 0.05f;
 
-            RenderApi.Frustum(left, right, bottom, top, 0.1f, 100.0f);
+            KoGL.Frustum(left, right, bottom, top, 0.1f, 100.0f);
         }
         else
         {
-            RenderApi.Perspective(45.0f, RenderApi.GetAspectRatio(), 0.1f, 100.0f);
+            KoGL.Perspective(45.0f, KoGL.GetAspectRatio(), 0.1f, 100.0f);
         }
 
         // modelView matrix (camera & object)
-        RenderApi.MatrixMode(MatrixStackMode.ModelView);
-        RenderApi.LoadIdentity();
+        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.LoadIdentity();
 
         // move the camera back 5 units
-        RenderApi.Translate(0, -1, -10);
+        KoGL.Translate(0, -1, -10);
 
         // rotate the cube on multiple axes
-        RenderApi.Rotate(_angle, 1, 1, 0);
+        KoGL.Rotate(_angle, 1, 1, 0);
 
-        RenderApi.UseDefaultShader();
+        KoGL.UseDefaultShader();
 
         // draw the cube using 6 quads
-        RenderApi.Begin(PrimitiveMode.Quads);
+        KoGL.Begin(PrimitiveMode.Quads);
 
         // ff (red)
-        RenderApi.Color4(1, 0, 0, 1);
-        RenderApi.Vertex3(-1, -1, 1);
-        RenderApi.Vertex3(1, -1, 1);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.Vertex3(-1, 1, 1);
+        KoGL.Color4(1, 0, 0, 1);
+        KoGL.Vertex3(-1, -1, 1);
+        KoGL.Vertex3(1, -1, 1);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.Vertex3(-1, 1, 1);
 
         // bf (orange)
-        RenderApi.Color4(1, 0.5f, 0, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.Vertex3(-1, 1, -1);
-        RenderApi.Vertex3(1, 1, -1);
-        RenderApi.Vertex3(1, -1, -1);
+        KoGL.Color4(1, 0.5f, 0, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.Vertex3(-1, 1, -1);
+        KoGL.Vertex3(1, 1, -1);
+        KoGL.Vertex3(1, -1, -1);
 
         // tf (blue)
-        RenderApi.Color4(0, 0, 1, 1);
-        RenderApi.Vertex3(-1, 1, -1);
-        RenderApi.Vertex3(-1, 1, 1);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.Vertex3(1, 1, -1);
+        KoGL.Color4(0, 0, 1, 1);
+        KoGL.Vertex3(-1, 1, -1);
+        KoGL.Vertex3(-1, 1, 1);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.Vertex3(1, 1, -1);
 
         // bf (yellow)
-        RenderApi.Color4(1, 1, 0, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.Vertex3(1, -1, -1);
-        RenderApi.Vertex3(1, -1, 1);
-        RenderApi.Vertex3(-1, -1, 1);
+        KoGL.Color4(1, 1, 0, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.Vertex3(1, -1, -1);
+        KoGL.Vertex3(1, -1, 1);
+        KoGL.Vertex3(-1, -1, 1);
 
         // rf (green)
-        RenderApi.Color4(0, 1, 0, 1);
-        RenderApi.Vertex3(1, -1, -1);
-        RenderApi.Vertex3(1, 1, -1);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.Vertex3(1, -1, 1);
+        KoGL.Color4(0, 1, 0, 1);
+        KoGL.Vertex3(1, -1, -1);
+        KoGL.Vertex3(1, 1, -1);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.Vertex3(1, -1, 1);
 
         // lf (purple)
-        RenderApi.Color4(1, 0, 1, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.Vertex3(-1, -1, 1);
-        RenderApi.Vertex3(-1, 1, 1);
-        RenderApi.Vertex3(-1, 1, -1);
+        KoGL.Color4(1, 0, 1, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.Vertex3(-1, -1, 1);
+        KoGL.Vertex3(-1, 1, 1);
+        KoGL.Vertex3(-1, 1, -1);
 
-        RenderApi.End();
+        KoGL.End();
 
         // final dispatch to GPU
-        RenderApi.Flush();
+        KoGL.Flush();
 
         // disable depth test
-        RenderApi.DisableDepthTest();
+        KoGL.DisableDepthTest();
     }
 }

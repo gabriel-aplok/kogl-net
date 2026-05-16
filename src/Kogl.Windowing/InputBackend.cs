@@ -1,7 +1,5 @@
 using System.Numerics;
-
 using Kogl.Input;
-
 using Silk.NET.Input;
 
 namespace Kogl.Windowing;

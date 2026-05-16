@@ -56,7 +56,7 @@ public static class GlobalUniforms
     /// <param name="shader">The shader</param>
     public static void ApplyTo(Resources.Shader shader)
     {
-        IGraphicsBackend backend = RenderApi.GetBackend();
+        IGraphicsBackend backend = KoGL.GetBackend();
         foreach (KeyValuePair<string, object> kvp in _globals)
         {
             if (kvp.Value is float f)

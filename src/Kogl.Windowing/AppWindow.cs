@@ -1,6 +1,8 @@
+using System.Numerics;
+using ImGuiNET;
 using Kogl.Core;
 using Kogl.OpenGL;
-
+using Kogl.Windowing.ImGuiImpl;
 using Silk.NET.Input;
 using Silk.NET.Input.Glfw;
 using Silk.NET.OpenGL;
@@ -45,7 +47,7 @@ public class AppWindow
             _controller = new ImGuiController(_gl, _window, _input);
 
             OpenGLBackend backend = new(_gl);
-            RenderApi.Initialize(backend);
+            KoGL.Initialize(backend);
 
             InputBackend inputBackend = new(_input);
             Input.InputManager.Initialize(inputBackend);
@@ -58,14 +60,15 @@ public class AppWindow
             _controller?.Update((float)dt);
             OnRender?.Invoke(dt);
 
-            // ImGuiNET.ImGui.ShowDemoWindow();
+            // ImGui.ShowDemoWindow();
+            ImGuiConsole.DrawConsoleWindow();
 
             _controller?.Render();
 
             Input.InputManager.Update();
         };
 
-        _window.FramebufferResize += s => RenderApi.SetViewport(0, 0, s.X, s.Y);
+        _window.FramebufferResize += s => KoGL.SetViewport(0, 0, s.X, s.Y);
 
         _window.Closing += () =>
         {

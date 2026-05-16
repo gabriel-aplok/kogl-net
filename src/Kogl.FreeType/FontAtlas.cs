@@ -19,7 +19,7 @@ internal class FontAtlas : IDisposable
 
         // initialize an empty RGBA texture
         byte[] emptyData = new byte[size * size * 4];
-        Texture = RenderApi.GetBackend().CreateTexture(emptyData, size, size, 4);
+        Texture = KoGL.GetBackend().CreateTexture(emptyData, size, size, 4);
     }
 
     public bool TryAddGlyph(
@@ -58,7 +58,7 @@ internal class FontAtlas : IDisposable
         }
 
         // upload glyph to gpu
-        RenderApi.UpdateTexture(Texture, _currentX, _currentY, width, height, rgbaData, 4);
+        KoGL.UpdateTexture(Texture, _currentX, _currentY, width, height, rgbaData, 4);
 
         // calculate UVs
         u0 = (float)_currentX / Size;
@@ -75,6 +75,6 @@ internal class FontAtlas : IDisposable
 
     public void Dispose()
     {
-        RenderApi.DeleteTexture(Texture);
+        KoGL.DeleteTexture(Texture);
     }
 }

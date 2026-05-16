@@ -24,6 +24,12 @@ internal class Batcher(IGraphicsBackend backend)
 
     private bool _isBuildingBatch;
 
+    /// <summary>
+    /// Begins rendering
+    /// </summary>
+    /// <param name="mode">The primitive mode</param>
+    /// <param name="texture">The texture</param>
+    /// <param name="shader">The shader</param>
     public void Begin(PrimitiveMode mode, TextureHandle texture, ShaderHandle shader)
     {
         if (_isBuildingBatch)
@@ -46,6 +52,13 @@ internal class Batcher(IGraphicsBackend backend)
         StartNewBatch();
     }
 
+    /// <summary>
+    /// Adds a vertex
+    /// </summary>
+    /// <param name="position">The position</param>
+    /// <param name="uv">The texture coordinate</param>
+    /// <param name="color">The color</param>
+    /// <param name="modelViewMatrix">The model-view matrix</param>
     public void AddVertex(Vector3 position, Vector2 uv, Vector4 color, in Matrix4x4 modelViewMatrix)
     {
         // safe preventative flush boundary to prevent array overflows on tight loop thresholds
@@ -56,7 +69,7 @@ internal class Batcher(IGraphicsBackend backend)
             ShaderHandle savedShader = _currentShader;
 
             End();
-            Flush(RenderApi.GetProjectionMatrix());
+            Flush(KoGL.GetProjectionMatrix());
 
             // transparently restart accumulation pipeline state for remaining primitives
             Begin(savedMode, savedTexture, savedShader);
@@ -68,6 +81,9 @@ internal class Batcher(IGraphicsBackend backend)
         _vertices[_vertexCount++] = new VertexData(transformedPosition, uv, color);
     }
 
+    /// <summary>
+    /// Ends the current batch
+    /// </summary>
     public void End()
     {
         if (!_isBuildingBatch)
@@ -115,6 +131,10 @@ internal class Batcher(IGraphicsBackend backend)
         _isBuildingBatch = false;
     }
 
+    /// <summary>
+    /// Flushes the current batch
+    /// </summary>
+    /// <param name="projectionMatrix">The projection matrix</param>
     public void Flush(in Matrix4x4 projectionMatrix)
     {
         if (_isBuildingBatch)
@@ -147,11 +167,14 @@ internal class Batcher(IGraphicsBackend backend)
         _batchCount = 0;
     }
 
+    /// <summary>
+    /// Starts a new batch
+    /// </summary>
     private void StartNewBatch()
     {
         if (_batchCount >= _maxBatches)
         {
-            Flush(RenderApi.GetProjectionMatrix());
+            Flush(KoGL.GetProjectionMatrix());
         }
 
         _batches[_batchCount] = new RenderBatch

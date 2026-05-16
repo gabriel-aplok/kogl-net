@@ -26,8 +26,8 @@ internal class CameraExample
     {
         _time += (float)dt;
 
-        RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
-        RenderApi.EnableDepthTest();
+        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoGL.EnableDepthTest();
 
         // orbit the camera in a circle, constantly looking at the center (0,0,0)
         _camera.Position.X = MathF.Sin(_time) * 8f;
@@ -35,80 +35,80 @@ internal class CameraExample
         _camera.LookAt(Vector3.Zero);
 
         // apply projection and view matrices
-        RenderApi.BeginCamera(_camera);
-        RenderApi.UseDefaultShader();
+        KoGL.BeginCamera(_camera);
+        KoGL.UseDefaultShader();
 
         // draw a reference grid (lines)
-        RenderApi.Begin(PrimitiveMode.Lines);
-        RenderApi.Color4(0.3f, 0.3f, 0.3f, 1.0f);
+        KoGL.Begin(PrimitiveMode.Lines);
+        KoGL.Color4(0.3f, 0.3f, 0.3f, 1.0f);
         for (int i = -5; i <= 5; i++)
         {
-            RenderApi.Vertex3(i, 0, -5);
-            RenderApi.Vertex3(i, 0, 5);
-            RenderApi.Vertex3(-5, 0, i);
-            RenderApi.Vertex3(5, 0, i);
+            KoGL.Vertex3(i, 0, -5);
+            KoGL.Vertex3(i, 0, 5);
+            KoGL.Vertex3(-5, 0, i);
+            KoGL.Vertex3(5, 0, i);
         }
-        RenderApi.End();
+        KoGL.End();
 
         // draw a central object (cube)
-        RenderApi.PushMatrix();
-        RenderApi.Translate(0, 0.5f, 0);
+        KoGL.PushMatrix();
+        KoGL.Translate(0, 0.5f, 0);
         DrawCube();
-        RenderApi.PopMatrix();
+        KoGL.PopMatrix();
 
         // flush and reset matrices back to Identity
-        RenderApi.EndCamera();
+        KoGL.EndCamera();
 
-        RenderApi.DisableDepthTest();
+        KoGL.DisableDepthTest();
     }
 
     private static void DrawCube()
     {
         // draw the cube using 6 quads
-        RenderApi.Begin(PrimitiveMode.Quads);
+        KoGL.Begin(PrimitiveMode.Quads);
 
         // ff (red)
-        RenderApi.Color4(1, 0, 0, 1);
-        RenderApi.Vertex3(-1, -1, 1);
-        RenderApi.Vertex3(1, -1, 1);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.Vertex3(-1, 1, 1);
+        KoGL.Color4(1, 0, 0, 1);
+        KoGL.Vertex3(-1, -1, 1);
+        KoGL.Vertex3(1, -1, 1);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.Vertex3(-1, 1, 1);
 
         // bf (orange)
-        RenderApi.Color4(1, 0.5f, 0, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.Vertex3(-1, 1, -1);
-        RenderApi.Vertex3(1, 1, -1);
-        RenderApi.Vertex3(1, -1, -1);
+        KoGL.Color4(1, 0.5f, 0, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.Vertex3(-1, 1, -1);
+        KoGL.Vertex3(1, 1, -1);
+        KoGL.Vertex3(1, -1, -1);
 
         // tf (blue)
-        RenderApi.Color4(0, 0, 1, 1);
-        RenderApi.Vertex3(-1, 1, -1);
-        RenderApi.Vertex3(-1, 1, 1);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.Vertex3(1, 1, -1);
+        KoGL.Color4(0, 0, 1, 1);
+        KoGL.Vertex3(-1, 1, -1);
+        KoGL.Vertex3(-1, 1, 1);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.Vertex3(1, 1, -1);
 
         // bf (yellow)
-        RenderApi.Color4(1, 1, 0, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.Vertex3(1, -1, -1);
-        RenderApi.Vertex3(1, -1, 1);
-        RenderApi.Vertex3(-1, -1, 1);
+        KoGL.Color4(1, 1, 0, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.Vertex3(1, -1, -1);
+        KoGL.Vertex3(1, -1, 1);
+        KoGL.Vertex3(-1, -1, 1);
 
         // rf (green)
-        RenderApi.Color4(0, 1, 0, 1);
-        RenderApi.Vertex3(1, -1, -1);
-        RenderApi.Vertex3(1, 1, -1);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.Vertex3(1, -1, 1);
+        KoGL.Color4(0, 1, 0, 1);
+        KoGL.Vertex3(1, -1, -1);
+        KoGL.Vertex3(1, 1, -1);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.Vertex3(1, -1, 1);
 
         // lf (purple)
-        RenderApi.Color4(1, 0, 1, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.Vertex3(-1, -1, 1);
-        RenderApi.Vertex3(-1, 1, 1);
-        RenderApi.Vertex3(-1, 1, -1);
+        KoGL.Color4(1, 0, 1, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.Vertex3(-1, -1, 1);
+        KoGL.Vertex3(-1, 1, 1);
+        KoGL.Vertex3(-1, 1, -1);
 
-        RenderApi.End();
+        KoGL.End();
     }
 }

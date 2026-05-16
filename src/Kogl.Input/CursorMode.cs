@@ -1,8 +1,22 @@
 namespace Kogl.Input;
 
+/// <summary>
+/// The cursor mode
+/// </summary>
 public enum CursorMode
 {
+    /// <summary>
+    /// Normal cursor
+    /// </summary>
     Normal,
+
+    /// <summary>
+    /// Hidden cursor
+    /// </summary>
     Hidden,
-    Locked, // infinite mouse movement, cursor invisible and locked to the window
+
+    /// <summary>
+    /// Locked cursor
+    /// </summary>
+    Locked,
 }

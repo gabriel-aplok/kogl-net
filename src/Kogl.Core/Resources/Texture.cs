@@ -16,6 +16,6 @@ public class Texture(TextureHandle handle, int width, int height) : Resource
 
     protected override void Dispose(bool disposing)
     {
-        RenderApi.DeleteTexture(Handle);
+        KoGL.DeleteTexture(Handle);
     }
 }

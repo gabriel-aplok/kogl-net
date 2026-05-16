@@ -60,7 +60,7 @@ public sealed class Shader(ShaderHandle handle) : Resource
     /// <returns></returns>
     public static Shader Create(string vertexSrc, string fragmentSrc)
     {
-        ShaderHandle handle = RenderApi.GetBackend().CreateShader(vertexSrc, fragmentSrc);
+        ShaderHandle handle = KoGL.GetBackend().CreateShader(vertexSrc, fragmentSrc);
         return new Shader(handle);
     }
 }

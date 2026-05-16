@@ -21,17 +21,17 @@ internal class SimpleExample
 
     private static void RenderLoop(double dt)
     {
-        RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        RenderApi.MatrixMode(MatrixStackMode.Projection);
-        RenderApi.LoadIdentity();
-        RenderApi.Ortho(0, 800, 600, 0, -1, 1);
+        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.LoadIdentity();
+        KoGL.Ortho(0, 800, 600, 0, -1, 1);
 
-        RenderApi.MatrixMode(MatrixStackMode.ModelView);
-        RenderApi.LoadIdentity();
+        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.LoadIdentity();
 
         // draw a standard quad using the default shader
-        RenderApi.UseDefaultShader();
+        KoGL.UseDefaultShader();
 
         // text
         // KoGLText.DrawText(
@@ -41,23 +41,23 @@ internal class SimpleExample
         //     new System.Numerics.Vector4(1, 1, 1, 1)
         // );
 
-        RenderApi.PushMatrix();
-        RenderApi.Translate(200, 200, 0);
+        KoGL.PushMatrix();
+        KoGL.Translate(200, 200, 0);
 
-        RenderApi.Begin(PrimitiveMode.Quads);
-        RenderApi.Color4(1, 0, 0, 1);
-        RenderApi.Vertex2(0, 0);
-        RenderApi.Color4(1, 1, 0, 1);
-        RenderApi.Vertex2(200, 0);
-        RenderApi.Color4(0, 1, 0, 1);
-        RenderApi.Vertex2(200, 200);
-        RenderApi.Color4(0, 0, 1, 1);
-        RenderApi.Vertex2(0, 200);
-        RenderApi.End();
+        KoGL.Begin(PrimitiveMode.Quads);
+        KoGL.Color4(1, 0, 0, 1);
+        KoGL.Vertex2(0, 0);
+        KoGL.Color4(1, 1, 0, 1);
+        KoGL.Vertex2(200, 0);
+        KoGL.Color4(0, 1, 0, 1);
+        KoGL.Vertex2(200, 200);
+        KoGL.Color4(0, 0, 1, 1);
+        KoGL.Vertex2(0, 200);
+        KoGL.End();
 
-        RenderApi.PopMatrix();
+        KoGL.PopMatrix();
 
         // final dispatch to GPU
-        RenderApi.Flush();
+        KoGL.Flush();
     }
 }

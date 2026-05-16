@@ -32,6 +32,8 @@ internal class MaterialExample
             _camera.Position = new Vector3(0, 3, 8);
             _camera.Projection = CameraProjection.Perspective;
             _camera.Fov = 60f;
+            _camera.LookAt(new Vector3(0, 0, 0));
+            _camera.ClearLookAt();
 
             _uiFont = Font.Load("assets/fonts/arial.ttf", 20);
 
@@ -77,7 +79,7 @@ void main() {
             _standardShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
             _standardShader.AddProperty("uTint", ShaderPropertyType.Vec4);
 
-            _logoTex = ResourceManager.Load<Texture>("assets/logo.png");
+            _logoTex = ResourceManager.Load<Texture>("assets/container.jpg");
 
             Material baseMat = new(_standardShader);
             baseMat.SetTexture("uTex", _logoTex);
@@ -108,17 +110,17 @@ void main() {
         _time += (float)dt;
         UpdateInput((float)dt);
 
-        RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
-        RenderApi.EnableDepthTest();
+        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoGL.EnableDepthTest();
 
-        RenderApi.BeginCamera(_camera);
+        KoGL.BeginCamera(_camera);
 
         GlobalUniforms.SetFloat("uTime", _time);
 
         DrawWorld();
 
-        RenderApi.EndCamera();
-        RenderApi.DisableDepthTest();
+        KoGL.EndCamera();
+        KoGL.DisableDepthTest();
 
         DrawUI();
     }
@@ -159,17 +161,17 @@ void main() {
 
     private static void DrawWorld()
     {
-        RenderApi.ApplyMaterial(_gridMaterial);
+        KoGL.ApplyMaterial(_gridMaterial);
 
-        RenderApi.Begin(PrimitiveMode.Lines);
+        KoGL.Begin(PrimitiveMode.Lines);
         for (int i = -10; i <= 10; i++)
         {
-            RenderApi.Vertex3(i, 0, -10);
-            RenderApi.Vertex3(i, 0, 10);
-            RenderApi.Vertex3(-10, 0, i);
-            RenderApi.Vertex3(10, 0, i);
+            KoGL.Vertex3(i, 0, -10);
+            KoGL.Vertex3(i, 0, 10);
+            KoGL.Vertex3(-10, 0, i);
+            KoGL.Vertex3(10, 0, i);
         }
-        RenderApi.End();
+        KoGL.End();
 
         DrawMaterialCube(new Vector3(-2, 1, 0), _redMaterial);
         DrawMaterialCube(new Vector3(2, 1, 0), _bluePulseMaterial);
@@ -177,89 +179,89 @@ void main() {
 
     private static void DrawMaterialCube(Vector3 position, Material mat)
     {
-        RenderApi.PushMatrix();
-        RenderApi.Translate(position.X, position.Y, position.Z);
+        KoGL.PushMatrix();
+        KoGL.Translate(position.X, position.Y, position.Z);
 
-        RenderApi.ApplyMaterial(mat);
-        RenderApi.UseTexture(_logoTex.Handle);
+        KoGL.ApplyMaterial(mat);
+        KoGL.UseTexture(_logoTex.Handle);
 
-        RenderApi.Begin(PrimitiveMode.Quads);
-        RenderApi.Color4(1, 1, 1, 1);
+        KoGL.Begin(PrimitiveMode.Quads);
+        KoGL.Color4(1, 1, 1, 1);
 
         // Front
-        RenderApi.TexCoord2(0, 1);
-        RenderApi.Vertex3(-1, -1, 1);
-        RenderApi.TexCoord2(1, 1);
-        RenderApi.Vertex3(1, -1, 1);
-        RenderApi.TexCoord2(1, 0);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.TexCoord2(0, 0);
-        RenderApi.Vertex3(-1, 1, 1);
+        KoGL.TexCoord2(0, 1);
+        KoGL.Vertex3(-1, -1, 1);
+        KoGL.TexCoord2(1, 1);
+        KoGL.Vertex3(1, -1, 1);
+        KoGL.TexCoord2(1, 0);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.TexCoord2(0, 0);
+        KoGL.Vertex3(-1, 1, 1);
 
         // Back
-        RenderApi.TexCoord2(1, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.TexCoord2(1, 0);
-        RenderApi.Vertex3(-1, 1, -1);
-        RenderApi.TexCoord2(0, 0);
-        RenderApi.Vertex3(1, 1, -1);
-        RenderApi.TexCoord2(0, 1);
-        RenderApi.Vertex3(1, -1, -1);
+        KoGL.TexCoord2(1, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.TexCoord2(1, 0);
+        KoGL.Vertex3(-1, 1, -1);
+        KoGL.TexCoord2(0, 0);
+        KoGL.Vertex3(1, 1, -1);
+        KoGL.TexCoord2(0, 1);
+        KoGL.Vertex3(1, -1, -1);
 
         // Top
-        RenderApi.TexCoord2(0, 0);
-        RenderApi.Vertex3(-1, 1, -1);
-        RenderApi.TexCoord2(0, 1);
-        RenderApi.Vertex3(-1, 1, 1);
-        RenderApi.TexCoord2(1, 1);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.TexCoord2(1, 0);
-        RenderApi.Vertex3(1, 1, -1);
+        KoGL.TexCoord2(0, 0);
+        KoGL.Vertex3(-1, 1, -1);
+        KoGL.TexCoord2(0, 1);
+        KoGL.Vertex3(-1, 1, 1);
+        KoGL.TexCoord2(1, 1);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.TexCoord2(1, 0);
+        KoGL.Vertex3(1, 1, -1);
 
         // Bottom
-        RenderApi.TexCoord2(1, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.TexCoord2(0, 1);
-        RenderApi.Vertex3(1, -1, -1);
-        RenderApi.TexCoord2(0, 0);
-        RenderApi.Vertex3(1, -1, 1);
-        RenderApi.TexCoord2(1, 0);
-        RenderApi.Vertex3(-1, -1, 1);
+        KoGL.TexCoord2(1, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.TexCoord2(0, 1);
+        KoGL.Vertex3(1, -1, -1);
+        KoGL.TexCoord2(0, 0);
+        KoGL.Vertex3(1, -1, 1);
+        KoGL.TexCoord2(1, 0);
+        KoGL.Vertex3(-1, -1, 1);
 
         // Right
-        RenderApi.TexCoord2(0, 1);
-        RenderApi.Vertex3(1, -1, -1);
-        RenderApi.TexCoord2(1, 1);
-        RenderApi.Vertex3(1, 1, -1);
-        RenderApi.TexCoord2(1, 0);
-        RenderApi.Vertex3(1, 1, 1);
-        RenderApi.TexCoord2(0, 0);
-        RenderApi.Vertex3(1, -1, 1);
+        KoGL.TexCoord2(0, 1);
+        KoGL.Vertex3(1, -1, -1);
+        KoGL.TexCoord2(1, 1);
+        KoGL.Vertex3(1, 1, -1);
+        KoGL.TexCoord2(1, 0);
+        KoGL.Vertex3(1, 1, 1);
+        KoGL.TexCoord2(0, 0);
+        KoGL.Vertex3(1, -1, 1);
 
         // Left
-        RenderApi.TexCoord2(1, 1);
-        RenderApi.Vertex3(-1, -1, -1);
-        RenderApi.TexCoord2(0, 1);
-        RenderApi.Vertex3(-1, -1, 1);
-        RenderApi.TexCoord2(0, 0);
-        RenderApi.Vertex3(-1, 1, 1);
-        RenderApi.TexCoord2(1, 0);
-        RenderApi.Vertex3(-1, 1, -1);
+        KoGL.TexCoord2(1, 1);
+        KoGL.Vertex3(-1, -1, -1);
+        KoGL.TexCoord2(0, 1);
+        KoGL.Vertex3(-1, -1, 1);
+        KoGL.TexCoord2(0, 0);
+        KoGL.Vertex3(-1, 1, 1);
+        KoGL.TexCoord2(1, 0);
+        KoGL.Vertex3(-1, 1, -1);
 
-        RenderApi.End();
-        RenderApi.PopMatrix();
+        KoGL.End();
+        KoGL.PopMatrix();
     }
 
     private static void DrawUI()
     {
-        RenderApi.DisableDepthTest();
-        RenderApi.EnableBlending();
+        KoGL.DisableDepthTest();
+        KoGL.EnableBlending();
 
-        RenderApi.MatrixMode(MatrixStackMode.Projection);
-        RenderApi.LoadIdentity();
-        RenderApi.Ortho(0, 800, 600, 0, -1, 1);
-        RenderApi.MatrixMode(MatrixStackMode.ModelView);
-        RenderApi.LoadIdentity();
+        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.LoadIdentity();
+        KoGL.Ortho(0, 800, 600, 0, -1, 1);
+        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.LoadIdentity();
 
         KoGLText.DrawText(
             _uiFont,

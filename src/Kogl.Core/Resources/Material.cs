@@ -79,7 +79,7 @@ public class Material : Resource
 
     public void Apply()
     {
-        IGraphicsBackend backend = RenderApi.GetBackend();
+        IGraphicsBackend backend = KoGL.GetBackend();
         backend.BindShader(Shader.Handle);
         backend.SetDepthTest(DepthTest);
         backend.SetBlending(Blending);

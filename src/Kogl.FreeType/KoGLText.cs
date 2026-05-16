@@ -53,7 +53,7 @@ void main() {
     if (FragColor.a < 0.01) discard;
 }";
 
-        _sdfShader = RenderApi.CreateShader(vs, fs);
+        _sdfShader = KoGL.CreateShader(vs, fs);
         _sdfShaderInitialized = true;
     }
 
@@ -72,30 +72,30 @@ void main() {
         if (string.IsNullOrEmpty(text))
             return;
 
-        RenderApi.UseTexture(font.AtlasTexture);
+        KoGL.UseTexture(font.AtlasTexture);
 
         if (font.IsSdf)
         {
             EnsureSdfShader();
-            RenderApi.UseShader(_sdfShader);
+            KoGL.UseShader(_sdfShader);
 
-            Matrix4x4 mvp = RenderApi.GetModelViewMatrix() * RenderApi.GetProjectionMatrix();
-            RenderApi.SetUniform("uMVP", mvp);
+            Matrix4x4 mvp = KoGL.GetModelViewMatrix() * KoGL.GetProjectionMatrix();
+            KoGL.SetUniform("uMVP", mvp);
 
             // smoothing should scale with the font size/zoom to keep edges crisp
             // standard value is ~0.25 / (font_size * scale)
             float smoothing = 0.125f / (font.Size * scale);
-            RenderApi.SetUniform("uSmoothing", smoothing);
+            KoGL.SetUniform("uSmoothing", smoothing);
         }
         else
         {
-            RenderApi.UseDefaultShader();
+            KoGL.UseDefaultShader();
         }
 
         // push to the stack to respect parent transforms easily
-        RenderApi.PushMatrix();
-        RenderApi.Translate(position.X, position.Y, 0);
-        RenderApi.Scale(scale, scale, 1.0f);
+        KoGL.PushMatrix();
+        KoGL.Translate(position.X, position.Y, 0);
+        KoGL.Scale(scale, scale, 1.0f);
 
         // handle alignment offset
         ReadOnlySpan<char> span = text.AsSpan();
@@ -109,8 +109,8 @@ void main() {
         }
 
         // batch rendering
-        RenderApi.Color4(color.X, color.Y, color.Z, color.W);
-        RenderApi.Begin(PrimitiveMode.Quads);
+        KoGL.Color4(color.X, color.Y, color.Z, color.W);
+        KoGL.Begin(PrimitiveMode.Quads);
 
         float cursorX = 0;
         float cursorY = font.Size; // base alignment
@@ -137,21 +137,21 @@ void main() {
                 float h = glyph.Height;
 
                 // push quad vertices directly into the batcher
-                RenderApi.TexCoord2(glyph.U0, glyph.V0);
-                RenderApi.Vertex2(xpos, ypos);
-                RenderApi.TexCoord2(glyph.U1, glyph.V0);
-                RenderApi.Vertex2(xpos + w, ypos);
-                RenderApi.TexCoord2(glyph.U1, glyph.V1);
-                RenderApi.Vertex2(xpos + w, ypos + h);
-                RenderApi.TexCoord2(glyph.U0, glyph.V1);
-                RenderApi.Vertex2(xpos, ypos + h);
+                KoGL.TexCoord2(glyph.U0, glyph.V0);
+                KoGL.Vertex2(xpos, ypos);
+                KoGL.TexCoord2(glyph.U1, glyph.V0);
+                KoGL.Vertex2(xpos + w, ypos);
+                KoGL.TexCoord2(glyph.U1, glyph.V1);
+                KoGL.Vertex2(xpos + w, ypos + h);
+                KoGL.TexCoord2(glyph.U0, glyph.V1);
+                KoGL.Vertex2(xpos, ypos + h);
             }
 
             cursorX += glyph.Advance;
         }
 
-        RenderApi.End();
-        RenderApi.PopMatrix();
+        KoGL.End();
+        KoGL.PopMatrix();
     }
 
     /// <summary>

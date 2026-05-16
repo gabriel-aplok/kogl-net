@@ -62,64 +62,64 @@ void main() {
     FragColor = vec4(finalRGB, 1.0) * fCol;
 }";
 
-            _customShader = RenderApi.CreateShader(vs, fs);
+            _customShader = KoGL.CreateShader(vs, fs);
         }
 
-        RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        RenderApi.MatrixMode(MatrixStackMode.Projection);
-        RenderApi.LoadIdentity();
-        RenderApi.Ortho(0, 800, 600, 0, -1, 1);
+        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.LoadIdentity();
+        KoGL.Ortho(0, 800, 600, 0, -1, 1);
 
-        RenderApi.MatrixMode(MatrixStackMode.ModelView);
-        RenderApi.LoadIdentity();
+        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.LoadIdentity();
 
         // draw a standard quad using the default shader
-        RenderApi.UseDefaultShader();
-        RenderApi.PushMatrix();
-        RenderApi.Translate(150, 200, 0);
+        KoGL.UseDefaultShader();
+        KoGL.PushMatrix();
+        KoGL.Translate(150, 200, 0);
 
-        RenderApi.Begin(PrimitiveMode.Quads);
-        RenderApi.Color4(1, 0, 0, 1);
-        RenderApi.Vertex2(0, 0);
-        RenderApi.Color4(1, 1, 0, 1);
-        RenderApi.Vertex2(200, 0);
-        RenderApi.Color4(0, 1, 0, 1);
-        RenderApi.Vertex2(200, 200);
-        RenderApi.Color4(0, 0, 1, 1);
-        RenderApi.Vertex2(0, 200);
-        RenderApi.End();
+        KoGL.Begin(PrimitiveMode.Quads);
+        KoGL.Color4(1, 0, 0, 1);
+        KoGL.Vertex2(0, 0);
+        KoGL.Color4(1, 1, 0, 1);
+        KoGL.Vertex2(200, 0);
+        KoGL.Color4(0, 1, 0, 1);
+        KoGL.Vertex2(200, 200);
+        KoGL.Color4(0, 0, 1, 1);
+        KoGL.Vertex2(0, 200);
+        KoGL.End();
 
-        RenderApi.PopMatrix();
+        KoGL.PopMatrix();
 
         // draw an animated quad using the custom shader
-        RenderApi.UseShader(_customShader);
+        KoGL.UseShader(_customShader);
 
         // setting a uniform automatically flushes the batcher
-        RenderApi.SetUniform("uTime", _time);
-        RenderApi.SetUniform("uTint", new Vector3(0.5f, 0.8f, 1.0f));
+        KoGL.SetUniform("uTime", _time);
+        KoGL.SetUniform("uTint", new Vector3(0.5f, 0.8f, 1.0f));
 
-        RenderApi.PushMatrix();
-        RenderApi.Translate(450, 200, 0);
+        KoGL.PushMatrix();
+        KoGL.Translate(450, 200, 0);
 
-        RenderApi.Begin(PrimitiveMode.Quads);
-        RenderApi.Color4(1, 1, 1, 1);
-        RenderApi.TexCoord2(0, 0);
-        RenderApi.Vertex2(0, 0);
-        RenderApi.Color4(1, 1, 1, 1);
-        RenderApi.TexCoord2(1, 0);
-        RenderApi.Vertex2(200, 0);
-        RenderApi.Color4(1, 1, 1, 1);
-        RenderApi.TexCoord2(1, 1);
-        RenderApi.Vertex2(200, 200);
-        RenderApi.Color4(1, 1, 1, 1);
-        RenderApi.TexCoord2(0, 1);
-        RenderApi.Vertex2(0, 200);
-        RenderApi.End();
+        KoGL.Begin(PrimitiveMode.Quads);
+        KoGL.Color4(1, 1, 1, 1);
+        KoGL.TexCoord2(0, 0);
+        KoGL.Vertex2(0, 0);
+        KoGL.Color4(1, 1, 1, 1);
+        KoGL.TexCoord2(1, 0);
+        KoGL.Vertex2(200, 0);
+        KoGL.Color4(1, 1, 1, 1);
+        KoGL.TexCoord2(1, 1);
+        KoGL.Vertex2(200, 200);
+        KoGL.Color4(1, 1, 1, 1);
+        KoGL.TexCoord2(0, 1);
+        KoGL.Vertex2(0, 200);
+        KoGL.End();
 
-        RenderApi.PopMatrix();
+        KoGL.PopMatrix();
 
         // final dispatch to GPU
-        RenderApi.Flush();
+        KoGL.Flush();
     }
 }

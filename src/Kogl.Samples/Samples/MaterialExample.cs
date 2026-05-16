@@ -3,6 +3,7 @@ using Kogl.Abstractions;
 using Kogl.Core;
 using Kogl.Core.Resources;
 using Kogl.FreeType;
+using Kogl.Input;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
@@ -18,6 +19,8 @@ internal class MaterialExample
     private static Material _gridMaterial = null!;
     private static Texture _logoTex = null!;
 
+    private static float _yaw = -90f;
+    private static float _pitch = 0f;
     private static float _time = 0f;
 
     public static void Start()
@@ -31,6 +34,11 @@ internal class MaterialExample
             _camera.Fov = 60f;
 
             _uiFont = Font.Load("assets/fonts/arial.ttf", 20);
+
+            InputMap.Bind("MoveLeft", Key.A);
+            InputMap.Bind("MoveRight", Key.D);
+            InputMap.Bind("MoveForward", Key.W);
+            InputMap.Bind("MoveBackward", Key.S);
 
             string vs =
                 @"#version 330 core
@@ -86,7 +94,6 @@ void main() {
             _gridMaterial = baseMat.CreateInstance();
             _gridMaterial.SetVector4("uTint", new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
         };
-
         app.OnRender += RenderLoop;
         app.OnUnload += () =>
         {
@@ -99,13 +106,10 @@ void main() {
     private static void RenderLoop(double dt)
     {
         _time += (float)dt;
+        UpdateInput((float)dt);
 
         RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
         RenderApi.EnableDepthTest();
-
-        _camera.Position.X = MathF.Sin(_time) * 8f;
-        _camera.Position.Z = MathF.Cos(_time) * 8f;
-        _camera.LookAt(Vector3.Zero);
 
         RenderApi.BeginCamera(_camera);
 
@@ -115,6 +119,42 @@ void main() {
 
         RenderApi.EndCamera();
         RenderApi.DisableDepthTest();
+
+        DrawUI();
+    }
+
+    private static void UpdateInput(float dt)
+    {
+        // right mouse button
+        if (InputManager.IsMouseButtonDown(MouseButton.Right))
+        {
+            InputManager.CursorMode = CursorMode.Locked;
+
+            // mouse
+            Vector2 delta = InputManager.MouseDelta;
+            _yaw -= delta.X * 0.15f;
+            _pitch -= delta.Y * 0.15f;
+            _pitch = Math.Clamp(_pitch, -89f, 89f);
+            _camera.Rotation = new Vector3(_pitch, _yaw, 0);
+
+            // move
+            Vector2 inputDir = InputMap.GetVector(
+                "MoveLeft",
+                "MoveRight",
+                "MoveBackward",
+                "MoveForward"
+            );
+
+            Vector3 horizontalFront = Vector3.Normalize(
+                new Vector3(_camera.Front.X, 0, _camera.Front.Z)
+            );
+            _camera.Position += horizontalFront * inputDir.Y * 8.0f * dt;
+            _camera.Position += _camera.Right * inputDir.X * 8.0f * dt;
+        }
+        else
+        {
+            InputManager.CursorMode = CursorMode.Normal;
+        }
     }
 
     private static void DrawWorld()
@@ -208,5 +248,27 @@ void main() {
 
         RenderApi.End();
         RenderApi.PopMatrix();
+    }
+
+    private static void DrawUI()
+    {
+        RenderApi.DisableDepthTest();
+        RenderApi.EnableBlending();
+
+        RenderApi.MatrixMode(MatrixStackMode.Projection);
+        RenderApi.LoadIdentity();
+        RenderApi.Ortho(0, 800, 600, 0, -1, 1);
+        RenderApi.MatrixMode(MatrixStackMode.ModelView);
+        RenderApi.LoadIdentity();
+
+        KoGLText.DrawText(
+            _uiFont,
+            "WASD = Move | Right Mouse = Look | ESC = Toggle Cursor",
+            new Vector2(10, 10),
+            Vector4.One
+        );
+
+        string pos = $"Pos: {_camera.Position:F1}";
+        KoGLText.DrawText(_uiFont, pos, new Vector2(10, 40), new Vector4(0.2f, 0.8f, 0.2f, 1));
     }
 }

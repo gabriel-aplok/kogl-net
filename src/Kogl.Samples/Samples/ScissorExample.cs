@@ -23,11 +23,11 @@ internal class ScissorExample
         // clear the whole screen
         RenderApi.Clear(0.05f, 0.05f, 0.08f, 1.0f);
 
-        RenderApi.MatrixMode(MatrixMode.Projection);
+        RenderApi.MatrixMode(MatrixStackMode.Projection);
         RenderApi.LoadIdentity();
         RenderApi.Ortho(0, 800, 600, 0, -1, 1);
 
-        RenderApi.MatrixMode(MatrixMode.ModelView);
+        RenderApi.MatrixMode(MatrixStackMode.ModelView);
         RenderApi.LoadIdentity();
 
         // draw a background "cntainer" to show where the scissor box is

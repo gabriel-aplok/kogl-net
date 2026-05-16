@@ -27,7 +27,7 @@ internal class Cube3DExample
         RenderApi.EnableDepthTest();
 
         // projection matrix (perspective)
-        RenderApi.MatrixMode(MatrixMode.Projection);
+        RenderApi.MatrixMode(MatrixStackMode.Projection);
         RenderApi.LoadIdentity();
 
         if (_useFrustum)
@@ -45,7 +45,7 @@ internal class Cube3DExample
         }
 
         // modelView matrix (camera & object)
-        RenderApi.MatrixMode(MatrixMode.ModelView);
+        RenderApi.MatrixMode(MatrixStackMode.ModelView);
         RenderApi.LoadIdentity();
 
         // move the camera back 5 units

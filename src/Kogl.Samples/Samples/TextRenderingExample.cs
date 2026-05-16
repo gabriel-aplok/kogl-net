@@ -42,11 +42,11 @@ internal class TextRenderingExample
         RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
         RenderApi.DisableDepthTest(); // 2d text mode
 
-        RenderApi.MatrixMode(MatrixMode.Projection);
+        RenderApi.MatrixMode(MatrixStackMode.Projection);
         RenderApi.LoadIdentity();
         RenderApi.Ortho(0, 800, 600, 0, -1, 1);
 
-        RenderApi.MatrixMode(MatrixMode.ModelView);
+        RenderApi.MatrixMode(MatrixStackMode.ModelView);
         RenderApi.LoadIdentity();
 
         // basic Text

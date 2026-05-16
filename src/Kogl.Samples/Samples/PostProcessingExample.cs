@@ -81,11 +81,11 @@ internal class PostProcessingExample
         RenderApi.SetRenderTarget(_renderTarget);
         RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f); // clear the render target
 
-        RenderApi.MatrixMode(MatrixMode.Projection);
+        RenderApi.MatrixMode(MatrixStackMode.Projection);
         RenderApi.LoadIdentity();
         RenderApi.Ortho(0, 800, 600, 0, -1, 1);
 
-        RenderApi.MatrixMode(MatrixMode.ModelView);
+        RenderApi.MatrixMode(MatrixStackMode.ModelView);
         RenderApi.LoadIdentity();
 
         // draw a standard quad using the default shader
@@ -140,10 +140,10 @@ internal class PostProcessingExample
         RenderApi.Clear(0.0f, 0.0f, 0.0f, 1.0f); // clear the screen
 
         // setup a basic orthographic camera for a fullscreen quad
-        RenderApi.MatrixMode(MatrixMode.Projection);
+        RenderApi.MatrixMode(MatrixStackMode.Projection);
         RenderApi.LoadIdentity();
         RenderApi.Ortho(0, 800, 600, 0, -1, 1);
-        RenderApi.MatrixMode(MatrixMode.ModelView);
+        RenderApi.MatrixMode(MatrixStackMode.ModelView);
         RenderApi.LoadIdentity();
 
         // bind the post-process shader and feed it our renderTarget texture

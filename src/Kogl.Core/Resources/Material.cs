@@ -3,11 +3,14 @@ using Kogl.Abstractions;
 
 namespace Kogl.Core.Resources;
 
+/// <summary>
+/// A material
+/// </summary>
 public class Material : Resource
 {
     public Shader Shader { get; }
 
-    // Pipeline state
+    // states
     public bool DepthTest { get; set; } = true;
     public bool Blending { get; set; } = true;
 
@@ -109,9 +112,9 @@ public class Material : Resource
                     break;
                 case ShaderPropertyType.Texture2D:
                     Texture tex = (Texture)val;
-                    // Logic for automatic binding to slots
-                    backend.BindTexture(tex.Handle); // Current backend only supports one binding at a time in current abstraction
-                    // In a multi-slot backend, we would use: backend.BindTexture(tex.Handle, textureSlot++);
+                    // automatic binding to slots
+                    backend.BindTexture(tex.Handle); // current backend only supports one binding at a time in current abstraction
+                    // backend.BindTexture(tex.Handle, textureSlot++);
                     break;
             }
         }

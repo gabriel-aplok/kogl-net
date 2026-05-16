@@ -67,11 +67,11 @@ void main() {
 
         RenderApi.Clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        RenderApi.MatrixMode(MatrixMode.Projection);
+        RenderApi.MatrixMode(MatrixStackMode.Projection);
         RenderApi.LoadIdentity();
         RenderApi.Ortho(0, 800, 600, 0, -1, 1);
 
-        RenderApi.MatrixMode(MatrixMode.ModelView);
+        RenderApi.MatrixMode(MatrixStackMode.ModelView);
         RenderApi.LoadIdentity();
 
         // draw a standard quad using the default shader

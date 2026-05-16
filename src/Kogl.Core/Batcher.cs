@@ -3,7 +3,7 @@ using Kogl.Abstractions;
 
 namespace Kogl.Core;
 
-internal class DynamicBatcher(IGraphicsBackend backend)
+internal class Batcher(IGraphicsBackend backend)
 {
     private const int _maxVertices = 8192;
     private const int _maxIndices = _maxVertices * 6;

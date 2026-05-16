@@ -21,7 +21,7 @@ public static class ImGuiConsole
         ImGui.SetNextWindowSize(new Vector2(600, 400), ImGuiCond.FirstUseEver);
         ImGui.Begin("Console Log");
 
-        // --- Top Control Panel ---
+        // top bar
         if (ImGui.Button("Clear"))
         {
             Log.ClearHistory();
@@ -30,13 +30,12 @@ public static class ImGuiConsole
         ImGui.SameLine();
         if (ImGui.Button("Scroll to Bottom"))
         {
-            // Forces scroll to the bottom on the next frame inside the child window
-            ImGui.SetNextWindowScroll(new Vector2(0, ImGui.GetScrollMaxY()));
+            ImGui.SetScrollHereY(ImGui.GetScrollMaxY());
         }
 
         ImGui.Separator();
 
-        // --- Filters Area ---
+        // filters
         ImGui.Text("Filters:");
         ImGui.SameLine();
         ImGui.Checkbox("Trace", ref _showTrace);
@@ -51,19 +50,18 @@ public static class ImGuiConsole
         ImGui.SameLine();
         ImGui.Checkbox("Critical", ref _showCritical);
 
-        // Substring Search Bar
-        ImGui.SetNextItemWidth(-1); // Stretch to fill the right border
+        // substring search bar
+        ImGui.SetNextItemWidth(-1); // stretch to fill the right border
         ImGui.InputTextWithHint(
             "##FilterInput",
-            "Filter logs by message or category... (e.g. 'OPENGL')",
+            "Filter logs by message or category...",
             ref _searchFilter,
             256
         );
 
         ImGui.Separator();
 
-        // --- Scrolling Region Setup ---
-        // Leave space for a sleek bottom command border or line status by adjusting height offset (-35)
+        // scrolling region
         ImGui.BeginChild(
             "ScrollingRegion",
             new Vector2(0, -35),
@@ -72,13 +70,11 @@ public static class ImGuiConsole
         );
 
         LogEntry[] logs = Log.GetHistorySnapshot();
-
-        // Track if we are currently sitting at the absolute bottom of the log viewport before drawing
         bool wasAtBottom = ImGui.GetScrollY() >= ImGui.GetScrollMaxY();
 
         foreach (LogEntry entry in logs)
         {
-            // 1. Level Filter Validation
+            // level filter validation
             bool shouldDisplay = entry.Level switch
             {
                 LogLevel.Trace => _showTrace,
@@ -92,7 +88,7 @@ public static class ImGuiConsole
             if (!shouldDisplay)
                 continue;
 
-            // 2. Search Substring Validation (Checks message content & system categories)
+            // search substring validation
             if (!string.IsNullOrWhiteSpace(_searchFilter))
             {
                 bool matchesCategory = entry.Category.Contains(
@@ -109,7 +105,7 @@ public static class ImGuiConsole
                 }
             }
 
-            // 3. Color mapping
+            // color mapping
             Vector4 color = entry.Level switch
             {
                 LogLevel.Trace => new Vector4(0.6f, 0.6f, 0.6f, 1.0f), // Dim Gray
@@ -121,7 +117,7 @@ public static class ImGuiConsole
                 _ => new Vector4(1.0f, 1.0f, 1.0f, 1.0f),
             };
 
-            // 4. Clean formatting
+            // clean formatting
             ImGui.TextColored(new Vector4(0.5f, 0.5f, 0.5f, 1.0f), $"[{entry.Timestamp:HH:mm:ss}]");
             ImGui.SameLine();
             ImGui.TextColored(color, $"[{entry.Level.ToString().ToUpper()}]");
@@ -129,9 +125,7 @@ public static class ImGuiConsole
             ImGui.TextUnformatted($"[{entry.Category}] {entry.Message}");
         }
 
-        // --- Smart Auto-Scroll Handler ---
-        // If the number of engine logs increases AND the user was already looking at the bottom,
-        // snap the viewport down to track the new engine events automatically.
+        // auto-scroll
         if (logs.Length > _lastLogCount)
         {
             if (wasAtBottom)
@@ -142,14 +136,14 @@ public static class ImGuiConsole
         }
         else if (logs.Length < _lastLogCount)
         {
-            // Reset state seamlessly if user clears history
+            // reset state seamlessly if user clears history
             _lastLogCount = logs.Length;
         }
 
         ImGui.EndChild();
         ImGui.Separator();
 
-        // --- Bottom StatusBar Display ---
+        // bottom statusbar display
         ImGui.TextDisabled($"Total Buffers: {logs.Length} entries | Current Filter Active");
 
         ImGui.End();

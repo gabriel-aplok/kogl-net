@@ -23,3 +23,4 @@ If you have multiple small sprites, putting them on one big texture will allow t
 - Text Rendering: Done
 - Signed Distance Fields: Done
 - Input Handling: Done
+- Material System: Done

@@ -66,6 +66,18 @@ immediate-mode-inspired rendering framework built on modern GPU pipelines with b
 
 ---
 
+## Materials & Shaders
+
+- [x] Material system
+- [ ] Shader reflection
+- [ ] Shader hot reloading
+- [ ] Shader include system
+- [x] Material parameters
+- [x] Global shader uniform buffers
+- [ ] Node-based shader graph
+
+---
+
 # In progress / planned
 
 ## Rich text rendering
@@ -202,18 +214,6 @@ Future possibilities:
 - [ ] Depth of field
 - [ ] Volumetric lighting
 - [ ] HDR pipeline
-
----
-
-## Materials & Shaders
-
-- [ ] Material system
-- [ ] Shader reflection
-- [ ] Shader hot reloading
-- [ ] Shader include system
-- [ ] Material parameters
-- [ ] Global shader uniform buffers
-- [ ] Node-based shader graph
 
 ---
 

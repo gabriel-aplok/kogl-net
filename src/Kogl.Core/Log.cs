@@ -62,11 +62,14 @@ public static class Log
     private static readonly Lock _lock = new();
     private static readonly List<LogEntry> _history = [];
     private static StreamWriter? _fileWriter;
+    private static LogLevel _minLogLevel = LogLevel.Trace;
+    private static bool _enableFileLogging = false;
 
     // config settings
-    public static LogLevel MinLogLevel { get; set; } = LogLevel.Trace;
+    public static LogLevel MinLogLevel => _minLogLevel;
     public static int MaxHistoryItems { get; set; } = 2000;
     public static bool EnableConsoleColors { get; set; } = true;
+    public static bool EnableFileLogging => _enableFileLogging;
 
     // triggered whenever a new log arrives (useful for real-time imgui auto-scroll)
     public static event Action<LogEntry>? OnLogReceived;
@@ -80,12 +83,28 @@ public static class Log
     private const string _red = "\u001b[31m";
     private const string _boldRed = "\u001b[1;31m";
 
-    static Log()
+    /// <summary>
+    /// Sets the minimum log level required to process a log entry.
+    /// </summary>
+    /// <param name="level">The log level threshold.</param>
+    public static void SetMinLogLevel(LogLevel level)
     {
-        InitializeFileLogger();
+        _minLogLevel = level;
     }
 
-    private static void InitializeFileLogger()
+    /// <summary>
+    /// Enables or disables file logging.
+    /// </summary>
+    /// <param name="enabled">True to enable file logging, false to disable.</param>
+    public static void SetFileLogging(bool enabled)
+    {
+        _enableFileLogging = enabled;
+    }
+
+    /// <summary>
+    /// Initializes the file logger.
+    /// </summary>
+    public static void InitFileLogger()
     {
         try
         {
@@ -108,7 +127,7 @@ public static class Log
             );
             _fileWriter = new StreamWriter(fileStream, Encoding.UTF8) { AutoFlush = true };
 
-            Info("CORE", $"Session logger initialized. Writing to: {filePath}");
+            Info("CORE", $"Logging to file (if enabled): {Path.GetFileName(filePath)}");
         }
         catch (Exception ex)
         {
@@ -121,6 +140,7 @@ public static class Log
     /// </summary>
     public static void Write(LogLevel level, string category, string message)
     {
+#if DEBUG
         if (level < MinLogLevel)
             return;
 
@@ -146,7 +166,7 @@ public static class Log
             Console.Out.WriteLine(consoleLine);
 
             // format and write to persistent log file (stripping ANSI codes)
-            if (_fileWriter != null)
+            if (_fileWriter != null && EnableFileLogging)
             {
                 string fileLine =
                     $"[{entry.Timestamp:HH:mm:ss}] [{entry.Level.ToString().ToUpper()}] [{entry.Category}] [Thread {entry.ThreadId}] {entry.Message}";
@@ -156,6 +176,7 @@ public static class Log
 
         // invoke event outside lock to prevent deadlock scenarios in UI threads
         OnLogReceived?.Invoke(entry);
+#endif
     }
 
     private static string ToUpperUnchecked(this string str)

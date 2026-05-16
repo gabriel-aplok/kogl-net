@@ -52,6 +52,8 @@ public class AppWindow
             InputBackend inputBackend = new(_input);
             Input.InputManager.Initialize(inputBackend);
 
+            FirstLog(width, height, title, options, backend);
+
             OnLoad?.Invoke();
         };
 
@@ -60,8 +62,9 @@ public class AppWindow
             _controller?.Update((float)dt);
             OnRender?.Invoke(dt);
 
-            // ImGui.ShowDemoWindow();
+#if DEBUG
             ImGuiConsole.DrawConsoleWindow();
+#endif
 
             _controller?.Render();
 
@@ -82,5 +85,71 @@ public class AppWindow
     public void Run()
     {
         _window.Run();
+    }
+
+    private void FirstLog(
+        int width,
+        int height,
+        string title,
+        WindowOptions options,
+        OpenGLBackend backend
+    )
+    {
+        if (_gl == null || _input == null)
+            return;
+
+        // OpenGL backend
+        Log.Info($"KoGL backend: {backend.GetType().Name}");
+        Log.Info(
+            "OPENGL",
+            $"Requested API: {options.API.API} {options.API.Version.MajorVersion}.{options.API.Version.MinorVersion}"
+        );
+        Log.Info(
+            "OPENGL",
+            $"Requested Profile: {options.API.Profile} | Flags: {options.API.Flags}"
+        );
+        Log.Info("OPENGL", $"Vendor: {_gl.GetStringS(StringName.Vendor)}");
+        Log.Info("OPENGL", $"Renderer: {_gl.GetStringS(StringName.Renderer)}");
+        Log.Info("OPENGL", $"Version: {_gl.GetStringS(StringName.Version)}");
+        Log.Info("OPENGL", $"GLSL Version: {_gl.GetStringS(StringName.ShadingLanguageVersion)}");
+
+        // System information
+        Log.Info(
+            "SYSTEM",
+            $"OS: {Environment.OSVersion} ({(Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit")})"
+        );
+        Log.Info(
+            "SYSTEM",
+            $"CPU Cores: {Environment.ProcessorCount} threads | Runtime: .NET {Environment.Version}"
+        );
+
+        // Window information
+        IMonitor monitor = Silk.NET.Windowing.Monitor.GetMainMonitor(_window);
+        Log.Info(
+            "WINDOW",
+            $"Display: {monitor.Name} ({monitor.Bounds.Size.X}x{monitor.Bounds.Size.Y} @ {monitor.VideoMode.RefreshRate}Hz)"
+        );
+        Log.Info("WINDOW", $"Viewport Created: {width}x{height} | Title: \"{title}\"");
+
+        // OpenGL information
+        _gl.GetInteger(GetPName.MaxTextureImageUnits, out int maxTextureSlots);
+        _gl.GetInteger(GetPName.MaxTextureSize, out int maxTextureSize);
+        _gl.GetInteger(GetPName.MaxUniformBlockSize, out int maxUniformBlockSize);
+        Log.Info(
+            "OPENGL",
+            $"Max Texture Slots: {maxTextureSlots} | Max Texture Dimension: {maxTextureSize}px | Uniform Buffer Max: {maxUniformBlockSize / 1024}KB"
+        );
+
+        bool hasDirectStateAccess = _gl.IsExtensionPresent("GL_ARB_direct_state_access");
+        Log.Info(
+            "OPENGL",
+            $"Features -> ARB_direct_state_access (DSA): {(hasDirectStateAccess ? "SUPPORTED" : "NOT SUPPORTED")}"
+        );
+
+        // Input
+        Log.Info(
+            "INPUT",
+            $"Keyboards: {_input.Keyboards.Count} | Mice: {_input.Mice.Count} | Gamepads: {_input.Mice.Count}"
+        );
     }
 }

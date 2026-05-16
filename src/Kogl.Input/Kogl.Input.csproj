@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <OutputType>Library</OutputType>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-    <!-- native AOT & trimming settings -->
+    <!-- native & trimming settings -->
     <PropertyGroup>
         <IsTrimmable>true</IsTrimmable>
         <TrimMode>full</TrimMode>
@@ -15,15 +16,14 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <!-- core performance enhancements -->
+        <!-- core performance -->
         <OptimizationPreference>Speed</OptimizationPreference>
         <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
 
-        <!-- tiered compilation / JIT settings -->
-        <!-- disables background JIT re-compilation to prevent random frame stutter/hiccups -->
+        <!-- tiered compilation -->
         <TieredCompilation>false</TieredCompilation>
 
-        <!-- native AOT meta-stripping -->
+        <!-- native meta-stripping -->
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <IlcTrimMetadata>true</IlcTrimMetadata>
         <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
@@ -35,7 +35,15 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
 
+        <!-- hardware-targeted micro-optimizations -->
+        <!-- generates specific AVX/AVX2/AVX-512 instructions matching the CPU -->
+        <!-- x86-64-v3 -->
+        <IlcInstructionSet>x86-64-v3</IlcInstructionSet>
+
         <!-- strips debug symbols out of the final compiled native binary completely -->
         <StripSymbols>true</StripSymbols>
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
     </PropertyGroup>
 </Project>

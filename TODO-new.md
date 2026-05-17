@@ -187,7 +187,7 @@ Future possibilities:
 
 ## Renderer features
 
-- [ ] Multi-render target support (MRT)
+- [x] Multi-render target support (MRT)
 - [ ] Instanced rendering
 - [ ] Compute shader support
 - [ ] Render graph system

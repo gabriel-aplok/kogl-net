@@ -29,7 +29,7 @@ public interface IGraphicsBackend : IDisposable
     public void DeleteTexture(TextureHandle texture);
 
     // RenderTargets
-    public RenderTarget CreateRenderTarget(int width, int height);
+    public RenderTarget CreateRenderTarget(int width, int height, int colorAttachments = 1);
     public void SetRenderTarget(RenderTarget? target);
     public void DeleteRenderTarget(RenderTarget target);
 

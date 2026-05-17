@@ -210,58 +210,79 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         }
     }
 
-    public RenderTarget CreateRenderTarget(int width, int height)
+    public RenderTarget CreateRenderTarget(int width, int height, int colorAttachments = 1)
     {
+        if (colorAttachments < 1)
+            throw new ArgumentOutOfRangeException(
+                nameof(colorAttachments),
+                "Must have at least 1 color attachment."
+            );
+
         // generate fbo
         uint fbo = _gl.GenFramebuffer();
         BindFramebufferInternal(fbo);
 
-        // generate and bind the Texture
-        uint tex = _gl.GenTexture();
-        BindTextureInternal(tex);
+        TextureHandle[] textures = new TextureHandle[colorAttachments];
+        Span<DrawBufferMode> drawBuffers = stackalloc DrawBufferMode[colorAttachments];
 
-        // allocate empty texture memory
-        _gl.TexImage2D(
-            TextureTarget.Texture2D,
-            0,
-            InternalFormat.Rgba,
-            (uint)width,
-            (uint)height,
-            0,
-            PixelFormat.Rgba,
-            PixelType.UnsignedByte,
-            (void*)0
-        );
+        for (int i = 0; i < colorAttachments; i++)
+        {
+            // generate and bind the texture
+            uint tex = _gl.GenTexture();
+            BindTextureInternal(tex);
 
-        _gl.TexParameter(
-            TextureTarget.Texture2D,
-            TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.Linear
-        );
-        _gl.TexParameter(
-            TextureTarget.Texture2D,
-            TextureParameterName.TextureMagFilter,
-            (int)TextureMagFilter.Linear
-        );
-        _gl.TexParameter(
-            TextureTarget.Texture2D,
-            TextureParameterName.TextureWrapS,
-            (int)TextureWrapMode.ClampToEdge
-        );
-        _gl.TexParameter(
-            TextureTarget.Texture2D,
-            TextureParameterName.TextureWrapT,
-            (int)TextureWrapMode.ClampToEdge
-        );
+            // allocate empty texture memory
+            _gl.TexImage2D(
+                TextureTarget.Texture2D,
+                0,
+                InternalFormat.Rgba,
+                (uint)width,
+                (uint)height,
+                0,
+                PixelFormat.Rgba,
+                PixelType.UnsignedByte,
+                (void*)0
+            );
 
-        // attach texture to fbo
-        _gl.FramebufferTexture2D(
-            FramebufferTarget.Framebuffer,
-            FramebufferAttachment.ColorAttachment0,
-            TextureTarget.Texture2D,
-            tex,
-            0
-        );
+            _gl.TexParameter(
+                TextureTarget.Texture2D,
+                TextureParameterName.TextureMinFilter,
+                (int)TextureMinFilter.Linear
+            );
+            _gl.TexParameter(
+                TextureTarget.Texture2D,
+                TextureParameterName.TextureMagFilter,
+                (int)TextureMagFilter.Linear
+            );
+            _gl.TexParameter(
+                TextureTarget.Texture2D,
+                TextureParameterName.TextureWrapS,
+                (int)TextureWrapMode.ClampToEdge
+            );
+            _gl.TexParameter(
+                TextureTarget.Texture2D,
+                TextureParameterName.TextureWrapT,
+                (int)TextureWrapMode.ClampToEdge
+            );
+
+            // attach texture to fbo dynamically offset by current iteration
+            _gl.FramebufferTexture2D(
+                FramebufferTarget.Framebuffer,
+                (FramebufferAttachment)((int)FramebufferAttachment.ColorAttachment0 + i),
+                TextureTarget.Texture2D,
+                tex,
+                0
+            );
+
+            textures[i] = new TextureHandle(tex);
+            drawBuffers[i] = (DrawBufferMode)((int)DrawBufferMode.ColorAttachment0 + i);
+        }
+
+        // register multi-draw attachments to the gl pipeline
+        fixed (DrawBufferMode* drawBuffersPtr = drawBuffers)
+        {
+            _gl.DrawBuffers((uint)colorAttachments, drawBuffersPtr);
+        }
 
         // generate renderbuffer for depth/stencil (required if draw 3d inside the fbo)
         uint rbo = _gl.GenRenderbuffer();
@@ -279,17 +300,9 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             rbo
         );
 
-        // if (
-        //     _gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer)
-        //     != FramebufferErrorCode.FramebufferComplete
-        // )
-        // {
-        //     throw new Exception("Framebuffer is not complete!");
-        // }
+        BindFramebufferInternal(0);
 
-        BindFramebufferInternal(0); // ynbind
-
-        return new RenderTarget(fbo, rbo, new TextureHandle(tex), width, height);
+        return new RenderTarget(fbo, rbo, textures, width, height);
     }
 
     public void SetRenderTarget(RenderTarget? target)
@@ -313,7 +326,15 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
         _gl.DeleteFramebuffer(target.FboId);
         _gl.DeleteRenderbuffer(target.RboId);
-        DeleteTexture(target.Texture);
+
+        // delete all dynamically generated textures attached to this FBO
+        if (target.Textures != null)
+        {
+            foreach (TextureHandle tex in target.Textures)
+            {
+                DeleteTexture(tex);
+            }
+        }
     }
 
     public ShaderHandle CreateShader(string vertexSrc, string fragmentSrc)

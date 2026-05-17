@@ -391,10 +391,11 @@ void main() {
     /// </summary>
     /// <param name="width">The width</param>
     /// <param name="height">The height</param>
+    /// <param name="colorAttachments">The number of color attachments (MRT)</param>
     /// <returns>The render target</returns>
-    public static RenderTarget CreateRenderTarget(int width, int height)
+    public static RenderTarget CreateRenderTarget(int width, int height, int colorAttachments = 1)
     {
-        return _backend.CreateRenderTarget(width, height);
+        return _backend.CreateRenderTarget(width, height, colorAttachments);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using Kogl.Abstractions;
 using Kogl.Core;
+using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
 using Kogl.Windowing;
 

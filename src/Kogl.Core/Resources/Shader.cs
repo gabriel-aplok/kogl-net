@@ -34,8 +34,9 @@ public sealed class ShaderProperty(string name, ShaderPropertyType type)
 public sealed class Shader(ShaderHandle handle) : Resource
 {
     public ShaderHandle Handle { get; } = handle;
-    private readonly List<ShaderProperty> _properties = [];
     public IReadOnlyList<ShaderProperty> Properties => _properties;
+
+    private readonly List<ShaderProperty> _properties = [];
 
     /// <summary>
     /// Adds a shader property
@@ -49,7 +50,7 @@ public sealed class Shader(ShaderHandle handle) : Resource
 
     protected override void Dispose(bool disposing)
     {
-        Console.WriteLine("Shader Disposed");
+        Log.Info("Shader Disposed");
     }
 
     /// <summary>

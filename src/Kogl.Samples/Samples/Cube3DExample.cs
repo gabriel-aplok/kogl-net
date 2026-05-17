@@ -1,5 +1,6 @@
 using Kogl.Abstractions;
 using Kogl.Core;
+using Kogl.Core.Rendering;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;

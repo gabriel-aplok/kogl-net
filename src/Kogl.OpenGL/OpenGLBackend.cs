@@ -5,7 +5,7 @@ using Silk.NET.OpenGL;
 namespace Kogl.OpenGL;
 
 /// <summary>
-/// The OpenGL backend
+/// The OpenGL backend, focused on Desktop OpenGL.
 /// </summary>
 /// <param name="glContext">The gl context</param>
 // TODO: add docs, reorganize and cleanup
@@ -447,6 +447,8 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _gl.DeleteTexture(texture.Id);
     }
 
+    #region States
+
     public void SetDepthTest(bool enabled)
     {
         if (enabled)
@@ -481,9 +483,8 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             _gl.Disable(EnableCap.ScissorTest);
     }
 
-    // ==========================================
-    // Cache
-    // ==========================================
+    #endregion
+    #region Cache (Internal)
 
     private void BindVaoInternal(uint id)
     {
@@ -538,6 +539,8 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             _cachedFbo = id;
         }
     }
+
+    #endregion
 
     public void Dispose()
     {

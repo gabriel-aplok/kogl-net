@@ -122,6 +122,6 @@ public class Material : Resource
 
     protected override void Dispose(bool disposing)
     {
-        Console.WriteLine("Material Disposed");
+        Log.Info("Material Disposed");
     }
 }

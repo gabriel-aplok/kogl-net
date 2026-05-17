@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Kogl.Core;
+namespace Kogl.Core.Rendering;
 
 public enum MatrixStackMode
 {

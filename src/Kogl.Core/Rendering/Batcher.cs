@@ -1,7 +1,7 @@
 using System.Numerics;
 using Kogl.Abstractions;
 
-namespace Kogl.Core;
+namespace Kogl.Core.Rendering;
 
 internal class Batcher(IGraphicsBackend backend)
 {

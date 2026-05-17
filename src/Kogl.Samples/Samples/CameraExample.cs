@@ -1,6 +1,7 @@
 using System.Numerics;
 using Kogl.Abstractions;
 using Kogl.Core;
+using Kogl.Core.Graphics;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;

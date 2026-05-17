@@ -1,5 +1,7 @@
 using System.Numerics;
 using Kogl.Abstractions;
+using Kogl.Core.Graphics;
+using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
 
 namespace Kogl.Core;

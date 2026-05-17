@@ -1,6 +1,8 @@
 using System.Numerics;
 using Kogl.Abstractions;
 using Kogl.Core;
+using Kogl.Core.Graphics;
+using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
 using Kogl.FreeType;
 using Kogl.Input;
@@ -25,7 +27,7 @@ internal class MaterialExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Material System");
+        AppWindow app = new(800, 600, "KoGL - Material");
 
         app.OnLoad += () =>
         {

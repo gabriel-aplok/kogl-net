@@ -9,7 +9,6 @@ namespace Kogl.OpenGL;
 /// The OpenGL backend, focused on Desktop OpenGL.
 /// </summary>
 /// <param name="glContext">The gl context</param>
-// TODO: add docs, reorganize and cleanup
 public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 {
     private readonly GL _gl = glContext;
@@ -28,6 +27,9 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
     private readonly Dictionary<(uint, string), int> _uniformLocations = [];
 
+    #region Initialization
+
+    /// <summary>Initializes the backend</summary>
     public void Initialize()
     {
         _vao = _gl.GenVertexArray();
@@ -91,6 +93,65 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _gl.Enable(EnableCap.Blend);
         _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
+
+    /// <summary>Sets the viewport</summary>
+    public void SetViewport(int x, int y, int w, int h)
+    {
+        _gl.Viewport(x, y, (uint)w, (uint)h);
+    }
+
+    /// <summary>Clears the screen</summary>
+    public void Clear(float r, float g, float b, float a)
+    {
+        _gl.ClearColor(r, g, b, a);
+        _gl.Clear((uint)(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
+    }
+
+    #endregion
+    #region States
+
+    /// <summary>Enables or disables depth testing</summary>
+    public void SetDepthTest(bool enabled)
+    {
+        if (enabled)
+            _gl.Enable(EnableCap.DepthTest);
+        else
+            _gl.Disable(EnableCap.DepthTest);
+    }
+
+    /// <summary>Enables or disables blending</summary>
+    public void SetBlending(bool enabled)
+    {
+        if (enabled)
+        {
+            _gl.Enable(EnableCap.Blend);
+            _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        }
+        else
+        {
+            _gl.Disable(EnableCap.Blend);
+        }
+    }
+
+    #endregion
+    #region Scissors
+
+    /// <summary>Sets the scissor</summary>
+    public void SetScissor(int x, int y, int width, int height)
+    {
+        _gl.Scissor(x, y, (uint)width, (uint)height);
+    }
+
+    /// <summary>Enables or disables scissor</summary>
+    public void SetScissorEnabled(bool enabled)
+    {
+        if (enabled)
+            _gl.Enable(EnableCap.ScissorTest);
+        else
+            _gl.Disable(EnableCap.ScissorTest);
+    }
+
+    #endregion
 
     public void UpdateVertexBuffer(ReadOnlySpan<VertexData> vertices)
     {
@@ -454,17 +515,6 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         }
     }
 
-    public void Clear(float r, float g, float b, float a)
-    {
-        _gl.ClearColor(r, g, b, a);
-        _gl.Clear((uint)(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
-    }
-
-    public void SetViewport(int x, int y, int w, int h)
-    {
-        _gl.Viewport(x, y, (uint)w, (uint)h);
-    }
-
     public void BindTexture(TextureHandle texture, int slot)
     {
         BindTextureInternal(texture.Id, slot);
@@ -488,43 +538,6 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _gl.DeleteTexture(texture.Id);
     }
 
-    #region States
-
-    public void SetDepthTest(bool enabled)
-    {
-        if (enabled)
-            _gl.Enable(EnableCap.DepthTest);
-        else
-            _gl.Disable(EnableCap.DepthTest);
-    }
-
-    public void SetBlending(bool enabled)
-    {
-        if (enabled)
-        {
-            _gl.Enable(EnableCap.Blend);
-            _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-        }
-        else
-        {
-            _gl.Disable(EnableCap.Blend);
-        }
-    }
-
-    public void SetScissor(int x, int y, int width, int height)
-    {
-        _gl.Scissor(x, y, (uint)width, (uint)height);
-    }
-
-    public void SetScissorEnabled(bool enabled)
-    {
-        if (enabled)
-            _gl.Enable(EnableCap.ScissorTest);
-        else
-            _gl.Disable(EnableCap.ScissorTest);
-    }
-
-    #endregion
     #region Cache (Internal)
 
     private void BindVaoInternal(uint id)

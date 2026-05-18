@@ -21,6 +21,7 @@ immediate-mode-inspired rendering framework built on modern GPU pipelines with b
 - [x] Resource lifetime management
 - [x] Texture loading
 - [x] Texture filtering & wrapping
+- [x] Multi-texture support
 - [x] Framebuffer/Post-Processing support
 - [x] Scissor testing
 - [x] Blend state management

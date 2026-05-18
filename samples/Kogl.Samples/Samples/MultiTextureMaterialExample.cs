@@ -12,6 +12,7 @@ namespace Kogl.Samples.Samples;
 
 internal class MultiTextureMaterialExample
 {
+    private static readonly AppWindow _app = new(800, 600, "KoGL - Multi-Texture Material Example");
     private static readonly Camera _camera = new();
     private static Font _uiFont = null!;
 
@@ -30,9 +31,7 @@ internal class MultiTextureMaterialExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Multi-Texture Material Example");
-
-        app.OnLoad += () =>
+        _app.OnLoad += () =>
         {
             _camera.Position = new Vector3(0, 3, 8);
             _camera.Projection = CameraProjection.Perspective;
@@ -154,13 +153,17 @@ void main() {
             _gridMaterial.SetVector4("uTint", new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
         };
 
-        app.OnRender += RenderLoop;
-        app.OnUnload += () =>
+        _app.OnRender += RenderLoop;
+        _app.OnResizeEvent += (width, height) =>
+        {
+            _camera.AspectRatio = height == 0 ? 1f : (float)width / height;
+        };
+        _app.OnUnload += () =>
         {
             ResourceManager.UnloadAll();
             _uiFont?.Dispose();
         };
-        app.Run();
+        _app.Run();
     }
 
     private static void RenderLoop(double dt)
@@ -315,7 +318,7 @@ void main() {
 
         KoGL.MatrixMode(MatrixStackMode.Projection);
         KoGL.LoadIdentity();
-        KoGL.Ortho(0, 800, 600, 0, -1, 1);
+        KoGL.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
         KoGL.MatrixMode(MatrixStackMode.ModelView);
         KoGL.LoadIdentity();
 

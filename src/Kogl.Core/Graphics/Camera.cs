@@ -42,6 +42,7 @@ public class Camera
     public Vector3 Right { get; private set; } = Vector3.UnitX;
 
     // TODO: update this when updating viewport
+    public float AspectRatio { get; set; } = 800f / 600f;
     public float ViewportWidth { get; set; } = 800;
     public float ViewportHeight { get; set; } = 600;
 
@@ -117,19 +118,16 @@ public class Camera
     /// </summary>
     public Matrix4x4 GetProjectionMatrix(float? aspectRatio = null)
     {
-        // float aspect = aspectRatio <= 0.0001f ? 1.0f : aspectRatio;
-        float aspect = aspectRatio ?? (16f / 9f);
-
         return Projection switch
         {
             CameraProjection.Perspective => Matrix4x4.CreatePerspectiveFieldOfView(
                 Fov * (MathF.PI / 180f),
-                aspect,
+                AspectRatio,
                 Near,
                 Far
             ),
             CameraProjection.Orthographic => Matrix4x4.CreateOrthographic(
-                OrthoSize * aspect,
+                OrthoSize * AspectRatio,
                 OrthoSize,
                 Near,
                 Far

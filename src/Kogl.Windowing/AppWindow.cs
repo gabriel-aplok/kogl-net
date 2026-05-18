@@ -1,8 +1,8 @@
 using Kogl.Core;
 using Kogl.OpenGL;
-using Kogl.Windowing.ImGuiImpl;
 using Silk.NET.Input;
 using Silk.NET.Input.Glfw;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
@@ -17,12 +17,19 @@ public class AppWindow
     private GL? _gl;
     private IInputContext? _input;
 
-    public event Action<double>? OnRender;
     public event Action? OnLoad;
+    public event Action<double>? OnRender;
+    public event Action<int, int>? OnResizeEvent;
     public event Action? OnUnload;
+
+    public int Width { get; private set; }
+    public int Height { get; private set; }
 
     public AppWindow(int width, int height, string title)
     {
+        Width = width;
+        Height = height;
+
         GlfwWindowing.RegisterPlatform();
         GlfwInput.RegisterPlatform();
 
@@ -60,16 +67,12 @@ public class AppWindow
             _controller?.Update((float)dt);
             OnRender?.Invoke(dt);
 
-#if DEBUG
-            ImGuiConsole.DrawConsoleWindow();
-#endif
-
             _controller?.Render();
 
             Input.InputManager.Update();
         };
 
-        _window.FramebufferResize += s => KoGL.SetViewport(0, 0, s.X, s.Y);
+        _window.FramebufferResize += OnResize;
 
         _window.Closing += () =>
         {
@@ -83,6 +86,16 @@ public class AppWindow
     public void Run()
     {
         _window.Run();
+    }
+
+    private void OnResize(Vector2D<int> size)
+    {
+        Width = size.X;
+        Height = size.Y;
+
+        KoGL.SetViewport(0, 0, size.X, size.Y);
+
+        OnResizeEvent?.Invoke(size.X, size.Y);
     }
 
     private void FirstLog(

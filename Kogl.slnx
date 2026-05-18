@@ -5,7 +5,9 @@
         <Project Path="src/Kogl.FreeType/Kogl.FreeType.csproj" />
         <Project Path="src/Kogl.Input/Kogl.Input.csproj" />
         <Project Path="src/Kogl.OpenGL/Kogl.OpenGL.csproj" />
-        <Project Path="src/Kogl.Samples/Kogl.Samples.csproj" />
         <Project Path="src/Kogl.Windowing/Kogl.Windowing.csproj" />
+    </Folder>
+    <Folder Name="/samples/">
+        <Project Path="samples/Kogl.Samples/Kogl.Samples.csproj" />
     </Folder>
 </Solution>

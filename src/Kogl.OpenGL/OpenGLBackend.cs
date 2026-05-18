@@ -1,5 +1,6 @@
 using System.Numerics;
 using Kogl.Abstractions;
+using Kogl.Abstractions.Types;
 using Silk.NET.OpenGL;
 
 namespace Kogl.OpenGL;

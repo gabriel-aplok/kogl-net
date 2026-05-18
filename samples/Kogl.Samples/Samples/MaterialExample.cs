@@ -1,5 +1,6 @@
 using System.Numerics;
 using Kogl.Abstractions;
+using Kogl.Abstractions.Types;
 using Kogl.Core;
 using Kogl.Core.Graphics;
 using Kogl.Core.Rendering;

@@ -1,5 +1,6 @@
 using System.Numerics;
 using Kogl.Abstractions;
+using Kogl.Abstractions.Types;
 
 namespace Kogl.Core.Rendering;
 

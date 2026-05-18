@@ -63,9 +63,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />
-        <ProjectReference Include="..\Kogl.FreeType\Kogl.FreeType.csproj" />
-        <ProjectReference Include="..\Kogl.OpenGL\Kogl.OpenGL.csproj" />
-        <ProjectReference Include="..\Kogl.Windowing\Kogl.Windowing.csproj" />
+        <ProjectReference Include="..\..\src\Kogl.Core\Kogl.Core.csproj" />
+        <ProjectReference Include="..\..\src\Kogl.FreeType\Kogl.FreeType.csproj" />
+        <ProjectReference Include="..\..\src\Kogl.OpenGL\Kogl.OpenGL.csproj" />
+        <ProjectReference Include="..\..\src\Kogl.Windowing\Kogl.Windowing.csproj" />
     </ItemGroup>
 </Project>

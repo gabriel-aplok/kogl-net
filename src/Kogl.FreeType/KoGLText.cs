@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Text;
 using Kogl.Abstractions;
+using Kogl.Abstractions.Types;
 using Kogl.Core;
 
 namespace Kogl.FreeType;

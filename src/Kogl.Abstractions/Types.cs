@@ -1,17 +1,8 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Kogl.Abstractions.Types;
 
 namespace Kogl.Abstractions;
-
-public enum PrimitiveMode
-{
-    Lines,
-    LineStrip,
-    Triangles,
-    TriangleStrip,
-    TriangleFan,
-    Quads,
-}
 
 public readonly record struct TextureHandle(uint Id);
 

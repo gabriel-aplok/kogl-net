@@ -1,5 +1,3 @@
-using System.Numerics;
-using ImGuiNET;
 using Kogl.Core;
 using Kogl.OpenGL;
 using Kogl.Windowing.ImGuiImpl;

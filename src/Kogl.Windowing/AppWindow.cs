@@ -57,7 +57,7 @@ public class AppWindow
             InputBackend inputBackend = new(_input);
             Input.InputManager.Initialize(inputBackend);
 
-            FirstLog(width, height, title, options, backend);
+            FirstLog(width, height, title, options, backend, inputBackend);
 
             OnLoad?.Invoke();
         };
@@ -103,14 +103,15 @@ public class AppWindow
         int height,
         string title,
         WindowOptions options,
-        OpenGLBackend backend
+        OpenGLBackend renderBackend,
+        InputBackend inputBackend
     )
     {
         if (_gl == null || _input == null)
             return;
 
-        // OpenGL backend
-        Log.Info($"KoGL backend: {backend.GetType().Name}");
+        // OpenGL
+        Log.Info($"KoGL backend: {renderBackend.GetType().Name}");
         Log.Info(
             "OPENGL",
             $"Requested API: {options.API.API} {options.API.Version.MajorVersion}.{options.API.Version.MinorVersion}"
@@ -158,6 +159,7 @@ public class AppWindow
         );
 
         // Input
+        Log.Info($"KoGL backend: {inputBackend.GetType().Name}");
         Log.Info(
             "INPUT",
             $"Keyboards: {_input.Keyboards.Count} | Mice: {_input.Mice.Count} | Gamepads: {_input.Mice.Count}"

@@ -2,9 +2,9 @@ using System.Numerics;
 using Kogl.Input;
 using Silk.NET.Input;
 
-namespace Kogl.Windowing;
+namespace Kogl.OpenGL;
 
-internal class InputBackend : IInputBackend
+public class InputBackend : IInputBackend
 {
     private readonly IInputContext _input;
     private readonly IMouse? _mouse;

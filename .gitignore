@@ -53,6 +53,10 @@ appsettings.Development.json
 # C# Dev Kit
 *.lscache
 
+# WEbsite proto
+website/**
+website
+
 # lol
 files/**
 files

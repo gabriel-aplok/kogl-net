@@ -529,34 +529,88 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         uint id = _gl.GenTexture();
         BindTextureInternal(id, 0);
 
+        // texture filtering
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.Linear
+            (int)TextureMinFilter.LinearMipmapLinear
         );
+
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMagFilter,
             (int)TextureMagFilter.Linear
         );
 
-        InternalFormat format = channels == 4 ? InternalFormat.Rgba : InternalFormat.Rgb;
-        PixelFormat pxFormat = channels == 4 ? PixelFormat.Rgba : PixelFormat.Rgb;
+        // wrapping
+        _gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureWrapS,
+            (int)TextureWrapMode.Repeat
+        );
 
+        _gl.TexParameter(
+            TextureTarget.Texture2D,
+            TextureParameterName.TextureWrapT,
+            (int)TextureWrapMode.Repeat
+        );
+
+        // pixel alignment
+        _gl.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
+
+        // texture formats
+        InternalFormat internalFormat = channels == 4 ? InternalFormat.Rgba : InternalFormat.Rgb;
+        PixelFormat pixelFormat = channels == 4 ? PixelFormat.Rgba : PixelFormat.Rgb;
+        // InternalFormat internalFormat;
+        // PixelFormat pixelFormat;
+
+        // switch (channels)
+        // {
+        //     case 1:
+        //         internalFormat = InternalFormat.R8;
+        //         pixelFormat = PixelFormat.Red;
+        //         break;
+
+        //     case 2:
+        //         internalFormat = InternalFormat.RG8;
+        //         pixelFormat = PixelFormat.RG;
+        //         break;
+
+        //     case 3:
+        //         internalFormat = InternalFormat.Rgb8;
+        //         pixelFormat = PixelFormat.Rgb;
+        //         break;
+
+        //     case 4:
+        //         internalFormat = InternalFormat.Rgba8;
+        //         pixelFormat = PixelFormat.Rgba;
+        //         break;
+
+        //     default:
+        //         throw new ArgumentException($"Unsupported channel count: {channels}");
+        // }
+
+        // upload texture
         fixed (byte* ptr = pixelData)
         {
             _gl.TexImage2D(
                 TextureTarget.Texture2D,
                 0,
-                format,
+                internalFormat,
                 (uint)width,
                 (uint)height,
                 0,
-                pxFormat,
+                pixelFormat,
                 PixelType.UnsignedByte,
                 ptr
             );
         }
+
+        // generate mipmaps
+        _gl.GenerateMipmap(TextureTarget.Texture2D);
+
+        // unbind
+        _gl.BindTexture(TextureTarget.Texture2D, 0);
 
         return new TextureHandle(id);
     }

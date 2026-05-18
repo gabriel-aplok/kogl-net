@@ -238,13 +238,13 @@ void main() {
         DrawMaterialCube(new Vector3(-2, 1, 0), _brickMaterial);
         DrawMaterialCube(new Vector3(2, 1, 0), _blueMaterial);
 
-        // estress test
+        // This is a test for a material that uses multiple textures.
         // I was genuinely surprised when I saw that all of this was only using 3% of the CPU and 70 MB of RAM.
-        // for (int i = 0; i < 450; i++)
-        // {
-        //     DrawMaterialCube(new Vector3(-2, 6, i), _brickMaterial);
-        //     DrawMaterialCube(new Vector3(2, 8, i), _blueMaterial);
-        // }
+        for (int i = 0; i < 450; i++)
+        {
+            DrawMaterialCube(new Vector3(-2, 6, i), _brickMaterial);
+            DrawMaterialCube(new Vector3(2, 8, i), _blueMaterial);
+        }
     }
 
     private static void DrawMaterialCube(Vector3 position, Material mat)

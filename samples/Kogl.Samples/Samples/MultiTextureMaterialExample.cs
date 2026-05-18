@@ -1,4 +1,5 @@
 using System.Numerics;
+using Kogl.Abstractions;
 using Kogl.Abstractions.Types;
 using Kogl.Core;
 using Kogl.Core.Graphics;
@@ -37,7 +38,6 @@ internal class MultiTextureMaterialExample
             _camera.Projection = CameraProjection.Perspective;
             _camera.Fov = 60f;
             _camera.LookAt(new Vector3(0, 0, 0));
-            _camera.ClearLookAt();
 
             _uiFont = Font.Load("assets/fonts/arial.ttf", 20);
 
@@ -237,6 +237,14 @@ void main() {
 
         DrawMaterialCube(new Vector3(-2, 1, 0), _brickMaterial);
         DrawMaterialCube(new Vector3(2, 1, 0), _blueMaterial);
+
+        // estress test
+        // I was genuinely surprised when I saw that all of this was only using 3% of the CPU and 70 MB of RAM.
+        for (int i = 0; i < 450; i++)
+        {
+            DrawMaterialCube(new Vector3(-2, 6, i), _brickMaterial);
+            DrawMaterialCube(new Vector3(2, 8, i), _blueMaterial);
+        }
     }
 
     private static void DrawMaterialCube(Vector3 position, Material mat)
@@ -245,6 +253,7 @@ void main() {
         KoGL.Translate(position.X, position.Y, position.Z);
         KoGL.ApplyMaterial(mat);
 
+        KoGL.EnableCulling(CullFaceState.Back);
         KoGL.Begin(PrimitiveMode.Quads);
         KoGL.Color4(1, 1, 1, 1);
 
@@ -316,10 +325,10 @@ void main() {
     {
         KoGL.EnableBlending();
 
-        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.MatrixMode(MatrixState.Projection);
         KoGL.LoadIdentity();
         KoGL.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
-        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.MatrixMode(MatrixState.ModelView);
         KoGL.LoadIdentity();
 
         string pos = $"Pos: {_camera.Position:F1}";

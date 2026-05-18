@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace Kogl.Core.Rendering;
 
-public enum MatrixStackMode
+public enum MatrixState
 {
     ModelView,
     Projection,
@@ -19,17 +19,17 @@ public class MatrixStack
     public Matrix4x4 ModelView => _modelView;
     public Matrix4x4 Projection => _projection;
 
-    public MatrixStackMode CurrentMode { get; set; } = MatrixStackMode.ModelView;
+    public MatrixState CurrentMode { get; set; } = MatrixState.ModelView;
 
     public ref Matrix4x4 CurrentMatrix =>
-        ref (CurrentMode == MatrixStackMode.ModelView ? ref _modelView : ref _projection);
+        ref (CurrentMode == MatrixState.ModelView ? ref _modelView : ref _projection);
 
     /// <summary>
     /// Pushes the current matrix onto the stack
     /// </summary>
     public void Push()
     {
-        if (CurrentMode == MatrixStackMode.ModelView)
+        if (CurrentMode == MatrixState.ModelView)
         {
             _modelViewStack.Push(_modelView);
         }
@@ -44,7 +44,7 @@ public class MatrixStack
     /// </summary>
     public void Pop()
     {
-        if (CurrentMode == MatrixStackMode.ModelView)
+        if (CurrentMode == MatrixState.ModelView)
         {
             _modelView = _modelViewStack.Pop();
         }

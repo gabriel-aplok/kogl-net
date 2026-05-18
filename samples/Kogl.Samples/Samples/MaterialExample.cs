@@ -35,7 +35,6 @@ internal class MaterialExample
             _camera.Projection = CameraProjection.Perspective;
             _camera.Fov = 60f;
             _camera.LookAt(new Vector3(0, 0, 0));
-            _camera.ClearLookAt();
 
             _uiFont = Font.Load("assets/fonts/arial.ttf", 20);
 
@@ -259,10 +258,10 @@ void main() {
         KoGL.DisableDepthTest();
         KoGL.EnableBlending();
 
-        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.MatrixMode(MatrixState.Projection);
         KoGL.LoadIdentity();
         KoGL.Ortho(0, 800, 600, 0, -1, 1);
-        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.MatrixMode(MatrixState.ModelView);
         KoGL.LoadIdentity();
 
         KoGLText.DrawText(

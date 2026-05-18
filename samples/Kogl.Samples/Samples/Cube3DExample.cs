@@ -28,7 +28,7 @@ internal class Cube3DExample
         KoGL.EnableDepthTest();
 
         // projection matrix (perspective)
-        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.MatrixMode(MatrixState.Projection);
         KoGL.LoadIdentity();
 
         if (_useFrustum)
@@ -46,7 +46,7 @@ internal class Cube3DExample
         }
 
         // modelView matrix (camera & object)
-        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.MatrixMode(MatrixState.ModelView);
         KoGL.LoadIdentity();
 
         // move the camera back 5 units

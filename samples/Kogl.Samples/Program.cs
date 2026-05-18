@@ -9,16 +9,16 @@ internal class Program
     {
         Log.Info("KoGL - Samples");
 
-        SimpleExample.Start();
         MultiTextureMaterialExample.Start();
-        MaterialExample.Start();
-        InputExample.Start();
-        TextRenderingExample.Start();
-        CameraExample.Start();
-        Cube3DExample.Start();
-        TextureLoadingExample.Start();
-        ScissorExample.Start();
-        CustomShadersExample.Start();
-        PostProcessingExample.Start();
+        // SimpleExample.Start();
+        // MaterialExample.Start();
+        // InputExample.Start();
+        // TextRenderingExample.Start();
+        // CameraExample.Start();
+        // Cube3DExample.Start();
+        // TextureLoadingExample.Start();
+        // ScissorExample.Start();
+        // CustomShadersExample.Start();
+        // PostProcessingExample.Start();
     }
 }

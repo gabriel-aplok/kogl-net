@@ -16,6 +16,13 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _vbo,
         _ebo;
 
+    private CullFaceState _currentCullMode = CullFaceState.Back;
+    private PolygonState _currentPolygonMode = PolygonState.Fill;
+    private float _currentLineWidth = 1.0f;
+    private float _currentPointSize = 1.0f;
+    private bool _depthMask = true;
+    private bool _stencilTest = false;
+
     private uint _cachedVao;
     private uint _cachedVbo;
     private uint _cachedEbo;
@@ -131,6 +138,161 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         {
             _gl.Disable(EnableCap.Blend);
         }
+    }
+
+    /// <summary>Enables or disables culling</summary>
+    public void SetCulling(bool enabled, CullFaceState mode = CullFaceState.Back)
+    {
+        if (enabled)
+        {
+            _gl.Enable(EnableCap.CullFace);
+            if (_currentCullMode != mode)
+            {
+                _gl.CullFace(
+                    mode switch
+                    {
+                        CullFaceState.Front => TriangleFace.Front,
+                        CullFaceState.Back => TriangleFace.Back,
+                        _ => TriangleFace.FrontAndBack,
+                    }
+                );
+                _currentCullMode = mode;
+            }
+        }
+        else
+        {
+            _gl.Disable(EnableCap.CullFace);
+        }
+    }
+
+    /// <summary>Sets the polygon mode</summary>
+    public void SetPolygonMode(PolygonState mode)
+    {
+        if (_currentPolygonMode == mode)
+            return;
+        _currentPolygonMode = mode;
+
+        _gl.PolygonMode(
+            TriangleFace.FrontAndBack,
+            mode switch
+            {
+                PolygonState.Fill => PolygonMode.Fill,
+                PolygonState.Line => PolygonMode.Line,
+                PolygonState.Point => PolygonMode.Point,
+                _ => PolygonMode.Fill,
+            }
+        );
+    }
+
+    /// <summary>Sets the line width</summary>
+    public void SetLineWidth(float width)
+    {
+        if (MathF.Abs(_currentLineWidth - width) > 0.001f)
+        {
+            _gl.LineWidth(width);
+            _currentLineWidth = width;
+        }
+    }
+
+    /// <summary>Sets the point size</summary>
+    public void SetPointSize(float size)
+    {
+        if (MathF.Abs(_currentPointSize - size) > 0.001f)
+        {
+            _gl.PointSize(size);
+            _currentPointSize = size;
+        }
+    }
+
+    /// <summary>Sets the depth mask</summary>
+    public void SetDepthMask(bool writeEnabled)
+    {
+        if (_depthMask != writeEnabled)
+        {
+            _gl.DepthMask(writeEnabled);
+            _depthMask = writeEnabled;
+        }
+    }
+
+    /// <summary>Sets the color mask</summary>
+    public void SetColorMask(bool r, bool g, bool b, bool a)
+    {
+        _gl.ColorMask(r, g, b, a);
+    }
+
+    /// <summary>Sets the blend function</summary>
+    public void SetBlendFunc(BlendingFactorState src, BlendingFactorState dst)
+    {
+        _gl.BlendFunc(
+            src switch
+            {
+                BlendingFactorState.SrcAlpha => BlendingFactor.SrcAlpha,
+                BlendingFactorState.OneMinusSrcAlpha => BlendingFactor.OneMinusSrcAlpha,
+                _ => BlendingFactor.One,
+            },
+            dst switch
+            {
+                BlendingFactorState.SrcAlpha => BlendingFactor.SrcAlpha,
+                BlendingFactorState.OneMinusSrcAlpha => BlendingFactor.OneMinusSrcAlpha,
+                _ => BlendingFactor.One,
+            }
+        );
+    }
+
+    /// <summary>Sets the blend equation</summary>
+    public void SetBlendEquation(BlendEquationState mode)
+    {
+        _gl.BlendEquation(
+            mode switch
+            {
+                BlendEquationState.Subtract => BlendEquationModeEXT.FuncSubtract,
+                BlendEquationState.ReverseSubtract => BlendEquationModeEXT.FuncReverseSubtract,
+                _ => BlendEquationModeEXT.FuncAdd,
+            }
+        );
+    }
+
+    /// <summary>Sets the depth function</summary>
+    public void SetDepthFunc(DepthFunctionState func)
+    {
+        _gl.DepthFunc(
+            func switch
+            {
+                DepthFunctionState.Never => DepthFunction.Never,
+                DepthFunctionState.Less => DepthFunction.Less,
+                DepthFunctionState.Equal => DepthFunction.Equal,
+                DepthFunctionState.Lequal => DepthFunction.Lequal,
+                DepthFunctionState.Greater => DepthFunction.Greater,
+                DepthFunctionState.NotEqual => DepthFunction.Notequal,
+                DepthFunctionState.Gequal => DepthFunction.Gequal,
+                _ => DepthFunction.Less,
+            }
+        );
+    }
+
+    /// <summary>Enables or disables stencil testing</summary>
+    public void SetStencilTest(bool enabled)
+    {
+        if (_stencilTest != enabled)
+        {
+            if (enabled)
+                _gl.Enable(EnableCap.StencilTest);
+            else
+                _gl.Disable(EnableCap.StencilTest);
+            _stencilTest = enabled;
+        }
+    }
+
+    /// <summary>Sets the clear depth</summary>
+    public void SetClearDepth(float depth)
+    {
+        _gl.ClearDepth(depth);
+    }
+
+    /// <summary>Sets the clear stencil</summary>
+    public void SetClearStencil(int stencil)
+    {
+        _gl.ClearStencil(stencil);
     }
 
     #endregion

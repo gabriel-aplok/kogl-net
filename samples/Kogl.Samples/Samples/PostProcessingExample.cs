@@ -83,11 +83,11 @@ internal class PostProcessingExample
         KoGL.SetRenderTarget(_renderTarget);
         KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f); // clear the render target
 
-        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.MatrixMode(MatrixState.Projection);
         KoGL.LoadIdentity();
         KoGL.Ortho(0, 800, 600, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.MatrixMode(MatrixState.ModelView);
         KoGL.LoadIdentity();
 
         // draw a standard quad using the default shader
@@ -142,10 +142,10 @@ internal class PostProcessingExample
         KoGL.Clear(0.0f, 0.0f, 0.0f, 1.0f); // clear the screen
 
         // setup a basic orthographic camera for a fullscreen quad
-        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.MatrixMode(MatrixState.Projection);
         KoGL.LoadIdentity();
         KoGL.Ortho(0, 800, 600, 0, -1, 1);
-        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.MatrixMode(MatrixState.ModelView);
         KoGL.LoadIdentity();
 
         // bind the post-process shader and feed it our renderTarget texture

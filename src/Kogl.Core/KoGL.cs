@@ -93,7 +93,7 @@ void main() {
     /// Sets the matrix mode
     /// </summary>
     /// <param name="mode">The matrix mode</param>
-    public static void MatrixMode(MatrixStackMode mode)
+    public static void MatrixMode(MatrixState mode)
     {
         _matrices.CurrentMode = mode;
     }
@@ -271,11 +271,11 @@ void main() {
     {
         Flush();
 
-        MatrixMode(MatrixStackMode.Projection);
+        MatrixMode(MatrixState.Projection);
         LoadIdentity();
         Multiply(camera.GetProjectionMatrix(GetAspectRatio()));
 
-        MatrixMode(MatrixStackMode.ModelView);
+        MatrixMode(MatrixState.ModelView);
         LoadIdentity();
         Multiply(camera.GetViewMatrix());
     }
@@ -287,10 +287,10 @@ void main() {
     {
         Flush();
 
-        MatrixMode(MatrixStackMode.Projection);
+        MatrixMode(MatrixState.Projection);
         LoadIdentity();
 
-        MatrixMode(MatrixStackMode.ModelView);
+        MatrixMode(MatrixState.ModelView);
         LoadIdentity();
     }
 
@@ -610,8 +610,7 @@ void main() {
     #region States
 
     /// <summary>
-    /// Resets all internal render states (Texture, Shader, Color, UVs) to their default values.
-    /// Prevents state-leaks between frames or major render passes.
+    /// Resets all internal render states to defaults.
     /// </summary>
     public static void ResetStates()
     {
@@ -621,40 +620,128 @@ void main() {
         UseDefaultShader();
         _currentTexCoord = Vector2.Zero;
         _currentColor = Vector4.One;
+
+        // set default render states
+        EnableDepthTest();
+        DisableBlending();
+        DisableCulling();
+        DepthMask(true);
+        ColorMask(true, true, true, true);
+        DepthFunc(DepthFunctionState.Less);
+        PolygonMode(PolygonState.Fill);
+        LineWidth(1.0f);
+        PointSize(1.0f);
+        DisableStencilTest();
     }
 
-    /// <summary>
-    /// Enables depth testing.
-    /// </summary>
+    /// <summary>Enables depth testing.</summary>
     public static void EnableDepthTest()
     {
         _backend.SetDepthTest(true);
     }
 
-    /// <summary>
-    /// Disables depth testing.
-    /// </summary>
+    /// <summary>Disables depth testing.</summary>
     public static void DisableDepthTest()
     {
         _backend.SetDepthTest(false);
     }
 
-    /// <summary>
-    /// Enables blending.
-    /// </summary>
+    /// <summary>Enables blending.</summary>
     public static void EnableBlending()
     {
         Flush();
         _backend.SetBlending(true);
     }
 
-    /// <summary>
-    /// Disables blending.
-    /// </summary>
+    /// <summary>Disables blending.</summary>
     public static void DisableBlending()
     {
         Flush();
         _backend.SetBlending(false);
+    }
+
+    /// <summary>Enables culling.</summary>
+    public static void EnableCulling(CullFaceState mode = CullFaceState.Back)
+    {
+        _backend.SetCulling(true, mode);
+    }
+
+    /// <summary>Disables culling.</summary>
+    public static void DisableCulling()
+    {
+        _backend.SetCulling(false);
+    }
+
+    /// <summary>Sets the polygon mode</summary>
+    public static void PolygonMode(PolygonState mode)
+    {
+        _backend.SetPolygonMode(mode);
+    }
+
+    /// <summary>Sets the line width</summary>
+    public static void LineWidth(float width)
+    {
+        _backend.SetLineWidth(width);
+    }
+
+    /// <summary>Sets the point size</summary>
+    public static void PointSize(float size)
+    {
+        _backend.SetPointSize(size);
+    }
+
+    /// <summary>Sets the depth mask</summary>
+    public static void DepthMask(bool writeEnabled)
+    {
+        _backend.SetDepthMask(writeEnabled);
+    }
+
+    /// <summary>Sets the color mask</summary>
+    public static void ColorMask(bool r, bool g, bool b, bool a)
+    {
+        _backend.SetColorMask(r, g, b, a);
+    }
+
+    /// <summary>Sets the blend function</summary>
+    public static void BlendFunc(BlendingFactorState src, BlendingFactorState dst)
+    {
+        _backend.SetBlendFunc(src, dst);
+    }
+
+    /// <summary>Sets the blend equation</summary>
+    public static void BlendEquation(BlendEquationState mode)
+    {
+        _backend.SetBlendEquation(mode);
+    }
+
+    /// <summary>Sets the depth function</summary>
+    public static void DepthFunc(DepthFunctionState func)
+    {
+        _backend.SetDepthFunc(func);
+    }
+
+    /// <summary>Enables stencil testing</summary>
+    public static void EnableStencilTest()
+    {
+        _backend.SetStencilTest(true);
+    }
+
+    /// <summary>Disables stencil testing</summary>
+    public static void DisableStencilTest()
+    {
+        _backend.SetStencilTest(false);
+    }
+
+    /// <summary>Sets the clear color</summary>
+    public static void ClearDepth(float depth)
+    {
+        _backend.SetClearDepth(depth);
+    }
+
+    /// <summary>Sets the clear stencil</summary>
+    public static void ClearStencil(int stencil)
+    {
+        _backend.SetClearStencil(stencil);
     }
 
     #endregion

@@ -41,7 +41,6 @@ public class Camera
     public Vector3 Up { get; private set; } = Vector3.UnitY;
     public Vector3 Right { get; private set; } = Vector3.UnitX;
 
-    // TODO: update this when updating viewport
     public float AspectRatio { get; set; } = 800f / 600f;
     public float ViewportWidth { get; set; } = 800;
     public float ViewportHeight { get; set; } = 600;
@@ -51,52 +50,38 @@ public class Camera
     public float FrustumBottom = -1f;
     public float FrustumTop = 1f;
 
-    private Vector3? _target;
-
     /// <summary>
-    /// Look at a target
+    /// Looks at a target.
     /// </summary>
-    /// <param name="target">The target</param>
+    /// <param name="target">The target point in space</param>
     public void LookAt(Vector3 target)
     {
-        _target = target;
+        Vector3 direction = target - Position;
+        if (direction == Vector3.Zero)
+            return;
+
+        direction = Vector3.Normalize(direction);
+
+        Rotation.X = MathF.Asin(direction.Y) * (180f / MathF.PI);
+        Rotation.Y = MathF.Atan2(direction.X, direction.Z) * (180f / MathF.PI);
+
+        UpdateVectors();
     }
 
     /// <summary>
-    /// Clears the target
-    /// </summary>
-    public void ClearLookAt()
-    {
-        _target = null;
-    }
-
-    /// <summary>
-    /// Updates the camera vectors
+    /// Updates the camera directional vectors based on the current Rotation angles.
     /// </summary>
     private void UpdateVectors()
     {
-        if (_target.HasValue)
-        {
-            // target camera
-            Front = Vector3.Normalize(_target.Value - Position);
+        float pitch = Rotation.X * (MathF.PI / 180f);
+        float yaw = Rotation.Y * (MathF.PI / 180f);
 
-            Rotation.X = MathF.Asin(Front.Y) * (180f / MathF.PI);
-            Rotation.Y = MathF.Atan2(Front.X, Front.Z) * (180f / MathF.PI);
-        }
-        else
-        {
-            // fps camera
-            float pitch = Rotation.X * (MathF.PI / 180f);
-            float yaw = Rotation.Y * (MathF.PI / 180f);
+        Vector3 direction;
+        direction.X = MathF.Cos(pitch) * MathF.Sin(yaw);
+        direction.Y = MathF.Sin(pitch);
+        direction.Z = MathF.Cos(pitch) * MathF.Cos(yaw);
 
-            Vector3 direction;
-            direction.X = MathF.Cos(pitch) * MathF.Sin(yaw);
-            direction.Y = MathF.Sin(pitch);
-            direction.Z = MathF.Cos(pitch) * MathF.Cos(yaw);
-
-            Front = Vector3.Normalize(direction);
-        }
-
+        Front = Vector3.Normalize(direction);
         Right = Vector3.Normalize(Vector3.Cross(Front, Vector3.UnitY));
         Up = Vector3.Normalize(Vector3.Cross(Right, Front));
     }
@@ -107,10 +92,7 @@ public class Camera
     public Matrix4x4 GetViewMatrix()
     {
         UpdateVectors();
-
-        Vector3 finalTarget = _target ?? (Position + Front);
-
-        return Matrix4x4.CreateLookAt(Position, finalTarget, Vector3.UnitY);
+        return Matrix4x4.CreateLookAt(Position, Position + Front, Vector3.UnitY);
     }
 
     /// <summary>
@@ -118,16 +100,18 @@ public class Camera
     /// </summary>
     public Matrix4x4 GetProjectionMatrix(float? aspectRatio = null)
     {
+        float actualAspect = aspectRatio ?? AspectRatio;
+
         return Projection switch
         {
             CameraProjection.Perspective => Matrix4x4.CreatePerspectiveFieldOfView(
                 Fov * (MathF.PI / 180f),
-                AspectRatio,
+                actualAspect,
                 Near,
                 Far
             ),
             CameraProjection.Orthographic => Matrix4x4.CreateOrthographic(
-                OrthoSize * AspectRatio,
+                OrthoSize * actualAspect,
                 OrthoSize,
                 Near,
                 Far
@@ -147,9 +131,6 @@ public class Camera
     /// <summary>
     /// Lerps the camera
     /// </summary>
-    /// <param name="targetPos">The target position</param>
-    /// <param name="targetRot">The target rotation</param>
-    /// <param name="alpha">The alpha</param>
     public void Lerp(Vector3 targetPos, Vector3 targetRot, float alpha)
     {
         Position = Vector3.Lerp(Position, targetPos, alpha);
@@ -159,15 +140,12 @@ public class Camera
     /// <summary>
     /// Gets the screen ray
     /// </summary>
-    /// <param name="mousePosition">The mouse position</param>
-    /// <param name="aspectRatio">The aspect ratio</param>
     public CameraRay GetScreenRay(Vector2 mousePosition, float aspectRatio)
     {
         Matrix4x4 view = GetViewMatrix();
         Matrix4x4 proj = GetProjectionMatrix(aspectRatio);
         Matrix4x4.Invert(view * proj, out Matrix4x4 invViewProj);
 
-        // map mouse to normalized device coords (-1 to 1)
         float x = (2.0f * mousePosition.X / ViewportWidth) - 1.0f;
         float y = 1.0f - (2.0f * mousePosition.Y / ViewportHeight);
 
@@ -194,20 +172,15 @@ public class Camera
     /// <summary>
     /// Checks if a point is in view
     /// </summary>
-    /// <param name="point">The point</param>
-    /// <param name="radius">The radius</param>
     public bool IsInView(Vector3 point, float radius)
     {
-        // simple distance check against far plane as a baseline
         float dist = Vector3.Distance(Position, point);
         if (dist > Far + radius)
             return false;
 
-        // plane-based culling
         Vector3 toPoint = Vector3.Normalize(point - Position);
         float dot = Vector3.Dot(Front, toPoint);
 
-        // check if point is roughly in front of the camera based on FOV
         return dot > MathF.Cos((Fov + 10f) * (MathF.PI / 180f));
     }
 }

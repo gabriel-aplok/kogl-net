@@ -43,11 +43,11 @@ internal class TextRenderingExample
         KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
         KoGL.DisableDepthTest(); // 2d text mode
 
-        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.MatrixMode(MatrixState.Projection);
         KoGL.LoadIdentity();
         KoGL.Ortho(0, 800, 600, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.MatrixMode(MatrixState.ModelView);
         KoGL.LoadIdentity();
 
         // basic Text

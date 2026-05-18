@@ -24,11 +24,11 @@ internal class ScissorExample
         // clear the whole screen
         KoGL.Clear(0.05f, 0.05f, 0.08f, 1.0f);
 
-        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.MatrixMode(MatrixState.Projection);
         KoGL.LoadIdentity();
         KoGL.Ortho(0, 800, 600, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.MatrixMode(MatrixState.ModelView);
         KoGL.LoadIdentity();
 
         // draw a background "cntainer" to show where the scissor box is

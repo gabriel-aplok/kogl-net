@@ -11,6 +11,7 @@ namespace Kogl.Samples.Samples;
 
 internal class InputExample
 {
+    private static readonly AppWindow _app = new(800, 600, "KoGL - Input & Action Mapping");
     private static readonly Camera _camera = new();
     private static readonly Camera _uiCamera = new();
     private static Font _uiFont = null!;
@@ -20,9 +21,7 @@ internal class InputExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Input & Action Mapping");
-
-        app.OnLoad += () =>
+        _app.OnLoad += () =>
         {
             // scene camera
             _camera.Position = new Vector3(0, 1, 5);
@@ -50,11 +49,13 @@ internal class InputExample
             InputManager.CursorMode = CursorMode.Locked;
         };
 
-        app.OnRender += RenderLoop;
-
-        app.OnUnload += () => _uiFont?.Dispose();
-
-        app.Run();
+        _app.OnRender += RenderLoop;
+        _app.OnResizeEvent += (width, height) =>
+        {
+            _camera.AspectRatio = height == 0 ? 1f : (float)width / height;
+        };
+        _app.OnUnload += () => _uiFont?.Dispose();
+        _app.Run();
     }
 
     private static void RenderLoop(double dt)
@@ -70,17 +71,15 @@ internal class InputExample
         DrawWorld();
         KoGL.EndCamera();
 
-        // TODO: fix the text rendering, cuz the text appears with the clear background that eliminates the 3D world behind it, lol
-        // TODO: maybe I just need to add more states to the renderApi to enable transparency and other important stuff
         // render ui
         KoGL.DisableDepthTest();
         KoGL.EnableBlending();
 
         // match screen coords (0,0 is top-left)
-        KoGL.MatrixMode(MatrixStackMode.Projection);
+        KoGL.MatrixMode(MatrixState.Projection);
         KoGL.LoadIdentity();
-        KoGL.Ortho(0, 800, 600, 0, -1, 1);
-        KoGL.MatrixMode(MatrixStackMode.ModelView);
+        KoGL.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
+        KoGL.MatrixMode(MatrixState.ModelView);
         KoGL.LoadIdentity();
 
         DrawUI();

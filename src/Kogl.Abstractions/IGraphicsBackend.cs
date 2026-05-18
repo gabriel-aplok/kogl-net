@@ -13,6 +13,23 @@ public interface IGraphicsBackend : IDisposable
     public void SetDepthTest(bool enabled);
     public void SetBlending(bool enabled);
 
+    public void SetCulling(bool enabled, CullFaceState mode = CullFaceState.Back);
+    public void SetPolygonMode(PolygonState mode);
+    public void SetLineWidth(float width);
+    public void SetPointSize(float size);
+
+    public void SetDepthMask(bool write);
+    public void SetColorMask(bool r, bool g, bool b, bool a);
+
+    public void SetBlendFunc(BlendingFactorState src, BlendingFactorState dst);
+    public void SetBlendEquation(BlendEquationState mode);
+    public void SetDepthFunc(DepthFunctionState func);
+
+    public void SetStencilTest(bool enabled);
+
+    public void SetClearDepth(float depth);
+    public void SetClearStencil(int stencil);
+
     // Scissors
     public void SetScissor(int x, int y, int width, int height);
     public void SetScissorEnabled(bool enabled);

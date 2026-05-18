@@ -6,7 +6,7 @@
 
 </div>
 
-this stills a work in progress, but it's already usable for some things, if you want to contribute or report any issue, feel free.
+this stills a work in progress, but it's already usable for some tests, if you want to contribute or report any issue, feel free for open a pull request.
 
 currently porting a library I created in pure C to C#.
 
@@ -16,11 +16,7 @@ currently porting a library I created in pure C to C#.
 ## features
 
 - modern backend with the opengl 1.1 immediate-mode style behind the scenes.
-- automatic dynamic batching.
-- shaders support.
-- resources management.
-- input management.
-- simd matrix transforms.
+- abstracted backend architecture
 
 ### license
 

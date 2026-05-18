@@ -1,4 +1,5 @@
 using System.Numerics;
+using Kogl.Abstractions.Types;
 
 namespace Kogl.Abstractions;
 
@@ -14,7 +15,10 @@ public interface IGraphicsBackend : IDisposable
     public void SetBlending(bool enabled);
 
     public void SetCulling(bool enabled, CullFaceState mode = CullFaceState.Back);
+    public void SetFrontFace(FrontFaceState mode);
     public void SetPolygonMode(PolygonState mode);
+    public void SetPolygonOffset(float factor, float units);
+    public void SetDither(bool enabled);
     public void SetLineWidth(float width);
     public void SetPointSize(float size);
 
@@ -25,6 +29,10 @@ public interface IGraphicsBackend : IDisposable
     public void SetBlendEquation(BlendEquationState mode);
     public void SetDepthFunc(DepthFunctionState func);
 
+    public void SetStencilFunc(StencilFunctionState func, int reference, uint mask);
+    public void SetStencilOp(StencilOpState sfail, StencilOpState dpfail, StencilOpState dppass);
+    public void SetStencilMask(uint mask);
+    public void SetLogicOp(LogicOpState op);
     public void SetStencilTest(bool enabled);
 
     public void SetClearDepth(float depth);

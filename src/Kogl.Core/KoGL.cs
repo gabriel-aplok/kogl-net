@@ -625,10 +625,13 @@ void main() {
         EnableDepthTest();
         DisableBlending();
         DisableCulling();
+        FrontFace(FrontFaceState.Ccw);
         DepthMask(true);
         ColorMask(true, true, true, true);
         DepthFunc(DepthFunctionState.Less);
+        StencilMask(0xFFFFFFFF);
         PolygonMode(PolygonState.Fill);
+        DisableDither();
         LineWidth(1.0f);
         PointSize(1.0f);
         DisableStencilTest();
@@ -672,10 +675,34 @@ void main() {
         _backend.SetCulling(false);
     }
 
+    /// <summary>Sets the front face</summary>
+    public static void FrontFace(FrontFaceState mode)
+    {
+        _backend.SetFrontFace(mode);
+    }
+
     /// <summary>Sets the polygon mode</summary>
     public static void PolygonMode(PolygonState mode)
     {
         _backend.SetPolygonMode(mode);
+    }
+
+    /// <summary>Sets the polygon offset</summary>
+    public static void PolygonOffset(float factor, float units)
+    {
+        _backend.SetPolygonOffset(factor, units);
+    }
+
+    /// <summary>Enables dithering</summary>
+    public static void EnableDither()
+    {
+        _backend.SetDither(true);
+    }
+
+    /// <summary>Disables dithering</summary>
+    public static void DisableDither()
+    {
+        _backend.SetDither(false);
     }
 
     /// <summary>Sets the line width</summary>
@@ -718,6 +745,30 @@ void main() {
     public static void DepthFunc(DepthFunctionState func)
     {
         _backend.SetDepthFunc(func);
+    }
+
+    /// <summary>Sets the stencil function</summary>
+    public static void StencilFunc(StencilFunctionState func, int reference, uint mask)
+    {
+        _backend.SetStencilFunc(func, reference, mask);
+    }
+
+    /// <summary>Sets the stencil op</summary>
+    public static void StencilOp(StencilOpState sfail, StencilOpState dpfail, StencilOpState dppass)
+    {
+        _backend.SetStencilOp(sfail, dpfail, dppass);
+    }
+
+    /// <summary>Sets the stencil mask</summary>
+    public static void StencilMask(uint mask)
+    {
+        _backend.SetStencilMask(mask);
+    }
+
+    /// <summary>Sets the logic operation</summary>
+    public static void LogicOp(LogicOpState op)
+    {
+        _backend.SetLogicOp(op);
     }
 
     /// <summary>Enables stencil testing</summary>

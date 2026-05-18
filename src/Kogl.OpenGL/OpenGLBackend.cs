@@ -16,11 +16,23 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _vbo,
         _ebo;
 
+    // state caching, to avoid redundant state changes
     private CullFaceState _currentCullMode = CullFaceState.Back;
+    private FrontFaceState _currentFrontFace = FrontFaceState.Ccw;
     private PolygonState _currentPolygonMode = PolygonState.Fill;
+    private float _polygonOffsetFactor = 0;
+    private float _polygonOffsetUnits = 0;
+    private bool _ditherEnabled = true;
     private float _currentLineWidth = 1.0f;
     private float _currentPointSize = 1.0f;
     private bool _depthMask = true;
+    private StencilFunctionState _currentStencilFunc = StencilFunctionState.Always;
+    private int _currentStencilRef = 0;
+    private uint _currentStencilMask = 0xFFFFFFFF;
+    private StencilOpState _currentStencilSFail = StencilOpState.Keep;
+    private StencilOpState _currentStencilDPFail = StencilOpState.Keep;
+    private StencilOpState _currentStencilDPPass = StencilOpState.Keep;
+    private LogicOpState _currentLogicOp = LogicOpState.Copy;
     private bool _stencilTest = false;
 
     private uint _cachedVao;
@@ -165,6 +177,15 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         }
     }
 
+    /// <summary>Sets the front face</summary>
+    public void SetFrontFace(FrontFaceState mode)
+    {
+        if (_currentFrontFace == mode)
+            return;
+        _currentFrontFace = mode;
+        _gl.FrontFace(mode == FrontFaceState.Cw ? FrontFaceDirection.CW : FrontFaceDirection.Ccw);
+    }
+
     /// <summary>Sets the polygon mode</summary>
     public void SetPolygonMode(PolygonState mode)
     {
@@ -182,6 +203,34 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
                 _ => PolygonMode.Fill,
             }
         );
+    }
+
+    /// <summary>Sets the polygon offset</summary>
+    public void SetPolygonOffset(float factor, float units)
+    {
+        if (
+            MathF.Abs(_polygonOffsetFactor - factor) < 0.001f
+            && MathF.Abs(_polygonOffsetUnits - units) < 0.001f
+        )
+            return;
+
+        _polygonOffsetFactor = factor;
+        _polygonOffsetUnits = units;
+
+        _gl.PolygonOffset(factor, units);
+    }
+
+    /// <summary>Sets the dither</summary>
+    public void SetDither(bool enabled)
+    {
+        if (_ditherEnabled == enabled)
+            return;
+        _ditherEnabled = enabled;
+
+        if (enabled)
+            _gl.Enable(EnableCap.Dither);
+        else
+            _gl.Disable(EnableCap.Dither);
     }
 
     /// <summary>Sets the line width</summary>
@@ -266,6 +315,104 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
                 DepthFunctionState.NotEqual => DepthFunction.Notequal,
                 DepthFunctionState.Gequal => DepthFunction.Gequal,
                 _ => DepthFunction.Less,
+            }
+        );
+    }
+
+    /// <summary>Sets the stencil function</summary>
+    public void SetStencilFunc(StencilFunctionState func, int reference, uint mask)
+    {
+        if (
+            _currentStencilFunc == func
+            && _currentStencilRef == reference
+            && _currentStencilMask == mask
+        )
+            return;
+
+        _currentStencilFunc = func;
+        _currentStencilRef = reference;
+        _currentStencilMask = mask;
+
+        _gl.StencilFunc(
+            func switch
+            {
+                StencilFunctionState.Never => StencilFunction.Never,
+                StencilFunctionState.Less => StencilFunction.Less,
+                StencilFunctionState.Equal => StencilFunction.Equal,
+                StencilFunctionState.Lequal => StencilFunction.Lequal,
+                StencilFunctionState.Greater => StencilFunction.Greater,
+                StencilFunctionState.NotEqual => StencilFunction.Notequal,
+                StencilFunctionState.Gequal => StencilFunction.Gequal,
+                _ => StencilFunction.Always,
+            },
+            reference,
+            mask
+        );
+    }
+
+    /// <summary>Sets the stencil op</summary>
+    public void SetStencilOp(StencilOpState sfail, StencilOpState dpfail, StencilOpState dppass)
+    {
+        if (
+            _currentStencilSFail == sfail
+            && _currentStencilDPFail == dpfail
+            && _currentStencilDPPass == dppass
+        )
+            return;
+
+        _currentStencilSFail = sfail;
+        _currentStencilDPFail = dpfail;
+        _currentStencilDPPass = dppass;
+
+        _gl.StencilOp(ToGlStencilOp(sfail), ToGlStencilOp(dpfail), ToGlStencilOp(dppass));
+    }
+
+    /// <summary>Converts a stencil op state to a gl enum</summary>
+    private static StencilOp ToGlStencilOp(StencilOpState op)
+    {
+        return op switch
+        {
+            StencilOpState.Zero => StencilOp.Zero,
+            StencilOpState.Replace => StencilOp.Replace,
+            StencilOpState.Incr => StencilOp.Incr,
+            StencilOpState.IncrWrap => StencilOp.IncrWrap,
+            StencilOpState.Decr => StencilOp.Decr,
+            StencilOpState.DecrWrap => StencilOp.DecrWrap,
+            StencilOpState.Invert => StencilOp.Invert,
+            _ => StencilOp.Keep,
+        };
+    }
+
+    /// <summary>Sets the stencil mask</summary>
+    public void SetStencilMask(uint mask)
+    {
+        if (_currentStencilMask == mask)
+            return;
+        _currentStencilMask = mask;
+
+        _gl.StencilMask(mask);
+    }
+
+    /// <summary>Sets the logic operation</summary>
+    public void SetLogicOp(LogicOpState op)
+    {
+        if (_currentLogicOp == op)
+            return;
+        _currentLogicOp = op;
+
+        _gl.LogicOp(
+            op switch
+            {
+                LogicOpState.Clear => LogicOp.Clear,
+                LogicOpState.And => LogicOp.And,
+                LogicOpState.Copy => LogicOp.Copy,
+                LogicOpState.Xor => LogicOp.Xor,
+                LogicOpState.Or => LogicOp.Or,
+                LogicOpState.Nor => LogicOp.Nor,
+                LogicOpState.Equiv => LogicOp.Equiv,
+                LogicOpState.Invert => LogicOp.Invert,
+                LogicOpState.OrReverse => LogicOp.OrReverse,
+                _ => LogicOp.Copy,
             }
         );
     }
@@ -385,12 +532,12 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.Nearest
+            (int)TextureMinFilter.Linear
         );
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMagFilter,
-            (int)TextureMagFilter.Nearest
+            (int)TextureMagFilter.Linear
         );
 
         InternalFormat format = channels == 4 ? InternalFormat.Rgba : InternalFormat.Rgb;

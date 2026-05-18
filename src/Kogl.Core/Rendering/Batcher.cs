@@ -20,7 +20,7 @@ internal class Batcher(IGraphicsBackend backend)
     private int _batchCount;
 
     private PrimitiveMode _currentMode;
-    private TextureHandle _currentTexture;
+    private TextureSet _currentTextures;
     private ShaderHandle _currentShader;
 
     private bool _isBuildingBatch;
@@ -29,15 +29,15 @@ internal class Batcher(IGraphicsBackend backend)
     /// Begins rendering
     /// </summary>
     /// <param name="mode">The primitive mode</param>
-    /// <param name="texture">The texture</param>
+    /// <param name="textures">The textures</param>
     /// <param name="shader">The shader</param>
-    public void Begin(PrimitiveMode mode, TextureHandle texture, ShaderHandle shader)
+    public void Begin(PrimitiveMode mode, in TextureSet textures, ShaderHandle shader)
     {
         if (_isBuildingBatch)
         {
             if (
                 _currentMode == mode
-                && _currentTexture.Id == texture.Id
+                && _currentTextures == textures
                 && _currentShader.Id == shader.Id
             )
             {
@@ -47,7 +47,7 @@ internal class Batcher(IGraphicsBackend backend)
         }
 
         _currentMode = mode;
-        _currentTexture = texture;
+        _currentTextures = textures;
         _currentShader = shader;
         _isBuildingBatch = true;
         StartNewBatch();
@@ -62,23 +62,19 @@ internal class Batcher(IGraphicsBackend backend)
     /// <param name="modelViewMatrix">The model-view matrix</param>
     public void AddVertex(Vector3 position, Vector2 uv, Vector4 color, in Matrix4x4 modelViewMatrix)
     {
-        // safe preventative flush boundary to prevent array overflows on tight loop thresholds
         if (_vertexCount >= _maxVertices - 4 || _indexCount >= _maxIndices - 6)
         {
             PrimitiveMode savedMode = _currentMode;
-            TextureHandle savedTexture = _currentTexture;
+            TextureSet savedTextures = _currentTextures;
             ShaderHandle savedShader = _currentShader;
 
             End();
             Flush(KoGL.GetProjectionMatrix());
 
-            // transparently restart accumulation pipeline state for remaining primitives
-            Begin(savedMode, savedTexture, savedShader);
+            Begin(savedMode, in savedTextures, savedShader);
         }
 
-        // apply CPU-side SIMD transform matrix projection
         Vector3 transformedPosition = Vector3.Transform(position, modelViewMatrix);
-
         _vertices[_vertexCount++] = new VertexData(transformedPosition, uv, color);
     }
 
@@ -181,7 +177,7 @@ internal class Batcher(IGraphicsBackend backend)
         _batches[_batchCount] = new RenderBatch
         {
             Mode = _currentMode,
-            Texture = _currentTexture,
+            Textures = _currentTextures,
             Shader = _currentShader,
             VertexOffset = _vertexCount,
             IndexOffset = _indexCount,

@@ -13,6 +13,8 @@ namespace Kogl.Core;
 /// </summary>
 public static class KoGL
 {
+    public const int MaxTextureSlots = 8;
+
     private static IGraphicsBackend _backend = null!;
     private static Batcher _batcher = null!;
     private static readonly MatrixStack _matrices = new();
@@ -23,7 +25,8 @@ public static class KoGL
     private static Material? _currentMaterial;
     private static Vector2 _currentTexCoord = Vector2.Zero;
     private static Vector4 _currentColor = Vector4.One;
-    private static TextureHandle _currentTextureHandle;
+
+    private static readonly TextureHandle[] _currentTextures = new TextureHandle[MaxTextureSlots];
     private static ShaderHandle _currentShaderHandle;
 
     private static uint _cachedFboId = 0;
@@ -46,7 +49,11 @@ public static class KoGL
         // create default texture
         ReadOnlySpan<byte> whitePixels = [255, 255, 255, 255];
         _defaultTexture = _backend.CreateTexture(whitePixels, 1, 1, 4);
-        _currentTextureHandle = _defaultTexture;
+
+        for (int i = 0; i < MaxTextureSlots; i++)
+        {
+            _currentTextures[i] = _defaultTexture;
+        }
 
         // create default shader
         string vs =
@@ -365,7 +372,19 @@ void main() {
     /// <param name="mode">The primitive mode</param>
     public static void Begin(PrimitiveMode mode)
     {
-        _batcher.Begin(mode, _currentTextureHandle, _currentShaderHandle);
+        TextureSet set = new()
+        {
+            Slot0 = _currentTextures[0],
+            Slot1 = _currentTextures[1],
+            Slot2 = _currentTextures[2],
+            Slot3 = _currentTextures[3],
+            Slot4 = _currentTextures[4],
+            Slot5 = _currentTextures[5],
+            Slot6 = _currentTextures[6],
+            Slot7 = _currentTextures[7],
+        };
+
+        _batcher.Begin(mode, set, _currentShaderHandle);
     }
 
     /// <summary>
@@ -530,18 +549,22 @@ void main() {
     /// <summary>
     /// Uses the default texture
     /// </summary>
-    public static void UseDefaultTexture()
+    /// <param name="slot">The slot</param>
+    public static void UseDefaultTexture(int slot = 0)
     {
-        _currentTextureHandle = _defaultTexture;
+        if (slot >= 0 && slot < MaxTextureSlots)
+            _currentTextures[slot] = _defaultTexture;
     }
 
     /// <summary>
     /// Uses a texture
     /// </summary>
     /// <param name="texture">The texture</param>
-    public static void UseTexture(TextureHandle texture)
+    /// <param name="slot">The slot</param>
+    public static void UseTexture(TextureHandle texture, int slot = 0)
     {
-        _currentTextureHandle = texture.Id == 0 ? _defaultTexture : texture;
+        if (slot >= 0 && slot < MaxTextureSlots)
+            _currentTextures[slot] = texture.Id == 0 ? _defaultTexture : texture;
     }
 
     /// <summary>
@@ -574,9 +597,11 @@ void main() {
     /// <param name="handle">The handle</param>
     public static void DeleteTexture(TextureHandle handle)
     {
-        if (_currentTextureHandle.Id == handle.Id)
+        // nullify from all active slots to prevent use-after-free
+        for (int i = 0; i < MaxTextureSlots; i++)
         {
-            UseDefaultTexture();
+            if (_currentTextures[i].Id == handle.Id)
+                UseDefaultTexture(i);
         }
         _backend.DeleteTexture(handle);
     }
@@ -590,7 +615,9 @@ void main() {
     /// </summary>
     public static void ResetStates()
     {
-        UseDefaultTexture();
+        for (int i = 0; i < MaxTextureSlots; i++)
+            UseDefaultTexture(i);
+
         UseDefaultShader();
         _currentTexCoord = Vector2.Zero;
         _currentColor = Vector4.One;

@@ -20,9 +20,11 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     private uint _cachedVao;
     private uint _cachedVbo;
     private uint _cachedEbo;
-    private uint _cachedTexture;
     private uint _cachedShader;
     private uint _cachedFbo;
+
+    private readonly uint[] _cachedTextures = new uint[8];
+    private int _activeTextureSlot = -1;
 
     private readonly Dictionary<(uint, string), int> _uniformLocations = [];
 
@@ -121,8 +123,16 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     public void DrawBatch(in RenderBatch batch)
     {
         BindVaoInternal(_vao);
-        BindTextureInternal(batch.Texture.Id);
         BindShaderInternal(batch.Shader.Id);
+
+        BindTextureInternal(batch.Textures.Slot0.Id, 0);
+        BindTextureInternal(batch.Textures.Slot1.Id, 1);
+        BindTextureInternal(batch.Textures.Slot2.Id, 2);
+        BindTextureInternal(batch.Textures.Slot3.Id, 3);
+        BindTextureInternal(batch.Textures.Slot4.Id, 4);
+        BindTextureInternal(batch.Textures.Slot5.Id, 5);
+        BindTextureInternal(batch.Textures.Slot6.Id, 6);
+        BindTextureInternal(batch.Textures.Slot7.Id, 7);
 
         PrimitiveType glMode = batch.Mode switch
         {
@@ -147,17 +157,17 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     )
     {
         uint id = _gl.GenTexture();
-        _gl.BindTexture(TextureTarget.Texture2D, id);
+        BindTextureInternal(id, 0);
 
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.Linear
+            (int)TextureMinFilter.Nearest
         );
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMagFilter,
-            (int)TextureMagFilter.Linear
+            (int)TextureMagFilter.Nearest
         );
 
         InternalFormat format = channels == 4 ? InternalFormat.Rgba : InternalFormat.Rgb;
@@ -191,10 +201,9 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         int channels
     )
     {
-        BindTextureInternal(texture.Id);
+        BindTextureInternal(texture.Id, 0);
 
         PixelFormat pxFormat = channels == 4 ? PixelFormat.Rgba : PixelFormat.Rgb;
-
         fixed (byte* ptr = pixelData)
         {
             _gl.TexSubImage2D(
@@ -230,7 +239,8 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         {
             // generate and bind the texture
             uint tex = _gl.GenTexture();
-            BindTextureInternal(tex);
+
+            BindTextureInternal(tex, 0);
 
             // allocate empty texture memory
             _gl.TexImage2D(
@@ -250,16 +260,19 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
                 TextureParameterName.TextureMinFilter,
                 (int)TextureMinFilter.Linear
             );
+
             _gl.TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMagFilter,
                 (int)TextureMagFilter.Linear
             );
+
             _gl.TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapS,
                 (int)TextureWrapMode.ClampToEdge
             );
+
             _gl.TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapT,
@@ -287,6 +300,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
         // generate renderbuffer for depth/stencil (required if draw 3d inside the fbo)
         uint rbo = _gl.GenRenderbuffer();
+
         _gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo);
         _gl.RenderbufferStorage(
             RenderbufferTarget.Renderbuffer,
@@ -294,6 +308,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             (uint)width,
             (uint)height
         );
+
         _gl.FramebufferRenderbuffer(
             FramebufferTarget.Framebuffer,
             FramebufferAttachment.DepthStencilAttachment,
@@ -450,9 +465,9 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         _gl.Viewport(x, y, (uint)w, (uint)h);
     }
 
-    public void BindTexture(TextureHandle texture)
+    public void BindTexture(TextureHandle texture, int slot)
     {
-        BindTextureInternal(texture.Id);
+        BindTextureInternal(texture.Id, slot);
     }
 
     public void BindShader(ShaderHandle shader)
@@ -462,10 +477,14 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 
     public void DeleteTexture(TextureHandle texture)
     {
-        if (_cachedTexture == texture.Id)
+        for (int i = 0; i < _cachedTextures.Length; i++)
         {
-            _cachedTexture = 0;
+            if (_cachedTextures[i] == texture.Id)
+            {
+                _cachedTextures[i] = 0;
+            }
         }
+
         _gl.DeleteTexture(texture.Id);
     }
 
@@ -535,12 +554,20 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         }
     }
 
-    private void BindTextureInternal(uint id)
+    private void BindTextureInternal(uint id, int slot)
     {
-        if (_cachedTexture != id)
+        // switch the active hardware unit if needed
+        if (_activeTextureSlot != slot)
+        {
+            _gl.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + slot));
+            _activeTextureSlot = slot;
+        }
+
+        // bind the specific texture id to the current active unit if changed
+        if (_cachedTextures[slot] != id)
         {
             _gl.BindTexture(TextureTarget.Texture2D, id);
-            _cachedTexture = id;
+            _cachedTextures[slot] = id;
         }
     }
 

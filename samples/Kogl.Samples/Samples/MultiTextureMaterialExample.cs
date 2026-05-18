@@ -10,16 +10,19 @@ using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
 
-internal class MaterialExample
+internal class MultiTextureMaterialExample
 {
     private static readonly Camera _camera = new();
     private static Font _uiFont = null!;
 
-    private static Shader _standardShader = null!;
-    private static Material _redMaterial = null!;
-    private static Material _bluePulseMaterial = null!;
+    private static Shader _pbrShader = null!;
+    private static Material _brickMaterial = null!;
+    private static Material _blueMaterial = null!;
     private static Material _gridMaterial = null!;
-    private static Texture _logoTex = null!;
+
+    private static Texture _brickAlbedoTex = null!;
+    private static Texture _brickNormalTex = null!;
+    private static Texture _containerAlbedoTex = null!;
 
     private static float _yaw = -90f;
     private static float _pitch = 0f;
@@ -27,7 +30,7 @@ internal class MaterialExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Material");
+        AppWindow app = new(800, 600, "KoGL - Multi-Texture Material Example");
 
         app.OnLoad += () =>
         {
@@ -44,6 +47,7 @@ internal class MaterialExample
             InputMap.Bind("MoveForward", Key.W);
             InputMap.Bind("MoveBackward", Key.S);
 
+            // TODO: Tangent and Bitangent vectors
             string vs =
                 @"#version 330 core
 layout(location = 0) in vec3 aPos;
@@ -52,6 +56,7 @@ layout(location = 2) in vec4 aCol;
 
 out vec2 fTex;
 out vec4 fCol;
+out vec3 fWorldPos;
 
 uniform mat4 uMVP;
 
@@ -59,45 +64,96 @@ void main() {
     gl_Position = uMVP * vec4(aPos, 1.0);
     fTex = aTex;
     fCol = aCol;
+    fWorldPos = aPos;
 }";
 
             string fs =
                 @"#version 330 core
 in vec2 fTex;
 in vec4 fCol;
+in vec3 fWorldPos;
 out vec4 FragColor;
 
-uniform sampler2D uTex;
+uniform sampler2D uAlbedoTex;
+uniform sampler2D uNormalTex;
 uniform vec4 uTint;
-uniform float uTime;
 
 void main() {
-    vec4 tex = texture(uTex, fTex);
-    float pulse = (sin(uTime * 4.0) * 0.15) + 0.85;
-    FragColor = tex * fCol * uTint * vec4(pulse, pulse, pulse, 1.0);
+    // sample textures
+    vec4 albedo = texture(uAlbedoTex, fTex);
+    vec3 normalMap = texture(uNormalTex, fTex).rgb;
+
+    // calculate the flat face normal using geometric derivatives
+    vec3 dX = dFdx(fWorldPos);
+    vec3 dY = dFdy(fWorldPos);
+    vec3 faceNormal = normalize(cross(dX, dY));
+    if (!gl_FrontFacing) faceNormal = -faceNormal;
+
+    // dynamically derive Tangent (T) and Bitangent (B) vectors using UV derivatives
+    vec2 st1 = dFdx(fTex);
+    vec2 st2 = dFdy(fTex);
+
+    vec3 edge1 = dX;
+    vec3 edge2 = dY;
+
+    float r = 1.0 / (st1.x * st2.y - st2.x * st1.y);
+    vec3 tangent = normalize((edge1 * st2.y - edge2 * st1.y) * r);
+
+    // re-orthogonalize and compute Bitangent
+    tangent = normalize(tangent - dot(tangent, faceNormal) * faceNormal);
+    vec3 bitangent = cross(faceNormal, tangent);
+
+    // construct TBN matrix to transform normal map from tangent space to world/object space
+    mat3 TBN = mat3(tangent, bitangent, faceNormal);
+
+    // map the normal texture from [0, 1] range to [-1, 1] range
+    vec3 bumpedNormal = normalMap * 2.0 - 1.0;
+
+    // if normal map is missing or flat, fallback gracefully
+    vec3 finalNormal = normalize(TBN * bumpedNormal);
+
+    // sun lighting
+    vec3 sunDirection = normalize(vec3(0.4, 1.0, 0.3));
+    vec3 sunColor = vec3(1.1, 1.05, 0.95);
+    vec3 ambientColor = vec3(0.22, 0.24, 0.26);
+
+    // diffuse calculation using the new bumped normal map vector
+    float diffuseFactor = max(dot(finalNormal, sunDirection), 0.0);
+    vec3 lighting = ambientColor + (diffuseFactor * sunColor);
+
+    vec4 composite = albedo * vec4(lighting, 1.0);
+    FragColor = composite * fCol * uTint;
 }";
 
-            _standardShader = Shader.Create(vs, fs);
-            _standardShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
-            _standardShader.AddProperty("uTint", ShaderPropertyType.Vec4);
+            _pbrShader = Shader.Create(vs, fs);
 
-            _logoTex = ResourceManager.Load<Texture>("assets/container.jpg");
+            _pbrShader.AddProperty("uAlbedoTex", ShaderPropertyType.Texture2D);
+            _pbrShader.AddProperty("uNormalTex", ShaderPropertyType.Texture2D);
+            _pbrShader.AddProperty("uTint", ShaderPropertyType.Vec4);
 
-            Material baseMat = new(_standardShader);
-            baseMat.SetTexture("uTex", _logoTex);
+            _brickAlbedoTex = ResourceManager.Load<Texture>("assets/brickwall.jpg");
+            _brickNormalTex = ResourceManager.Load<Texture>("assets/brickwall_normal.jpg");
+            _containerAlbedoTex = ResourceManager.Load<Texture>("assets/container.jpg");
+
+            Material baseMat = new(_pbrShader);
+            baseMat.SetTexture("uAlbedoTex", _brickAlbedoTex);
+            baseMat.SetTexture("uNormalTex", _brickNormalTex);
             baseMat.SetVector4("uTint", Vector4.One);
             baseMat.DepthTest = true;
             baseMat.Blending = false;
 
-            _redMaterial = baseMat.CreateInstance();
-            _redMaterial.SetVector4("uTint", new Vector4(1.0f, 0.3f, 0.3f, 1.0f));
+            _brickMaterial = baseMat.CreateInstance();
+            _brickMaterial.SetVector4("uTint", new Vector4(1.0f, 0.8f, 0.6f, 1.0f));
 
-            _bluePulseMaterial = baseMat.CreateInstance();
-            _bluePulseMaterial.SetVector4("uTint", new Vector4(0.3f, 0.5f, 1.0f, 1.0f));
+            _blueMaterial = baseMat.CreateInstance();
+            _blueMaterial.SetTexture("uAlbedoTex", _containerAlbedoTex);
+            // btw container doesn't have a specific normal map, it reuses the base brick normal texture slot smoothly
+            _blueMaterial.SetVector4("uTint", new Vector4(0.3f, 0.5f, 1.0f, 1.0f));
 
             _gridMaterial = baseMat.CreateInstance();
             _gridMaterial.SetVector4("uTint", new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
         };
+
         app.OnRender += RenderLoop;
         app.OnUnload += () =>
         {
@@ -112,36 +168,29 @@ void main() {
         _time += (float)dt;
         UpdateInput((float)dt);
 
-        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoGL.Clear(0.11f, 0.13f, 0.16f, 1.0f);
         KoGL.EnableDepthTest();
 
         KoGL.BeginCamera(_camera);
-
-        GlobalUniforms.SetFloat("uTime", _time);
-
         DrawWorld();
-
         KoGL.EndCamera();
-        KoGL.DisableDepthTest();
 
+        KoGL.DisableDepthTest();
         DrawUI();
     }
 
     private static void UpdateInput(float dt)
     {
-        // right mouse button
         if (InputManager.IsMouseButtonDown(MouseButton.Right))
         {
             InputManager.CursorMode = CursorMode.Locked;
 
-            // mouse
             Vector2 delta = InputManager.MouseDelta;
             _yaw -= delta.X * 0.15f;
             _pitch -= delta.Y * 0.15f;
             _pitch = Math.Clamp(_pitch, -89f, 89f);
             _camera.Rotation = new Vector3(_pitch, _yaw, 0);
 
-            // move
             Vector2 inputDir = InputMap.GetVector(
                 "MoveLeft",
                 "MoveRight",
@@ -152,8 +201,18 @@ void main() {
             Vector3 horizontalFront = Vector3.Normalize(
                 new Vector3(_camera.Front.X, 0, _camera.Front.Z)
             );
+
             _camera.Position += horizontalFront * inputDir.Y * 8.0f * dt;
             _camera.Position += _camera.Right * inputDir.X * 8.0f * dt;
+
+            if (InputManager.IsKeyDown(Key.Space))
+            {
+                _camera.Position += Vector3.UnitY * 8.0f * dt;
+            }
+            if (InputManager.IsKeyDown(Key.ShiftLeft))
+            {
+                _camera.Position -= Vector3.UnitY * 8.0f * dt;
+            }
         }
         else
         {
@@ -163,8 +222,6 @@ void main() {
 
     private static void DrawWorld()
     {
-        KoGL.ApplyMaterial(_gridMaterial);
-
         KoGL.Begin(PrimitiveMode.Lines);
         for (int i = -10; i <= 10; i++)
         {
@@ -175,17 +232,15 @@ void main() {
         }
         KoGL.End();
 
-        DrawMaterialCube(new Vector3(-2, 1, 0), _redMaterial);
-        DrawMaterialCube(new Vector3(2, 1, 0), _bluePulseMaterial);
+        DrawMaterialCube(new Vector3(-2, 1, 0), _brickMaterial);
+        DrawMaterialCube(new Vector3(2, 1, 0), _blueMaterial);
     }
 
     private static void DrawMaterialCube(Vector3 position, Material mat)
     {
         KoGL.PushMatrix();
         KoGL.Translate(position.X, position.Y, position.Z);
-
         KoGL.ApplyMaterial(mat);
-        KoGL.UseTexture(_logoTex.Handle);
 
         KoGL.Begin(PrimitiveMode.Quads);
         KoGL.Color4(1, 1, 1, 1);
@@ -256,7 +311,6 @@ void main() {
 
     private static void DrawUI()
     {
-        KoGL.DisableDepthTest();
         KoGL.EnableBlending();
 
         KoGL.MatrixMode(MatrixStackMode.Projection);
@@ -265,14 +319,7 @@ void main() {
         KoGL.MatrixMode(MatrixStackMode.ModelView);
         KoGL.LoadIdentity();
 
-        KoGLText.DrawText(
-            _uiFont,
-            "WASD = Move | Right Mouse = Look | ESC = Toggle Cursor",
-            new Vector2(10, 10),
-            Vector4.One
-        );
-
         string pos = $"Pos: {_camera.Position:F1}";
-        KoGLText.DrawText(_uiFont, pos, new Vector2(10, 40), new Vector4(0.2f, 0.8f, 0.2f, 1));
+        KoGLText.DrawText(_uiFont, pos, new Vector2(10, 10), new Vector4(0.2f, 0.8f, 0.2f, 1));
     }
 }

@@ -84,6 +84,8 @@ public class Material : Resource
         backend.SetDepthTest(DepthTest);
         backend.SetBlending(Blending);
 
+        int textureSlot = 0;
+
         foreach (ShaderProperty prop in Shader.Properties)
         {
             object? val = GetParameter(prop.Name);
@@ -112,9 +114,9 @@ public class Material : Resource
                     break;
                 case ShaderPropertyType.Texture2D:
                     Texture tex = (Texture)val;
-                    // automatic binding to slots
-                    backend.BindTexture(tex.Handle); // current backend only supports one binding at a time in current abstraction
-                    // backend.BindTexture(tex.Handle, textureSlot++);
+                    KoGL.UseTexture(tex.Handle, textureSlot);
+                    backend.SetUniformInt(Shader.Handle, prop.Name, textureSlot);
+                    textureSlot++;
                     break;
             }
         }

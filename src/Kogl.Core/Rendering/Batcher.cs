@@ -59,6 +59,7 @@ internal class Batcher(IGraphicsBackend backend)
         Vector2 uv,
         Vector4 color,
         Vector3 normal,
+        Vector4 tangent,
         in Matrix4x4 modelViewMatrix
     )
     {
@@ -76,12 +77,17 @@ internal class Batcher(IGraphicsBackend backend)
 
         Vector3 transformedPosition = Vector3.Transform(position, modelViewMatrix);
         Vector3 transformedNormal = Vector3.TransformNormal(normal, modelViewMatrix);
+        Vector4 transformedTangent = new(
+            Vector3.TransformNormal(tangent.AsVector3(), modelViewMatrix),
+            tangent.W
+        );
 
         _vertices[_vertexCount++] = new VertexData(
             transformedPosition,
             uv,
             color,
-            transformedNormal
+            transformedNormal,
+            transformedTangent
         );
     }
 

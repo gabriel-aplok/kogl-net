@@ -26,6 +26,7 @@ public static class KoGL
     private static Vector2 _currentTexCoord = Vector2.Zero;
     private static Vector4 _currentColor = Vector4.One;
     private static Vector3 _currentNormal = Vector3.UnitZ;
+    private static Vector4 _currentTangent = new(1, 0, 0, 1);
 
     private static readonly TextureHandle[] _currentTextures = new TextureHandle[MaxTextureSlots];
     private static ShaderHandle _currentShaderHandle;
@@ -482,6 +483,18 @@ void main() {
         _currentNormal = normal;
     }
 
+    /// <summary>Sets the tangent vector (w = handedness, usually +1 or -1)</summary>
+    public static void Tangent4(float x, float y, float z, float w = 1.0f)
+    {
+        _currentTangent = new Vector4(x, y, z, w);
+    }
+
+    /// <summary>Sets the tangent vector (w = handedness, usually +1 or -1)</summary>
+    public static void Tangent4(in Vector4 tangent)
+    {
+        _currentTangent = tangent;
+    }
+
     /// <summary>Sets the vertex</summary>
     public static void Vertex2(float x, float y)
     {
@@ -496,6 +509,7 @@ void main() {
             _currentTexCoord,
             _currentColor,
             _currentNormal,
+            _currentTangent,
             _matrices.ModelView
         );
     }
@@ -503,9 +517,7 @@ void main() {
     #endregion
     #region Resources Management
 
-    /// <summary>
-    /// Applies a material
-    /// </summary>
+    /// <summary>Applies a material</summary>
     public static void ApplyMaterial(Material material)
     {
         if (_currentMaterial == material)
@@ -520,19 +532,13 @@ void main() {
         GlobalUniforms.ApplyTo(material.Shader);
     }
 
-    /// <summary>
-    /// Uses the default shader
-    /// </summary>
+    /// <summary>Uses the default shader</summary>
     public static void UseDefaultShader()
     {
         _currentShaderHandle = _defaultShader;
     }
 
-    /// <summary>
-    /// Creates a shader
-    /// </summary>
-    /// <param name="vsCode">Code for the vertex shader</param>
-    /// <param name="fsCode">Code for the fragment shader</param>
+    /// <summary>Creates a shader</summary>
     /// <returns></returns>
     public static ShaderHandle CreateShader(string vsCode, string fsCode)
     {
@@ -646,6 +652,8 @@ void main() {
         UseDefaultShader();
         _currentTexCoord = Vector2.Zero;
         _currentColor = Vector4.One;
+        _currentNormal = Vector3.UnitZ;
+        _currentTangent = new Vector4(1, 0, 0, 1);
 
         // set default render states
         EnableDepthTest();

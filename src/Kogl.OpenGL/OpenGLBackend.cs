@@ -82,7 +82,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             VertexAttribPointerType.Float,
             false,
             (uint)sizeof(VertexData),
-            (void*)0
+            (void*)0 // offset: Pos(0)
         );
 
         // attribute setup: location 1 = texCoord
@@ -93,7 +93,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             VertexAttribPointerType.Float,
             false,
             (uint)sizeof(VertexData),
-            (void*)12
+            (void*)12 // offset: Pos(0)
         );
 
         // attribute setup: location 2 = color
@@ -104,7 +104,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             VertexAttribPointerType.Float,
             false,
             (uint)sizeof(VertexData),
-            (void*)20
+            (void*)20 // offset: Pos(0)+Tex(12)
         );
 
         // attribute setup: location 3 = normal
@@ -115,7 +115,18 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             VertexAttribPointerType.Float,
             false,
             (uint)sizeof(VertexData),
-            (void*)32
+            (void*)32 // offset: Pos(0)+Tex(12)+Col(20)
+        );
+
+        // attribute setup: location 4 = tangent (vec4)
+        _gl.EnableVertexAttribArray(4);
+        _gl.VertexAttribPointer(
+            4,
+            4,
+            VertexAttribPointerType.Float,
+            false,
+            (uint)sizeof(VertexData),
+            (void*)48 // offset: Pos(0)+Tex(12)+Col(20)+Normal(36) = 48
         );
 
         BindVaoInternal(0);

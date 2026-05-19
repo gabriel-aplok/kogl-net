@@ -53,10 +53,13 @@ layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec2 aTex;
 layout(location = 2) in vec4 aCol;
 layout(location = 3) in vec3 aNormal;
+layout(location = 4) in vec4 aTangent;
 
 out vec2 fTex;
 out vec4 fCol;
 out vec3 fNormal;
+out vec3 fTangent;
+out vec3 fBitangent;
 out vec3 fWorldPos;
 
 uniform mat4 uMVP;
@@ -67,8 +70,10 @@ void main() {
     fCol = aCol;
     fWorldPos = aPos;
 
-    // transform normal (simple but effective for this setup)
-    fNormal = normalize(mat3(uMVP) * aNormal);   // or just aNormal if you prefer object space
+    mat3 normalMatrix = mat3(uMVP); // or better: transpose(inverse(mat3(model))) if you have model matrix
+    fNormal    = normalize(normalMatrix * aNormal);
+    fTangent   = normalize(normalMatrix * aTangent.xyz);
+    fBitangent = cross(fNormal, fTangent) * aTangent.w; // handedness
 }";
 
             string fs =
@@ -76,6 +81,8 @@ void main() {
 in vec2 fTex;
 in vec4 fCol;
 in vec3 fNormal;
+in vec3 fTangent;
+in vec3 fBitangent;
 in vec3 fWorldPos;
 
 out vec4 FragColor;
@@ -85,16 +92,12 @@ uniform sampler2D uNormalTex;
 uniform vec4 uTint;
 
 void main() {
-    // sample textures
     vec4 albedo = texture(uAlbedoTex, fTex);
-    vec3 normalMap = texture(uNormalTex, fTex).rgb;
+    vec3 normalMap = texture(uNormalTex, fTex).rgb * 2.0 - 1.0;
 
-    // use vertex normal as base
-    vec3 baseNormal = normalize(fNormal);
-
-    // blend with normal map (you can remove this if you only want vertex normals)
-    vec3 bumpedNormal = normalMap * 2.0 - 1.0;
-    vec3 finalNormal = normalize(baseNormal + bumpedNormal * 0.5); // light normal mapping influence
+    // build TBN matrix
+    mat3 TBN = mat3(fTangent, fBitangent, fNormal);
+    vec3 finalNormal = normalize(TBN * normalMap);
 
     // lighting
     vec3 sunDirection = normalize(vec3(0.4, 1.0, 0.3));
@@ -104,8 +107,7 @@ void main() {
     float diffuseFactor = max(dot(finalNormal, sunDirection), 0.0);
     vec3 lighting = ambientColor + (diffuseFactor * sunColor);
 
-    vec4 composite = albedo * vec4(lighting, 1.0);
-    FragColor = composite * fCol * uTint;
+    FragColor = albedo * vec4(lighting, 1.0) * fCol * uTint;
 }";
             _pbrShader = Shader.Create(vs, fs);
 
@@ -223,13 +225,13 @@ void main() {
 
         // This is a test for a material that uses multiple textures.
         // I was genuinely surprised when I saw that all of this was only using 3% of the CPU and 70 MB of RAM.
-        // for (int i = 0; i < 450; i++)
-        // {
-        //     DrawMaterialCube(new Vector3(-2, 6, i + 30), _brickMaterial);
-        //     DrawMaterialCube(new Vector3(-4, 6, i - 30), _brickMaterial);
-        //     DrawMaterialCube(new Vector3(i + 30, 8, 1), _blueMaterial);
-        //     DrawMaterialCube(new Vector3(i - 30, 8, 3), _blueMaterial);
-        // }
+        for (int i = 0; i < 450; i++)
+        {
+            DrawMaterialCube(new Vector3(-2, 6, i + 30), _brickMaterial);
+            DrawMaterialCube(new Vector3(-4, 6, i - 30), _brickMaterial);
+            DrawMaterialCube(new Vector3(i + 30, 8, 1), _blueMaterial);
+            DrawMaterialCube(new Vector3(i - 30, 8, 3), _blueMaterial);
+        }
     }
 
     private static void DrawMaterialCube(Vector3 position, Material mat)
@@ -242,8 +244,9 @@ void main() {
         KoGL.Begin(PrimitiveMode.Quads);
         KoGL.Color4(1, 1, 1, 1);
 
-        // Front
+        // Front (+Z)
         KoGL.Normal3(0, 0, 1);
+        KoGL.Tangent4(1, 0, 0, 1); // tangent = +X, handedness +1
         KoGL.TexCoord2(0, 1);
         KoGL.Vertex3(-1, -1, 1);
         KoGL.TexCoord2(1, 1);
@@ -253,8 +256,9 @@ void main() {
         KoGL.TexCoord2(0, 0);
         KoGL.Vertex3(-1, 1, 1);
 
-        // Back
+        // Back (-Z)
         KoGL.Normal3(0, 0, -1);
+        KoGL.Tangent4(-1, 0, 0, 1); // tangent = -X
         KoGL.TexCoord2(1, 1);
         KoGL.Vertex3(-1, -1, -1);
         KoGL.TexCoord2(1, 0);
@@ -264,8 +268,9 @@ void main() {
         KoGL.TexCoord2(0, 1);
         KoGL.Vertex3(1, -1, -1);
 
-        // Top
+        // Top (+Y)
         KoGL.Normal3(0, 1, 0);
+        KoGL.Tangent4(1, 0, 0, 1); // tangent = +X
         KoGL.TexCoord2(0, 0);
         KoGL.Vertex3(-1, 1, -1);
         KoGL.TexCoord2(0, 1);
@@ -275,8 +280,9 @@ void main() {
         KoGL.TexCoord2(1, 0);
         KoGL.Vertex3(1, 1, -1);
 
-        // Bottom
+        // Bottom (-Y)
         KoGL.Normal3(0, -1, 0);
+        KoGL.Tangent4(1, 0, 0, -1); // handedness flipped
         KoGL.TexCoord2(1, 1);
         KoGL.Vertex3(-1, -1, -1);
         KoGL.TexCoord2(0, 1);
@@ -286,8 +292,9 @@ void main() {
         KoGL.TexCoord2(1, 0);
         KoGL.Vertex3(-1, -1, 1);
 
-        // Right
+        // Right (+X)
         KoGL.Normal3(1, 0, 0);
+        KoGL.Tangent4(0, 0, 1, 1); // tangent = +Z
         KoGL.TexCoord2(0, 1);
         KoGL.Vertex3(1, -1, -1);
         KoGL.TexCoord2(1, 1);
@@ -297,8 +304,9 @@ void main() {
         KoGL.TexCoord2(0, 0);
         KoGL.Vertex3(1, -1, 1);
 
-        // Left
+        // Left (-X)
         KoGL.Normal3(-1, 0, 0);
+        KoGL.Tangent4(0, 0, -1, 1); // tangent = -Z
         KoGL.TexCoord2(1, 1);
         KoGL.Vertex3(-1, -1, -1);
         KoGL.TexCoord2(0, 1);

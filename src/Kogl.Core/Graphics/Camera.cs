@@ -2,9 +2,7 @@ using System.Numerics;
 
 namespace Kogl.Core.Graphics;
 
-/// <summary>
-/// The projection mode
-/// </summary>
+/// <summary>The projection mode</summary>
 public enum CameraProjection
 {
     Perspective,
@@ -12,20 +10,14 @@ public enum CameraProjection
     Frustum,
 }
 
-/// <summary>
-/// A camera ray
-/// </summary>
-/// <param name="origin">The origin</param>
-/// <param name="direction">The direction</param>
+/// <summary>A camera ray</summary>
 public struct CameraRay(Vector3 origin, Vector3 direction)
 {
     public Vector3 Origin = origin;
     public Vector3 Direction = direction;
 }
 
-/// <summary>
-/// A camera
-/// </summary>
+/// <summary>A camera</summary>
 public class Camera
 {
     public Vector3 Position = Vector3.Zero;
@@ -50,10 +42,7 @@ public class Camera
     public float FrustumBottom = -1f;
     public float FrustumTop = 1f;
 
-    /// <summary>
-    /// Looks at a target.
-    /// </summary>
-    /// <param name="target">The target point in space</param>
+    /// <summary>Looks at a target.</summary>
     public void LookAt(Vector3 target)
     {
         Vector3 direction = target - Position;
@@ -68,9 +57,7 @@ public class Camera
         UpdateVectors();
     }
 
-    /// <summary>
-    /// Updates the camera directional vectors based on the current Rotation angles.
-    /// </summary>
+    /// <summary>Updates the camera directional vectors based on the current Rotation angles.</summary>
     private void UpdateVectors()
     {
         float pitch = Rotation.X * (MathF.PI / 180f);
@@ -86,18 +73,14 @@ public class Camera
         Up = Vector3.Normalize(Vector3.Cross(Right, Front));
     }
 
-    /// <summary>
-    /// Gets the view matrix
-    /// </summary>
+    /// <summary>Gets the view matrix</summary>
     public Matrix4x4 GetViewMatrix()
     {
         UpdateVectors();
         return Matrix4x4.CreateLookAt(Position, Position + Front, Vector3.UnitY);
     }
 
-    /// <summary>
-    /// Gets the projection matrix
-    /// </summary>
+    /// <summary>Gets the projection matrix</summary>
     public Matrix4x4 GetProjectionMatrix(float? aspectRatio = null)
     {
         float actualAspect = aspectRatio ?? AspectRatio;
@@ -128,18 +111,14 @@ public class Camera
         };
     }
 
-    /// <summary>
-    /// Lerps the camera
-    /// </summary>
+    /// <summary>Lerps the camera</summary>
     public void Lerp(Vector3 targetPos, Vector3 targetRot, float alpha)
     {
         Position = Vector3.Lerp(Position, targetPos, alpha);
         Rotation = Vector3.Lerp(Rotation, targetRot, alpha);
     }
 
-    /// <summary>
-    /// Gets the screen ray
-    /// </summary>
+    /// <summary>Gets the screen ray</summary>
     public CameraRay GetScreenRay(Vector2 mousePosition, float aspectRatio)
     {
         Matrix4x4 view = GetViewMatrix();
@@ -169,9 +148,7 @@ public class Camera
         return new CameraRay(rayStart, Vector3.Normalize(rayEnd - rayStart));
     }
 
-    /// <summary>
-    /// Checks if a point is in view
-    /// </summary>
+    /// <summary>Checks if a point is in view</summary>
     public bool IsInView(Vector3 point, float radius)
     {
         float dist = Vector3.Distance(Position, point);

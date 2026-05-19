@@ -25,12 +25,7 @@ internal class Batcher(IGraphicsBackend backend)
 
     private bool _isBuildingBatch;
 
-    /// <summary>
-    /// Begins rendering
-    /// </summary>
-    /// <param name="mode">The primitive mode</param>
-    /// <param name="textures">The textures</param>
-    /// <param name="shader">The shader</param>
+    /// <summary>Begins rendering</summary>
     public void Begin(PrimitiveMode mode, in TextureSet textures, ShaderHandle shader)
     {
         if (_isBuildingBatch)
@@ -91,9 +86,7 @@ internal class Batcher(IGraphicsBackend backend)
         );
     }
 
-    /// <summary>
-    /// Ends the current batch
-    /// </summary>
+    /// <summary>Ends the current batch</summary>
     public void End()
     {
         if (!_isBuildingBatch)
@@ -141,10 +134,7 @@ internal class Batcher(IGraphicsBackend backend)
         _isBuildingBatch = false;
     }
 
-    /// <summary>
-    /// Flushes the current batch
-    /// </summary>
-    /// <param name="projectionMatrix">The projection matrix</param>
+    /// <summary>Flushes the current batch</summary>
     public void Flush(in Matrix4x4 projectionMatrix)
     {
         if (_isBuildingBatch)
@@ -177,9 +167,7 @@ internal class Batcher(IGraphicsBackend backend)
         _batchCount = 0;
     }
 
-    /// <summary>
-    /// Starts a new batch
-    /// </summary>
+    /// <summary>Starts a new batch</summary>
     private void StartNewBatch()
     {
         if (_batchCount >= _maxBatches)

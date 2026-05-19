@@ -51,9 +51,7 @@ public static class InputManager
         _backend = backend;
     }
 
-    /// <summary>
-    /// Flushes frame-specific state tracking. Must be called at the VERY END of the frame loop.
-    /// </summary>
+    /// <summary>Flushes frame-specific state tracking. Must be called at the VERY END of the frame loop.</summary>
     public static void Update()
     {
         Array.Clear(_keysPressed, 0, _maxKeys);

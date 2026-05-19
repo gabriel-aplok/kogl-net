@@ -7,10 +7,8 @@ using Kogl.Core.Resources;
 
 namespace Kogl.Core;
 
-/// <summary>
-/// This is the heart of the library.
-/// Old name was RenderAPI.
-/// </summary>
+/// <summary>This is the heart of the library.
+/// Old name was RenderAPI.</summary>
 public static class KoGL
 {
     public const int MaxTextureSlots = 8;
@@ -37,10 +35,7 @@ public static class KoGL
 
     #region Init
 
-    /// <summary>
-    /// Initializes the render api
-    /// </summary>
-    /// <param name="backend">The graphics backend</param>
+    /// <summary>Initializes the render api</summary>
     public static void Initialize(IGraphicsBackend backend)
     {
         // initialize the graphics backend
@@ -100,184 +95,110 @@ void main() {
 
     #region Matrix
 
-    /// <summary>
-    /// Sets the matrix mode
-    /// </summary>
-    /// <param name="mode">The matrix mode</param>
+    /// <summary>Sets the matrix mode</summary>
     public static void MatrixMode(MatrixState mode)
     {
         _matrices.CurrentMode = mode;
     }
 
-    /// <summary>
-    /// Pushes the current matrix onto the stack
-    /// </summary>
+    /// <summary>Pushes the current matrix onto the stack</summary>
     public static void PushMatrix()
     {
         _matrices.Push();
     }
 
-    /// <summary>
-    /// Pops the current matrix off the stack
-    /// </summary>
+    /// <summary>Pops the current matrix off the stack</summary>
     public static void PopMatrix()
     {
         _matrices.Pop();
     }
 
-    /// <summary>
-    /// Sets the current matrix to the identity
-    /// </summary>
+    /// <summary>Sets the current matrix to the identity</summary>
     public static void LoadIdentity()
     {
         _matrices.LoadIdentity();
     }
 
-    /// <summary>
-    /// Sets the current matrix
-    /// </summary>
-    /// <param name="matrix">The matrix</param>
+    /// <summary>Sets the current matrix</summary>
     public static void LoadMatrix(Matrix4x4 matrix)
     {
         _matrices.LoadMatrix(matrix);
     }
 
-    /// <summary>
-    /// Multiplies the current matrix
-    /// </summary>
+    /// <summary>Multiplies the current matrix</summary>
     public static void Multiply(Matrix4x4 matrix)
     {
         _matrices.Multiply(matrix);
     }
 
-    /// <summary>
-    /// Scales the current matrix
-    /// </summary>
-    /// <param name="x">The x scale</param>
-    /// <param name="y">The y scale</param>
-    /// <param name="z">The z scale</param>
+    /// <summary>Scales the current matrix</summary>
     public static void Scale(float x, float y, float z)
     {
         _matrices.Scale(x, y, z);
     }
 
-    /// <summary>
-    /// Scales the current matrix
-    /// </summary>
-    /// <param name="x">The x scale</param>
-    /// <param name="y">The y scale</param>
+    /// <summary>Scales the current matrix</summary>
     public static void Scale(float x, float y)
     {
         _matrices.Scale(x, y, 1);
     }
 
-    /// <summary>
-    /// Translates the current matrix
-    /// </summary>
-    /// <param name="x">The x translation</param>
-    /// <param name="y">The y translation</param>
-    /// <param name="z">The z translation</param>
+    /// <summary>Translates the current matrix</summary>
     public static void Translate(float x, float y, float z)
     {
         _matrices.Translate(x, y, z);
     }
 
-    /// <summary>
-    /// Translates the current matrix
-    /// </summary>
-    /// <param name="x">The x translation</param>
-    /// <param name="y">The y translation</param>
+    /// <summary>Translates the current matrix</summary>
     public static void Translate(float x, float y)
     {
         _matrices.Translate(x, y, 0);
     }
 
-    /// <summary>
-    /// Rotates the current matrix
-    /// </summary>
-    /// <param name="angle">The angle in degrees</param>
-    /// <param name="x">The x axis</param>
-    /// <param name="y">The y axis</param>
-    /// <param name="z">The z axis</param>
+    /// <summary>Rotates the current matrix</summary>
     public static void Rotate(float angle, float x, float y, float z)
     {
         _matrices.Rotate(angle, x, y, z);
     }
 
-    /// <summary>
-    /// Rotates the current matrix
-    /// </summary>
-    /// <param name="angle">The angle in degrees</param>
-    /// <param name="x">The x axis</param>
-    /// <param name="y">The y axis</param>
+    /// <summary>Rotates the current matrix</summary>
     public static void Rotate(float angle, float x, float y)
     {
         _matrices.Rotate(angle, x, y, 0);
     }
 
-    /// <summary>
-    /// Sets the current matrix to an orthographic projection
-    /// </summary>
-    /// <param name="left">The left plane</param>
-    /// <param name="right">The right plane</param>
-    /// <param name="bottom">The bottom plane</param>
-    /// <param name="top">The top plane</param>
-    /// <param name="zNear">The near plane</param>
-    /// <param name="zFar">The far plane</param>
+    /// <summary>Sets the current matrix to an orthographic projection</summary>
     public static void Ortho(float l, float r, float b, float t, float zn, float zf)
     {
         _matrices.Ortho(l, r, b, t, zn, zf);
     }
 
-    /// <summary>
-    /// Sets the current matrix to a perspective projection
-    /// </summary>
-    /// <param name="fovy">The field of view in y</param>
-    /// <param name="aspect">The aspect ratio</param>
-    /// <param name="zNear">The near plane</param>
-    /// <param name="zFar">The far plane</param>
+    /// <summary>Sets the current matrix to a perspective projection</summary>
     public static void Perspective(float fovy, float aspect, float zNear, float zFar)
     {
         float fovRad = fovy * (MathF.PI / 180.0f);
         _matrices.Perspective(fovRad, aspect, zNear, zFar);
     }
 
-    /// <summary>
-    /// Sets the current matrix to a perspective projection
-    /// </summary>
-    /// <param name="left">The left plane</param>
-    /// <param name="right">The right plane</param>
-    /// <param name="bottom">The bottom plane</param>
-    /// <param name="top">The top plane</param>
-    /// <param name="zNear">The near plane</param>
-    /// <param name="zFar">The far plane</param>
+    /// <summary>Sets the current matrix to a perspective projection</summary>
     public static void Frustum(float l, float r, float b, float t, float zn, float zf)
     {
         _matrices.Frustum(l, r, b, t, zn, zf);
     }
 
-    /// <summary>
-    /// Returns the current projection matrix
-    /// </summary>
-    /// <returns>The projection matrix</returns>
+    /// <summary>Returns the current projection matrix</summary>
     public static Matrix4x4 GetProjectionMatrix()
     {
         return _matrices.Projection;
     }
 
-    /// <summary>
-    /// Returns the current model view matrix
-    /// </summary>
-    /// <returns>The model view matrix</returns>
+    /// <summary>Returns the current model view matrix</summary>
     public static Matrix4x4 GetModelViewMatrix()
     {
         return _matrices.ModelView;
     }
 
-    /// <summary>
-    /// Begins a camera
-    /// </summary>
-    /// <param name="camera">The camera</param>
+    /// <summary>Begins a camera</summary>
     public static void BeginCamera(Camera camera)
     {
         Flush();
@@ -291,9 +212,7 @@ void main() {
         Multiply(camera.GetViewMatrix());
     }
 
-    /// <summary>
-    /// Ends a camera
-    /// </summary>
+    /// <summary>Ends a camera</summary>
     public static void EndCamera()
     {
         Flush();
@@ -309,26 +228,14 @@ void main() {
 
     #region Viewport
 
-    /// <summary>
-    /// Clears the screen
-    /// </summary>
-    /// <param name="r">The red component</param>
-    /// <param name="g">The green component</param>
-    /// <param name="b">The blue component</param>
-    /// <param name="a">The alpha component</param>
+    /// <summary>Clears the screen</summary>
     public static void Clear(float r, float g, float b, float a)
     {
         ResetStates();
         _backend.Clear(r, g, b, a);
     }
 
-    /// <summary>
-    /// Sets the viewport
-    /// </summary>
-    /// <param name="x">The x position</param>
-    /// <param name="y">The y position</param>
-    /// <param name="width">The width</param>
-    /// <param name="height">The height</param>
+    /// <summary>Sets the viewport</summary>
     public static void SetViewport(int x, int y, int width, int height)
     {
         if (_cachedFboId == 0)
@@ -339,22 +246,13 @@ void main() {
         _backend.SetViewport(x, y, width, height);
     }
 
-    /// <summary>
-    /// Returns the aspect ratio
-    /// </summary>
-    /// <returns>The aspect ratio</returns>
+    /// <summary>Returns the aspect ratio</summary>
     public static float GetAspectRatio()
     {
         return (float)_screenWidth / _screenHeight;
     }
 
-    /// <summary>
-    /// Begins a scissor
-    /// </summary>
-    /// <param name="x">The x position</param>
-    /// <param name="y">The y position</param>
-    /// <param name="width">The width</param>
-    /// <param name="height">The height</param>
+    /// <summary>Begins a scissor</summary>
     public static void BeginScissor(int x, int y, int width, int height)
     {
         Flush();
@@ -364,9 +262,7 @@ void main() {
         _backend.SetScissor(x, flippedY, width, height);
     }
 
-    /// <summary>
-    /// Ends a scissor
-    /// </summary>
+    /// <summary>Ends a scissor</summary>
     public static void EndScissor()
     {
         Flush();
@@ -377,10 +273,7 @@ void main() {
 
     #region Rendering
 
-    /// <summary>
-    /// Begins rendering
-    /// </summary>
-    /// <param name="mode">The primitive mode</param>
+    /// <summary>Begins rendering</summary>
     public static void Begin(PrimitiveMode mode)
     {
         TextureSet set = new()
@@ -398,17 +291,13 @@ void main() {
         _batcher.Begin(mode, set, _currentShaderHandle);
     }
 
-    /// <summary>
-    /// Ends rendering
-    /// </summary>
+    /// <summary>Ends rendering</summary>
     public static void End()
     {
         _batcher.End();
     }
 
-    /// <summary>
-    /// Flushes the batcher
-    /// </summary>
+    /// <summary>Flushes the batcher</summary>
     public static void Flush()
     {
         _batcher.Flush(_matrices.Projection);
@@ -575,21 +464,14 @@ void main() {
         );
     }
 
-    /// <summary>
-    /// Uses the default texture
-    /// </summary>
-    /// <param name="slot">The slot</param>
+    /// <summary>Uses the default texture</summary>
     public static void UseDefaultTexture(int slot = 0)
     {
         if (slot >= 0 && slot < MaxTextureSlots)
             _currentTextures[slot] = _defaultTexture;
     }
 
-    /// <summary>
-    /// Uses a texture
-    /// </summary>
-    /// <param name="texture">The texture</param>
-    /// <param name="slot">The slot</param>
+    /// <summary>Uses a texture</summary>
     public static void UseTexture(TextureHandle texture, int slot = 0)
     {
         if (slot >= 0 && slot < MaxTextureSlots)
@@ -611,10 +493,7 @@ void main() {
         _backend.UpdateTexture(handle, x, y, width, height, data, format);
     }
 
-    /// <summary>
-    /// Deletes a texture
-    /// </summary>
-    /// <param name="handle">The handle</param>
+    /// <summary>Deletes a texture</summary>
     public static void DeleteTexture(TextureHandle handle)
     {
         // nullify from all active slots to prevent use-after-free
@@ -641,9 +520,7 @@ void main() {
     #endregion
     #region States
 
-    /// <summary>
-    /// Resets all internal render states to defaults.
-    /// </summary>
+    /// <summary>Resets all internal render states to defaults.</summary>
     public static void ResetStates()
     {
         for (int i = 0; i < MaxTextureSlots; i++)
@@ -832,76 +709,49 @@ void main() {
     #endregion
     #region Uniforms
 
-    /// <summary>
-    /// Sets a int uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a int uniform</summary>
     public static void SetUniform(string name, int value)
     {
         Flush();
         _backend.SetUniformInt(_currentShaderHandle, name, value);
     }
 
-    /// <summary>
-    /// Sets a float uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a float uniform</summary>
     public static void SetUniform(string name, float value)
     {
         Flush();
         _backend.SetUniformFloat(_currentShaderHandle, name, value);
     }
 
-    /// <summary>
-    /// Sets a vector2 uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a vector2 uniform</summary>
     public static void SetUniform(string name, in Vector2 value)
     {
         Flush();
         _backend.SetUniformVec2(_currentShaderHandle, name, value);
     }
 
-    /// <summary>
-    /// Sets a vector3 uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a vector3 uniform</summary>
     public static void SetUniform(string name, in Vector3 value)
     {
         Flush();
         _backend.SetUniformVec3(_currentShaderHandle, name, value);
     }
 
-    /// <summary>
-    /// Sets a vector4 uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a vector4 uniform</summary>
     public static void SetUniform(string name, in Vector4 value)
     {
         Flush();
         _backend.SetUniformVec4(_currentShaderHandle, name, value);
     }
 
-    /// <summary>
-    /// Sets a matrix 4x4 uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a matrix 4x4 uniform</summary>
     public static void SetUniform(string name, in Matrix4x4 value)
     {
         Flush();
         _backend.SetUniformMatrix4(_currentShaderHandle, name, value);
     }
 
-    /// <summary>
-    /// Returns the graphics backend
-    /// </summary>
-    /// <returns>The graphics backend</returns>
+    /// <summary>Returns the graphics backend</summary>
     public static IGraphicsBackend GetBackend()
     {
         return _backend;

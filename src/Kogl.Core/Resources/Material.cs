@@ -3,9 +3,7 @@ using Kogl.Abstractions;
 
 namespace Kogl.Core.Resources;
 
-/// <summary>
-/// A material
-/// </summary>
+/// <summary>A material</summary>
 public class Material : Resource
 {
     public Shader Shader { get; }

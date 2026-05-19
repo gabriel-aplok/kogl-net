@@ -2,9 +2,7 @@ using Kogl.Abstractions;
 
 namespace Kogl.Core.Resources;
 
-/// <summary>
-/// The type of a shader property
-/// </summary>
+/// <summary>The type of a shader property</summary>
 public enum ShaderPropertyType
 {
     Int,
@@ -16,21 +14,14 @@ public enum ShaderPropertyType
     Texture2D,
 }
 
-/// <summary>
-/// A shader property
-/// </summary>
-/// <param name="name">The name of the property</param>
-/// <param name="type">The type of the property</param>
+/// <summary>A shader property</summary>
 public sealed class ShaderProperty(string name, ShaderPropertyType type)
 {
     public string Name { get; init; } = name;
     public ShaderPropertyType Type { get; init; } = type;
 }
 
-/// <summary>
-/// A shader program
-/// </summary>
-/// <param name="handle">The handle of the shader</param>
+/// <summary>A shader program</summary>
 public sealed class Shader(ShaderHandle handle) : Resource
 {
     public ShaderHandle Handle { get; } = handle;
@@ -38,11 +29,7 @@ public sealed class Shader(ShaderHandle handle) : Resource
 
     private readonly List<ShaderProperty> _properties = [];
 
-    /// <summary>
-    /// Adds a shader property
-    /// </summary>
-    /// <param name="name">The name of the property</param>
-    /// <param name="type">The type of the property</param>
+    /// <summary>Adds a shader property</summary>
     public void AddProperty(string name, ShaderPropertyType type)
     {
         _properties.Add(new ShaderProperty(name, type));
@@ -53,12 +40,7 @@ public sealed class Shader(ShaderHandle handle) : Resource
         Log.Info("Shader Disposed");
     }
 
-    /// <summary>
-    /// Creates a new shader
-    /// </summary>
-    /// <param name="vertexSrc">Code for the vertex shader</param>
-    /// <param name="fragmentSrc">Code for the fragment shader</param>
-    /// <returns></returns>
+    /// <summary>Creates a new shader</summary>
     public static Shader Create(string vertexSrc, string fragmentSrc)
     {
         ShaderHandle handle = KoGL.GetBackend().CreateShader(vertexSrc, fragmentSrc);

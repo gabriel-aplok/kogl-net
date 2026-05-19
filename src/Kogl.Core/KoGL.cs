@@ -25,6 +25,7 @@ public static class KoGL
     private static Material? _currentMaterial;
     private static Vector2 _currentTexCoord = Vector2.Zero;
     private static Vector4 _currentColor = Vector4.One;
+    private static Vector3 _currentNormal = Vector3.UnitZ;
 
     private static readonly TextureHandle[] _currentTextures = new TextureHandle[MaxTextureSlots];
     private static ShaderHandle _currentShaderHandle;
@@ -451,61 +452,50 @@ void main() {
     #endregion
     #region Vertex
 
-    /// <summary>
-    /// Sets the texture coordinates
-    /// </summary>
-    /// <param name="x">The x</param>
-    /// <param name="y">The y</param>
+    /// <summary>Sets the texture coordinates</summary>
     public static void TexCoord2(float x, float y)
     {
         _currentTexCoord = new Vector2(x, y);
     }
 
-    /// <summary>
-    /// Sets the color
-    /// </summary>
-    /// <param name="r">The red component</param>
-    /// <param name="g">The green component</param>
-    /// <param name="b">The blue component</param>
+    /// <summary>Sets the color</summary>
     public static void Color3(float r, float g, float b)
     {
         _currentColor = new Vector4(r, g, b, 1);
     }
 
-    /// <summary>
-    /// Sets the color and alpha
-    /// </summary>
-    /// <param name="r">The red component</param>
-    /// <param name="g">The green component</param>
-    /// <param name="b">The blue component</param>
-    /// <param name="a">The alpha component</param>
+    /// <summary>Sets the color and alpha</summary>
     public static void Color4(float r, float g, float b, float a)
     {
         _currentColor = new Vector4(r, g, b, a);
     }
 
-    /// <summary>
-    /// Sets the vertex
-    /// </summary>
-    /// <param name="x">The x</param>
-    /// <param name="y">The y</param>
+    /// <summary>Sets the normal</summary>
+    public static void Normal3(float x, float y, float z)
+    {
+        _currentNormal = new Vector3(x, y, z);
+    }
+
+    /// <summary>Sets the normal</summary>
+    public static void Normal3(in Vector3 normal)
+    {
+        _currentNormal = normal;
+    }
+
+    /// <summary>Sets the vertex</summary>
     public static void Vertex2(float x, float y)
     {
         Vertex3(x, y, 0);
     }
 
-    /// <summary>
-    /// Sets the vertex
-    /// </summary>
-    /// <param name="x">The x</param>
-    /// <param name="y">The y</param>
-    /// <param name="z">The z</param>
+    /// <summary>Sets the vertex</summary>
     public static void Vertex3(float x, float y, float z)
     {
         _batcher.AddVertex(
             new Vector3(x, y, z),
             _currentTexCoord,
             _currentColor,
+            _currentNormal,
             _matrices.ModelView
         );
     }
@@ -516,7 +506,6 @@ void main() {
     /// <summary>
     /// Applies a material
     /// </summary>
-    /// <param name="material">The material</param>
     public static void ApplyMaterial(Material material)
     {
         if (_currentMaterial == material)

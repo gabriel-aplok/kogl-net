@@ -53,14 +53,14 @@ internal class Batcher(IGraphicsBackend backend)
         StartNewBatch();
     }
 
-    /// <summary>
-    /// Adds a vertex
-    /// </summary>
-    /// <param name="position">The position</param>
-    /// <param name="uv">The texture coordinate</param>
-    /// <param name="color">The color</param>
-    /// <param name="modelViewMatrix">The model-view matrix</param>
-    public void AddVertex(Vector3 position, Vector2 uv, Vector4 color, in Matrix4x4 modelViewMatrix)
+    /// <summary>Adds a vertex</summary>
+    public void AddVertex(
+        Vector3 position,
+        Vector2 uv,
+        Vector4 color,
+        Vector3 normal,
+        in Matrix4x4 modelViewMatrix
+    )
     {
         if (_vertexCount >= _maxVertices - 4 || _indexCount >= _maxIndices - 6)
         {
@@ -75,7 +75,14 @@ internal class Batcher(IGraphicsBackend backend)
         }
 
         Vector3 transformedPosition = Vector3.Transform(position, modelViewMatrix);
-        _vertices[_vertexCount++] = new VertexData(transformedPosition, uv, color);
+        Vector3 transformedNormal = Vector3.TransformNormal(normal, modelViewMatrix);
+
+        _vertices[_vertexCount++] = new VertexData(
+            transformedPosition,
+            uv,
+            color,
+            transformedNormal
+        );
     }
 
     /// <summary>

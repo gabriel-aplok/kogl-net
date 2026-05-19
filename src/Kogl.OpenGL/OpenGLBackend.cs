@@ -107,6 +107,17 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             (void*)20
         );
 
+        // attribute setup: location 3 = normal
+        _gl.EnableVertexAttribArray(3);
+        _gl.VertexAttribPointer(
+            3,
+            3,
+            VertexAttribPointerType.Float,
+            false,
+            (uint)sizeof(VertexData),
+            (void*)32
+        );
+
         BindVaoInternal(0);
 
         _gl.Enable(EnableCap.Blend);

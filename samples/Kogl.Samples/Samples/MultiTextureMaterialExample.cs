@@ -52,9 +52,11 @@ internal class MultiTextureMaterialExample
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec2 aTex;
 layout(location = 2) in vec4 aCol;
+layout(location = 3) in vec3 aNormal;
 
 out vec2 fTex;
 out vec4 fCol;
+out vec3 fNormal;
 out vec3 fWorldPos;
 
 uniform mat4 uMVP;
@@ -64,13 +66,18 @@ void main() {
     fTex = aTex;
     fCol = aCol;
     fWorldPos = aPos;
+
+    // transform normal (simple but effective for this setup)
+    fNormal = normalize(mat3(uMVP) * aNormal);   // or just aNormal if you prefer object space
 }";
 
             string fs =
                 @"#version 330 core
 in vec2 fTex;
 in vec4 fCol;
+in vec3 fNormal;
 in vec3 fWorldPos;
+
 out vec4 FragColor;
 
 uniform sampler2D uAlbedoTex;
@@ -82,48 +89,24 @@ void main() {
     vec4 albedo = texture(uAlbedoTex, fTex);
     vec3 normalMap = texture(uNormalTex, fTex).rgb;
 
-    // calculate the flat face normal using geometric derivatives
-    vec3 dX = dFdx(fWorldPos);
-    vec3 dY = dFdy(fWorldPos);
-    vec3 faceNormal = normalize(cross(dX, dY));
-    if (!gl_FrontFacing) faceNormal = -faceNormal;
+    // use vertex normal as base
+    vec3 baseNormal = normalize(fNormal);
 
-    // dynamically derive Tangent (T) and Bitangent (B) vectors using UV derivatives
-    vec2 st1 = dFdx(fTex);
-    vec2 st2 = dFdy(fTex);
-
-    vec3 edge1 = dX;
-    vec3 edge2 = dY;
-
-    float r = 1.0 / (st1.x * st2.y - st2.x * st1.y);
-    vec3 tangent = normalize((edge1 * st2.y - edge2 * st1.y) * r);
-
-    // re-orthogonalize and compute Bitangent
-    tangent = normalize(tangent - dot(tangent, faceNormal) * faceNormal);
-    vec3 bitangent = cross(faceNormal, tangent);
-
-    // construct TBN matrix to transform normal map from tangent space to world/object space
-    mat3 TBN = mat3(tangent, bitangent, faceNormal);
-
-    // map the normal texture from [0, 1] range to [-1, 1] range
+    // blend with normal map (you can remove this if you only want vertex normals)
     vec3 bumpedNormal = normalMap * 2.0 - 1.0;
+    vec3 finalNormal = normalize(baseNormal + bumpedNormal * 0.5); // light normal mapping influence
 
-    // if normal map is missing or flat, fallback gracefully
-    vec3 finalNormal = normalize(TBN * bumpedNormal);
-
-    // sun lighting
+    // lighting
     vec3 sunDirection = normalize(vec3(0.4, 1.0, 0.3));
     vec3 sunColor = vec3(1.1, 1.05, 0.95);
     vec3 ambientColor = vec3(0.22, 0.24, 0.26);
 
-    // diffuse calculation using the new bumped normal map vector
     float diffuseFactor = max(dot(finalNormal, sunDirection), 0.0);
     vec3 lighting = ambientColor + (diffuseFactor * sunColor);
 
     vec4 composite = albedo * vec4(lighting, 1.0);
     FragColor = composite * fCol * uTint;
 }";
-
             _pbrShader = Shader.Create(vs, fs);
 
             _pbrShader.AddProperty("uAlbedoTex", ShaderPropertyType.Texture2D);
@@ -260,6 +243,7 @@ void main() {
         KoGL.Color4(1, 1, 1, 1);
 
         // Front
+        KoGL.Normal3(0, 0, 1);
         KoGL.TexCoord2(0, 1);
         KoGL.Vertex3(-1, -1, 1);
         KoGL.TexCoord2(1, 1);
@@ -270,6 +254,7 @@ void main() {
         KoGL.Vertex3(-1, 1, 1);
 
         // Back
+        KoGL.Normal3(0, 0, -1);
         KoGL.TexCoord2(1, 1);
         KoGL.Vertex3(-1, -1, -1);
         KoGL.TexCoord2(1, 0);
@@ -280,6 +265,7 @@ void main() {
         KoGL.Vertex3(1, -1, -1);
 
         // Top
+        KoGL.Normal3(0, 1, 0);
         KoGL.TexCoord2(0, 0);
         KoGL.Vertex3(-1, 1, -1);
         KoGL.TexCoord2(0, 1);
@@ -290,6 +276,7 @@ void main() {
         KoGL.Vertex3(1, 1, -1);
 
         // Bottom
+        KoGL.Normal3(0, -1, 0);
         KoGL.TexCoord2(1, 1);
         KoGL.Vertex3(-1, -1, -1);
         KoGL.TexCoord2(0, 1);
@@ -300,6 +287,7 @@ void main() {
         KoGL.Vertex3(-1, -1, 1);
 
         // Right
+        KoGL.Normal3(1, 0, 0);
         KoGL.TexCoord2(0, 1);
         KoGL.Vertex3(1, -1, -1);
         KoGL.TexCoord2(1, 1);
@@ -310,6 +298,7 @@ void main() {
         KoGL.Vertex3(1, -1, 1);
 
         // Left
+        KoGL.Normal3(-1, 0, 0);
         KoGL.TexCoord2(1, 1);
         KoGL.Vertex3(-1, -1, -1);
         KoGL.TexCoord2(0, 1);

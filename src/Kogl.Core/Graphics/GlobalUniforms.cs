@@ -20,6 +20,24 @@ public static class GlobalUniforms
         _globals[name] = value;
     }
 
+    /// <summary>Sets a global bool uniform</summary>
+    public static void SetBool(string name, bool value)
+    {
+        _globals[name] = value;
+    }
+
+    /// <summary>Sets a global vector uniform</summary>
+    public static void SetVector2(string name, Vector4 value)
+    {
+        _globals[name] = value;
+    }
+
+    /// <summary>Sets a global vector uniform</summary>
+    public static void SetVector3(string name, Vector4 value)
+    {
+        _globals[name] = value;
+    }
+
     /// <summary>Sets a global vector uniform</summary>
     public static void SetVector4(string name, Vector4 value)
     {
@@ -38,14 +56,34 @@ public static class GlobalUniforms
         IGraphicsBackend backend = KoGL.GetBackend();
         foreach (KeyValuePair<string, object> kvp in _globals)
         {
-            if (kvp.Value is float f)
-                backend.SetUniformFloat(shader.Handle, kvp.Key, f);
-            else if (kvp.Value is int i)
+            if (kvp.Value is int i)
+            {
                 backend.SetUniformInt(shader.Handle, kvp.Key, i);
-            else if (kvp.Value is Vector4 v)
-                backend.SetUniformVec4(shader.Handle, kvp.Key, v);
-            else if (kvp.Value is Matrix4x4 m)
-                backend.SetUniformMatrix4(shader.Handle, kvp.Key, m);
+            }
+            else if (kvp.Value is float f)
+            {
+                backend.SetUniformFloat(shader.Handle, kvp.Key, f);
+            }
+            else if (kvp.Value is bool b)
+            {
+                backend.SetUniformBool(shader.Handle, kvp.Key, b);
+            }
+            else if (kvp.Value is Vector2 v2)
+            {
+                backend.SetUniformVec2(shader.Handle, kvp.Key, v2);
+            }
+            else if (kvp.Value is Vector3 v3)
+            {
+                backend.SetUniformVec3(shader.Handle, kvp.Key, v3);
+            }
+            else if (kvp.Value is Vector4 v4)
+            {
+                backend.SetUniformVec4(shader.Handle, kvp.Key, v4);
+            }
+            else if (kvp.Value is Matrix4x4 m44)
+            {
+                backend.SetUniformMatrix4x4(shader.Handle, kvp.Key, m44);
+            }
         }
     }
 }

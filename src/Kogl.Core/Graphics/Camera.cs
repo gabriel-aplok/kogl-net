@@ -10,13 +10,6 @@ public enum CameraProjection
     Frustum,
 }
 
-/// <summary>A camera ray</summary>
-public struct CameraRay(Vector3 origin, Vector3 direction)
-{
-    public Vector3 Origin = origin;
-    public Vector3 Direction = direction;
-}
-
 /// <summary>A camera</summary>
 public class Camera
 {
@@ -34,8 +27,6 @@ public class Camera
     public Vector3 Right { get; private set; } = Vector3.UnitX;
 
     public float AspectRatio { get; set; } = 800f / 600f;
-    public float ViewportWidth { get; set; } = 800;
-    public float ViewportHeight { get; set; } = 600;
 
     public float FrustumLeft = -1f;
     public float FrustumRight = 1f;
@@ -116,48 +107,5 @@ public class Camera
     {
         Position = Vector3.Lerp(Position, targetPos, alpha);
         Rotation = Vector3.Lerp(Rotation, targetRot, alpha);
-    }
-
-    /// <summary>Gets the screen ray</summary>
-    public CameraRay GetScreenRay(Vector2 mousePosition, float aspectRatio)
-    {
-        Matrix4x4 view = GetViewMatrix();
-        Matrix4x4 proj = GetProjectionMatrix(aspectRatio);
-        Matrix4x4.Invert(view * proj, out Matrix4x4 invViewProj);
-
-        float x = (2.0f * mousePosition.X / ViewportWidth) - 1.0f;
-        float y = 1.0f - (2.0f * mousePosition.Y / ViewportHeight);
-
-        Vector4 nearSource = new(x, y, 0f, 1f);
-        Vector4 farSource = new(x, y, 1f, 1f);
-
-        Vector4 nearPoint = Vector4.Transform(nearSource, invViewProj);
-        Vector4 farPoint = Vector4.Transform(farSource, invViewProj);
-
-        Vector3 rayStart = new(
-            nearPoint.X / nearPoint.W,
-            nearPoint.Y / nearPoint.W,
-            nearPoint.Z / nearPoint.W
-        );
-        Vector3 rayEnd = new(
-            farPoint.X / farPoint.W,
-            farPoint.Y / farPoint.W,
-            farPoint.Z / farPoint.W
-        );
-
-        return new CameraRay(rayStart, Vector3.Normalize(rayEnd - rayStart));
-    }
-
-    /// <summary>Checks if a point is in view</summary>
-    public bool IsInView(Vector3 point, float radius)
-    {
-        float dist = Vector3.Distance(Position, point);
-        if (dist > Far + radius)
-            return false;
-
-        Vector3 toPoint = Vector3.Normalize(point - Position);
-        float dot = Vector3.Dot(Front, toPoint);
-
-        return dot > MathF.Cos((Fov + 10f) * (MathF.PI / 180f));
     }
 }

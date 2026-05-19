@@ -65,7 +65,7 @@ public interface IGraphicsBackend : IDisposable
 
     public void BindTexture(TextureHandle texture, int slot);
     public void DeleteTexture(TextureHandle texture);
-    public void SetTextureCompareMode(TextureHandle texture, KTextureCompareMode mode);
+    public void SetTextureCompareMode(TextureHandle texture, TextureCompare mode);
     public void SetTextureBorderColor(TextureHandle texture, Vector4 color);
 
     // RenderTargets
@@ -87,10 +87,11 @@ public interface IGraphicsBackend : IDisposable
     // Uniforms
     public void SetUniformInt(ShaderHandle shader, string name, int value);
     public void SetUniformFloat(ShaderHandle shader, string name, float value);
+    public void SetUniformBool(ShaderHandle shader, string name, bool value);
     public void SetUniformVec2(ShaderHandle shader, string name, in Vector2 value);
     public void SetUniformVec3(ShaderHandle shader, string name, in Vector3 value);
     public void SetUniformVec4(ShaderHandle shader, string name, in Vector4 value);
-    public void SetUniformMatrix4(ShaderHandle shader, string name, in Matrix4x4 matrix);
+    public void SetUniformMatrix4x4(ShaderHandle shader, string name, in Matrix4x4 matrix);
 
     // Buffers
     public void UpdateVertexBuffer(ReadOnlySpan<VertexData> vertices);

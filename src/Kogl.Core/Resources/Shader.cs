@@ -1,4 +1,5 @@
 using Kogl.Abstractions;
+using Kogl.Abstractions.Types;
 
 namespace Kogl.Core.Resources;
 
@@ -7,6 +8,7 @@ public enum ShaderPropertyType
 {
     Int,
     Float,
+    Bool,
     Vec2,
     Vec3,
     Vec4,

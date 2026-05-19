@@ -506,7 +506,7 @@ void main() {
     }
 
     /// <summary>Sets the texture compare mode</summary>
-    public static void SetTextureCompareMode(TextureHandle texture, KTextureCompareMode mode)
+    public static void SetTextureCompareMode(TextureHandle texture, TextureCompare mode)
     {
         _backend.SetTextureCompareMode(texture, mode);
     }
@@ -723,6 +723,13 @@ void main() {
         _backend.SetUniformFloat(_currentShaderHandle, name, value);
     }
 
+    /// <summary>Sets a bool uniform</summary>
+    public static void SetUniform(string name, bool value)
+    {
+        Flush();
+        _backend.SetUniformBool(_currentShaderHandle, name, value);
+    }
+
     /// <summary>Sets a vector2 uniform</summary>
     public static void SetUniform(string name, in Vector2 value)
     {
@@ -748,7 +755,7 @@ void main() {
     public static void SetUniform(string name, in Matrix4x4 value)
     {
         Flush();
-        _backend.SetUniformMatrix4(_currentShaderHandle, name, value);
+        _backend.SetUniformMatrix4x4(_currentShaderHandle, name, value);
     }
 
     /// <summary>Returns the graphics backend</summary>

@@ -1,7 +1,9 @@
 {
   "files.exclude": {
     "**/.git": true,
-    "**/**.lscache": true
+    "**/**.lscache": true,
+    "**/bin**": true,
+    "**/obj**": true
   },
   "search.exclude": {
     "**/.git": true,

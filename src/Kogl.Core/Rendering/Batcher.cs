@@ -155,7 +155,7 @@ internal class Batcher(IGraphicsBackend backend)
             // check against localized context execution boundaries before uniform updates
             if (lastBoundShader == null || lastBoundShader.Value.Id != batch.Shader.Id)
             {
-                _backend.SetUniformMatrix4(batch.Shader, "uMVP", projectionMatrix);
+                _backend.SetUniformMatrix4x4(batch.Shader, "uMVP", projectionMatrix);
                 lastBoundShader = batch.Shader;
             }
 

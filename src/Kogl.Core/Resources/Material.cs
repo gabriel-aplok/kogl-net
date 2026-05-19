@@ -43,6 +43,11 @@ public class Material : Resource
         _parameters[name] = value;
     }
 
+    public void SetBool(string name, bool value)
+    {
+        _parameters[name] = value;
+    }
+
     public void SetVector2(string name, Vector2 value)
     {
         _parameters[name] = value;
@@ -58,7 +63,7 @@ public class Material : Resource
         _parameters[name] = value;
     }
 
-    public void SetMatrix4(string name, Matrix4x4 value)
+    public void SetMatrix4x4(string name, Matrix4x4 value)
     {
         _parameters[name] = value;
     }
@@ -98,6 +103,9 @@ public class Material : Resource
                 case ShaderPropertyType.Float:
                     backend.SetUniformFloat(Shader.Handle, prop.Name, (float)val);
                     break;
+                case ShaderPropertyType.Bool:
+                    backend.SetUniformBool(Shader.Handle, prop.Name, (bool)val);
+                    break;
                 case ShaderPropertyType.Vec2:
                     backend.SetUniformVec2(Shader.Handle, prop.Name, (Vector2)val);
                     break;
@@ -108,7 +116,7 @@ public class Material : Resource
                     backend.SetUniformVec4(Shader.Handle, prop.Name, (Vector4)val);
                     break;
                 case ShaderPropertyType.Mat4:
-                    backend.SetUniformMatrix4(Shader.Handle, prop.Name, (Matrix4x4)val);
+                    backend.SetUniformMatrix4x4(Shader.Handle, prop.Name, (Matrix4x4)val);
                     break;
                 case ShaderPropertyType.Texture2D:
                     Texture tex = (Texture)val;

@@ -1,4 +1,5 @@
 using Kogl.Abstractions;
+using Kogl.Abstractions.Types;
 using StbImageSharp;
 
 namespace Kogl.Core.Resources;

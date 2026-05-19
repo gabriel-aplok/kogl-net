@@ -638,10 +638,10 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         }
     }
 
-    public void SetTextureCompareMode(TextureHandle texture, KTextureCompareMode mode)
+    public void SetTextureCompareMode(TextureHandle texture, TextureCompare mode)
     {
         BindTextureInternal(texture.Id, 0);
-        if (mode == KTextureCompareMode.CompareRefToTexture)
+        if (mode == TextureCompare.CompareRefToTexture)
         {
             _gl.TexParameter(
                 TextureTarget.Texture2D,
@@ -947,6 +947,14 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             _gl.Uniform1(loc, value);
     }
 
+    public void SetUniformBool(ShaderHandle shader, string name, bool value)
+    {
+        BindShaderInternal(shader.Id);
+        int loc = GetUniformLocation(shader.Id, name);
+        if (loc != -1)
+            _gl.Uniform1(loc, value ? 1 : 0);
+    }
+
     public void SetUniformVec2(ShaderHandle shader, string name, in Vector2 value)
     {
         BindShaderInternal(shader.Id);
@@ -971,7 +979,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             _gl.Uniform4(loc, value.X, value.Y, value.Z, value.W);
     }
 
-    public void SetUniformMatrix4(ShaderHandle shader, string name, in Matrix4x4 matrix)
+    public void SetUniformMatrix4x4(ShaderHandle shader, string name, in Matrix4x4 matrix)
     {
         BindShaderInternal(shader.Id);
         int loc = GetUniformLocation(shader.Id, name);

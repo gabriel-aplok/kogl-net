@@ -58,9 +58,7 @@ void main() {
         _sdfShaderInitialized = true;
     }
 
-    /// <summary>
-    /// Draws a string to the screen.
-    /// </summary>
+    /// <summary>Draws a string to the screen.</summary>
     public static void DrawText(
         Font font,
         string text,
@@ -155,9 +153,7 @@ void main() {
         KoGL.PopMatrix();
     }
 
-    /// <summary>
-    /// Measures the pixel dimensions of a string without allocating arrays.
-    /// </summary>
+    /// <summary>Measures the pixel dimensions of a string without allocating arrays.</summary>
     public static Vector2 Measure(Font font, ReadOnlySpan<char> text)
     {
         float maxWidth = 0;

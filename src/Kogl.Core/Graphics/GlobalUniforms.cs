@@ -3,57 +3,36 @@ using Kogl.Abstractions;
 
 namespace Kogl.Core.Graphics;
 
-/// <summary>
-/// A collection of global uniforms
-/// </summary>
+/// <summary>A collection of global uniforms</summary>
 public static class GlobalUniforms
 {
     private static readonly Dictionary<string, object> _globals = [];
 
-    /// <summary>
-    /// Sets a global int uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a global int uniform</summary>
     public static void SetInt(string name, int value)
     {
         _globals[name] = value;
     }
 
-    /// <summary>
-    /// Sets a global float uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a global float uniform</summary>
     public static void SetFloat(string name, float value)
     {
         _globals[name] = value;
     }
 
-    /// <summary>
-    /// Sets a global vector uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a global vector uniform</summary>
     public static void SetVector4(string name, Vector4 value)
     {
         _globals[name] = value;
     }
 
-    /// <summary>
-    /// Sets a global matrix uniform
-    /// </summary>
-    /// <param name="name">The name</param>
-    /// <param name="value">The value</param>
+    /// <summary>Sets a global matrix uniform</summary>
     public static void SetMatrix4(string name, Matrix4x4 value)
     {
         _globals[name] = value;
     }
 
-    /// <summary>
-    /// Applies the global uniforms to a shader
-    /// </summary>
-    /// <param name="shader">The shader</param>
+    /// <summary>Applies the global uniforms to a shader</summary>
     public static void ApplyTo(Resources.Shader shader)
     {
         IGraphicsBackend backend = KoGL.GetBackend();

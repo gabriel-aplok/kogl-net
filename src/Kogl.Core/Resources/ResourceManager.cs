@@ -7,9 +7,7 @@ public static class ResourceManager
 {
     private static readonly Dictionary<string, Resource> _cache = [];
 
-    /// <summary>
-    /// Loads a resource of type T. If it's already loaded, returns the cached version.
-    /// </summary>
+    /// <summary>Loads a resource of type T. If it's already loaded, returns the cached version.</summary>
     public static T Load<T>(string path)
         where T : Resource
     {
@@ -63,9 +61,7 @@ public static class ResourceManager
         return new Texture(handle, image.Width, image.Height);
     }
 
-    /// <summary>
-    /// Unloads a specific resource and disposes its GPU data.
-    /// </summary>
+    /// <summary>Unloads a specific resource and disposes its GPU data.</summary>
     public static void Unload(string path)
     {
         if (_cache.Remove(path, out Resource? resource))
@@ -74,9 +70,7 @@ public static class ResourceManager
         }
     }
 
-    /// <summary>
-    /// Clears the entire cache and disposes all resources.
-    /// </summary>
+    /// <summary>Clears the entire cache and disposes all resources.</summary>
     public static void UnloadAll()
     {
         foreach (Resource resource in _cache.Values)

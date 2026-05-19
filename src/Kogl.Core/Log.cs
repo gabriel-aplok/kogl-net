@@ -2,50 +2,29 @@ using System.Text;
 
 namespace Kogl.Core;
 
-/// <summary>
-/// The log level
-/// </summary>
+/// <summary>The log level</summary>
 public enum LogLevel
 {
-    /// <summary>
-    /// The trace level
-    /// </summary>
+    /// <summary>The trace level</summary>
     Trace,
 
-    /// <summary>
-    /// The debug level
-    /// </summary>
+    /// <summary>The debug level</summary>
     Debug,
 
-    /// <summary>
-    /// The info level
-    /// </summary>
+    /// <summary>The info level</summary>
     Info,
 
-    /// <summary>
-    /// The warning level
-    /// </summary>
+    /// <summary>The warning level</summary>
     Warn,
 
-    /// <summary>
-    /// The error level
-    /// </summary>
+    /// <summary>The error level</summary>
     Error,
 
-    /// <summary>
-    /// The critical level
-    /// </summary>
+    /// <summary>The critical level</summary>
     Critical,
 }
 
-/// <summary>
-/// A log entry
-/// </summary>
-/// <param name="Timestamp">The timestamp</param>
-/// <param name="Level">The level</param>
-/// <param name="Category">The category</param>
-/// <param name="Message">The message</param>
-/// <param name="ThreadId">The thread ID</param>
+/// <summary>A log entry</summary>
 public readonly record struct LogEntry(
     DateTime Timestamp,
     LogLevel Level,
@@ -54,9 +33,7 @@ public readonly record struct LogEntry(
     int ThreadId
 );
 
-/// <summary>
-/// A logger
-/// </summary>
+/// <summary>A logger</summary>
 public static class Log
 {
     private static readonly Lock _lock = new();
@@ -83,27 +60,19 @@ public static class Log
     private const string _red = "\u001b[31m";
     private const string _boldRed = "\u001b[1;31m";
 
-    /// <summary>
-    /// Sets the minimum log level required to process a log entry.
-    /// </summary>
-    /// <param name="level">The log level threshold.</param>
+    /// <summary>Sets the minimum log level required to process a log entry.</summary>
     public static void SetMinLogLevel(LogLevel level)
     {
         _minLogLevel = level;
     }
 
-    /// <summary>
-    /// Enables or disables file logging.
-    /// </summary>
-    /// <param name="enabled">True to enable file logging, false to disable.</param>
+    /// <summary>Enables or disables file logging.</summary>
     public static void SetFileLogging(bool enabled)
     {
         _enableFileLogging = enabled;
     }
 
-    /// <summary>
-    /// Initializes the file logger.
-    /// </summary>
+    /// <summary>Initializes the file logger.</summary>
     public static void InitFileLogger()
     {
         try
@@ -135,9 +104,7 @@ public static class Log
         }
     }
 
-    /// <summary>
-    /// Core thread-safe logging pipeline
-    /// </summary>
+    /// <summary>Core thread-safe logging pipeline</summary>
     public static void Write(LogLevel level, string category, string message)
     {
 #if DEBUG
@@ -307,9 +274,7 @@ public static class Log
     #endregion
     #region ImGui Integration API
 
-    /// <summary>
-    /// Returns a snapshot copy of the current log history in a thread-safe manner
-    /// </summary>
+    /// <summary>Returns a snapshot copy of the current log history in a thread-safe manner</summary>
     public static LogEntry[] GetHistorySnapshot()
     {
         lock (_lock)
@@ -318,9 +283,7 @@ public static class Log
         }
     }
 
-    /// <summary>
-    /// Clears the in-memory log queue.
-    /// </summary>
+    /// <summary>Clears the in-memory log queue.</summary>
     public static void ClearHistory()
     {
         lock (_lock)
@@ -329,9 +292,7 @@ public static class Log
         }
     }
 
-    /// <summary>
-    /// Ensures all logs are completely flushed and the session file handle is safely freed.
-    /// </summary>
+    /// <summary>Ensures all logs are completely flushed and the session file handle is safely freed.</summary>
     public static void Shutdown()
     {
         lock (_lock)

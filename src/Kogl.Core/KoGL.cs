@@ -48,7 +48,16 @@ public static class KoGL
 
         // create default texture
         ReadOnlySpan<byte> whitePixels = [255, 255, 255, 255];
-        _defaultTexture = _backend.CreateTexture(whitePixels, 1, 1, 4);
+        _defaultTexture = _backend.CreateTexture(
+            1,
+            1,
+            TextureFormat.Rgba8,
+            TextureFilter.Nearest,
+            TextureFilter.Nearest,
+            TextureWrap.Repeat,
+            TextureWrap.Repeat,
+            whitePixels
+        );
 
         for (int i = 0; i < MaxTextureSlots; i++)
         {
@@ -406,22 +415,26 @@ void main() {
     #endregion
     #region Post Processing
 
-    /// <summary>
-    /// Creates a render target
-    /// </summary>
-    /// <param name="width">The width</param>
-    /// <param name="height">The height</param>
-    /// <param name="colorAttachments">The number of color attachments (MRT)</param>
-    /// <returns>The render target</returns>
-    public static RenderTarget CreateRenderTarget(int width, int height, int colorAttachments = 1)
+    /// <summary>Creates a render target</summary>
+    public static RenderTarget CreateRenderTarget(
+        int width,
+        int height,
+        TextureFormat[]? colorFormats = null,
+        TextureFormat depthFormat = TextureFormat.Depth24Stencil8,
+        bool depthAsTexture = false
+    )
     {
-        return _backend.CreateRenderTarget(width, height, colorAttachments);
+        colorFormats ??= [TextureFormat.Rgba8];
+        return _backend.CreateRenderTarget(
+            width,
+            height,
+            colorFormats,
+            depthFormat,
+            depthAsTexture
+        );
     }
 
-    /// <summary>
-    /// Sets the render target
-    /// </summary>
-    /// <param name="target">The target</param>
+    /// <summary>Sets the render target</summary>
     public static void SetRenderTarget(RenderTarget? target)
     {
         Flush();
@@ -537,13 +550,34 @@ void main() {
         return _backend.CreateShader(vsCode, fsCode);
     }
 
-    /// <summary>
-    /// Uses a shader
-    /// </summary>
-    /// <param name="shader">The shader</param>
+    /// <summary>Uses a shader</summary>
     public static void UseShader(ShaderHandle shader)
     {
         _currentShaderHandle = shader.Id == 0 ? _defaultShader : shader;
+    }
+
+    /// <summary>Creates a texture</summary>
+    public static TextureHandle CreateTexture(
+        int width,
+        int height,
+        TextureFormat format,
+        TextureFilter minFilter,
+        TextureFilter magFilter,
+        TextureWrap wrapS,
+        TextureWrap wrapT,
+        ReadOnlySpan<byte> data = default
+    )
+    {
+        return _backend.CreateTexture(
+            width,
+            height,
+            format,
+            minFilter,
+            magFilter,
+            wrapS,
+            wrapT,
+            data
+        );
     }
 
     /// <summary>
@@ -567,16 +601,7 @@ void main() {
             _currentTextures[slot] = texture.Id == 0 ? _defaultTexture : texture;
     }
 
-    /// <summary>
-    /// Updates a texture
-    /// </summary>
-    /// <param name="handle">The handle</param>
-    /// <param name="x">The x</param>
-    /// <param name="y">The y</param>
-    /// <param name="width">The width</param>
-    /// <param name="height">The height</param>
-    /// <param name="data">The data</param>
-    /// <param name="channels">The channels</param>
+    /// <summary>Updates a texture</summary>
     public static void UpdateTexture(
         TextureHandle handle,
         int x,
@@ -584,11 +609,11 @@ void main() {
         int width,
         int height,
         ReadOnlySpan<byte> data,
-        int channels
+        TextureFormat format
     )
     {
         Flush();
-        _backend.UpdateTexture(handle, x, y, width, height, data, channels);
+        _backend.UpdateTexture(handle, x, y, width, height, data, format);
     }
 
     /// <summary>
@@ -604,6 +629,18 @@ void main() {
                 UseDefaultTexture(i);
         }
         _backend.DeleteTexture(handle);
+    }
+
+    /// <summary>Sets the texture compare mode</summary>
+    public static void SetTextureCompareMode(TextureHandle texture, KTextureCompareMode mode)
+    {
+        _backend.SetTextureCompareMode(texture, mode);
+    }
+
+    /// <summary>Sets the texture border color</summary>
+    public static void SetTextureBorderColor(TextureHandle texture, Vector4 color)
+    {
+        _backend.SetTextureBorderColor(texture, color);
     }
 
     #endregion

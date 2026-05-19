@@ -44,10 +44,14 @@ public interface IGraphicsBackend : IDisposable
 
     // Textures
     public TextureHandle CreateTexture(
-        ReadOnlySpan<byte> pixelData,
         int width,
         int height,
-        int channels
+        TextureFormat format,
+        TextureFilter minFilter,
+        TextureFilter magFilter,
+        TextureWrap wrapS,
+        TextureWrap wrapT,
+        ReadOnlySpan<byte> pixelData
     );
     public void UpdateTexture(
         TextureHandle texture,
@@ -56,14 +60,23 @@ public interface IGraphicsBackend : IDisposable
         int width,
         int height,
         ReadOnlySpan<byte> pixelData,
-        int channels
+        TextureFormat format
     );
 
     public void BindTexture(TextureHandle texture, int slot);
     public void DeleteTexture(TextureHandle texture);
+    public void SetTextureCompareMode(TextureHandle texture, KTextureCompareMode mode);
+    public void SetTextureBorderColor(TextureHandle texture, Vector4 color);
 
     // RenderTargets
-    public RenderTarget CreateRenderTarget(int width, int height, int colorAttachments = 1);
+    public RenderTarget CreateRenderTarget(
+        int width,
+        int height,
+        ReadOnlySpan<TextureFormat> colorFormats,
+        TextureFormat depthFormat,
+        bool depthAsTexture
+    );
+
     public void SetRenderTarget(RenderTarget? target);
     public void DeleteRenderTarget(RenderTarget target);
 

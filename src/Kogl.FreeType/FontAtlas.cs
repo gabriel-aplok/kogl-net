@@ -16,10 +16,19 @@ internal class FontAtlas : IDisposable
     public FontAtlas(int size = 2048)
     {
         Size = size;
-
-        // initialize an empty RGBA texture
         byte[] emptyData = new byte[size * size * 4];
-        Texture = KoGL.GetBackend().CreateTexture(emptyData, size, size, 4);
+
+        Texture = KoGL.GetBackend()
+            .CreateTexture(
+                size,
+                size,
+                TextureFormat.Rgba8,
+                TextureFilter.Linear,
+                TextureFilter.Linear,
+                TextureWrap.ClampToEdge,
+                TextureWrap.ClampToEdge,
+                emptyData
+            );
     }
 
     public bool TryAddGlyph(
@@ -58,7 +67,15 @@ internal class FontAtlas : IDisposable
         }
 
         // upload glyph to gpu
-        KoGL.UpdateTexture(Texture, _currentX, _currentY, width, height, rgbaData, 4);
+        KoGL.UpdateTexture(
+            Texture,
+            _currentX,
+            _currentY,
+            width,
+            height,
+            rgbaData,
+            TextureFormat.Rgba8
+        );
 
         // calculate UVs
         u0 = (float)_currentX / Size;

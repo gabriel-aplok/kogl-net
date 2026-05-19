@@ -520,98 +520,72 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     }
 
     public TextureHandle CreateTexture(
-        ReadOnlySpan<byte> pixelData,
         int width,
         int height,
-        int channels
+        TextureFormat format,
+        TextureFilter minFilter,
+        TextureFilter magFilter,
+        TextureWrap wrapS,
+        TextureWrap wrapT,
+        ReadOnlySpan<byte> pixelData
     )
     {
         uint id = _gl.GenTexture();
         BindTextureInternal(id, 0);
 
-        // texture filtering
+        (InternalFormat InternalFormat, PixelFormat PixelFormat, PixelType PixelType) mapping =
+            GetFormatMapping(format);
+
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMinFilter,
-            (int)TextureMinFilter.LinearMipmapLinear
+            (int)GetGlMinFilter(minFilter)
         );
-
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureMagFilter,
-            (int)TextureMagFilter.Linear
+            (int)GetGlMagFilter(magFilter)
         );
-
-        // wrapping
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureWrapS,
-            (int)TextureWrapMode.Repeat
+            (int)GetGlWrap(wrapS)
         );
-
         _gl.TexParameter(
             TextureTarget.Texture2D,
             TextureParameterName.TextureWrapT,
-            (int)TextureWrapMode.Repeat
+            (int)GetGlWrap(wrapT)
         );
 
-        // pixel alignment
         _gl.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
-        // texture formats
-        InternalFormat internalFormat = channels == 4 ? InternalFormat.Rgba : InternalFormat.Rgb;
-        PixelFormat pixelFormat = channels == 4 ? PixelFormat.Rgba : PixelFormat.Rgb;
-        // InternalFormat internalFormat;
-        // PixelFormat pixelFormat;
-
-        // switch (channels)
-        // {
-        //     case 1:
-        //         internalFormat = InternalFormat.R8;
-        //         pixelFormat = PixelFormat.Red;
-        //         break;
-
-        //     case 2:
-        //         internalFormat = InternalFormat.RG8;
-        //         pixelFormat = PixelFormat.RG;
-        //         break;
-
-        //     case 3:
-        //         internalFormat = InternalFormat.Rgb8;
-        //         pixelFormat = PixelFormat.Rgb;
-        //         break;
-
-        //     case 4:
-        //         internalFormat = InternalFormat.Rgba8;
-        //         pixelFormat = PixelFormat.Rgba;
-        //         break;
-
-        //     default:
-        //         throw new ArgumentException($"Unsupported channel count: {channels}");
-        // }
-
-        // upload texture
         fixed (byte* ptr = pixelData)
         {
             _gl.TexImage2D(
                 TextureTarget.Texture2D,
                 0,
-                internalFormat,
+                mapping.InternalFormat,
                 (uint)width,
                 (uint)height,
                 0,
-                pixelFormat,
-                PixelType.UnsignedByte,
-                ptr
+                mapping.PixelFormat,
+                mapping.PixelType,
+                pixelData.IsEmpty ? null : ptr
             );
         }
 
-        // generate mipmaps
-        _gl.GenerateMipmap(TextureTarget.Texture2D);
+        if (
+            minFilter
+            is TextureFilter.NearestMipmapNearest
+                or TextureFilter.LinearMipmapNearest
+                or TextureFilter.NearestMipmapLinear
+                or TextureFilter.LinearMipmapLinear
+        )
+        {
+            _gl.GenerateMipmap(TextureTarget.Texture2D);
+        }
 
-        // unbind
         _gl.BindTexture(TextureTarget.Texture2D, 0);
-
         return new TextureHandle(id);
     }
 
@@ -622,12 +596,13 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         int width,
         int height,
         ReadOnlySpan<byte> pixelData,
-        int channels
+        TextureFormat format
     )
     {
         BindTextureInternal(texture.Id, 0);
+        (InternalFormat InternalFormat, PixelFormat PixelFormat, PixelType PixelType) mapping =
+            GetFormatMapping(format);
 
-        PixelFormat pxFormat = channels == 4 ? PixelFormat.Rgba : PixelFormat.Rgb;
         fixed (byte* ptr = pixelData)
         {
             _gl.TexSubImage2D(
@@ -637,112 +612,218 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
                 yOffset,
                 (uint)width,
                 (uint)height,
-                pxFormat,
-                PixelType.UnsignedByte,
+                mapping.PixelFormat,
+                mapping.PixelType,
                 ptr
             );
         }
     }
 
-    public RenderTarget CreateRenderTarget(int width, int height, int colorAttachments = 1)
+    public void SetTextureCompareMode(TextureHandle texture, KTextureCompareMode mode)
     {
-        if (colorAttachments < 1)
-            throw new ArgumentOutOfRangeException(
-                nameof(colorAttachments),
-                "Must have at least 1 color attachment."
+        BindTextureInternal(texture.Id, 0);
+        if (mode == KTextureCompareMode.CompareRefToTexture)
+        {
+            _gl.TexParameter(
+                TextureTarget.Texture2D,
+                TextureParameterName.TextureCompareMode,
+                (int)GLEnum.CompareRefToTexture
             );
+            _gl.TexParameter(
+                TextureTarget.Texture2D,
+                TextureParameterName.TextureCompareFunc,
+                (int)DepthFunction.Lequal
+            );
+        }
+        else
+        {
+            _gl.TexParameter(
+                TextureTarget.Texture2D,
+                TextureParameterName.TextureCompareMode,
+                (int)GLEnum.None
+            );
+        }
+    }
 
-        // generate fbo
+    public void SetTextureBorderColor(TextureHandle texture, Vector4 color)
+    {
+        BindTextureInternal(texture.Id, 0);
+        float[] c = [color.X, color.Y, color.Z, color.W];
+        fixed (float* ptr = c)
+        {
+            _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBorderColor, ptr);
+        }
+    }
+
+    public RenderTarget CreateRenderTarget(
+        int width,
+        int height,
+        ReadOnlySpan<TextureFormat> colorFormats,
+        TextureFormat depthFormat,
+        bool depthAsTexture
+    )
+    {
         uint fbo = _gl.GenFramebuffer();
         BindFramebufferInternal(fbo);
 
-        TextureHandle[] textures = new TextureHandle[colorAttachments];
-        Span<DrawBufferMode> drawBuffers = stackalloc DrawBufferMode[colorAttachments];
+        TextureHandle[] colorTextures = new TextureHandle[colorFormats.Length];
+        Span<DrawBufferMode> drawBuffers = stackalloc DrawBufferMode[colorFormats.Length];
 
-        for (int i = 0; i < colorAttachments; i++)
+        for (int i = 0; i < colorFormats.Length; i++)
         {
-            // generate and bind the texture
             uint tex = _gl.GenTexture();
-
             BindTextureInternal(tex, 0);
 
-            // allocate empty texture memory
+            (InternalFormat InternalFormat, PixelFormat PixelFormat, PixelType PixelType) mapping =
+                GetFormatMapping(colorFormats[i]);
+
             _gl.TexImage2D(
                 TextureTarget.Texture2D,
                 0,
-                InternalFormat.Rgba,
+                mapping.InternalFormat,
                 (uint)width,
                 (uint)height,
                 0,
-                PixelFormat.Rgba,
-                PixelType.UnsignedByte,
-                (void*)0
+                mapping.PixelFormat,
+                mapping.PixelType,
+                null
             );
-
             _gl.TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMinFilter,
                 (int)TextureMinFilter.Linear
             );
-
             _gl.TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureMagFilter,
                 (int)TextureMagFilter.Linear
             );
-
             _gl.TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapS,
                 (int)TextureWrapMode.ClampToEdge
             );
-
             _gl.TexParameter(
                 TextureTarget.Texture2D,
                 TextureParameterName.TextureWrapT,
                 (int)TextureWrapMode.ClampToEdge
             );
 
-            // attach texture to fbo dynamically offset by current iteration
             _gl.FramebufferTexture2D(
                 FramebufferTarget.Framebuffer,
-                (FramebufferAttachment)((int)FramebufferAttachment.ColorAttachment0 + i),
+                FramebufferAttachment.ColorAttachment0 + i,
                 TextureTarget.Texture2D,
                 tex,
                 0
             );
 
-            textures[i] = new TextureHandle(tex);
-            drawBuffers[i] = (DrawBufferMode)((int)DrawBufferMode.ColorAttachment0 + i);
+            colorTextures[i] = new TextureHandle(tex);
+            drawBuffers[i] = DrawBufferMode.ColorAttachment0 + i;
         }
 
-        // register multi-draw attachments to the gl pipeline
-        fixed (DrawBufferMode* drawBuffersPtr = drawBuffers)
+        if (colorFormats.Length > 0)
         {
-            _gl.DrawBuffers((uint)colorAttachments, drawBuffersPtr);
+            fixed (DrawBufferMode* drawBuffersPtr = drawBuffers)
+            {
+                _gl.DrawBuffers((uint)colorFormats.Length, drawBuffersPtr);
+            }
+        }
+        else
+        {
+            // nullify color writing for depth-only rendering configurations
+            _gl.DrawBuffer(DrawBufferMode.None);
+            _gl.ReadBuffer(ReadBufferMode.None);
         }
 
-        // generate renderbuffer for depth/stencil (required if draw 3d inside the fbo)
-        uint rbo = _gl.GenRenderbuffer();
+        uint rbo = 0;
+        TextureHandle depthTexture = default;
 
-        _gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo);
-        _gl.RenderbufferStorage(
-            RenderbufferTarget.Renderbuffer,
-            InternalFormat.Depth24Stencil8,
-            (uint)width,
-            (uint)height
-        );
+        if (depthFormat != TextureFormat.None)
+        {
+            (InternalFormat InternalFormat, PixelFormat PixelFormat, PixelType PixelType) mapping =
+                GetFormatMapping(depthFormat);
+            FramebufferAttachment attachment =
+                mapping.PixelFormat == PixelFormat.DepthStencil
+                    ? FramebufferAttachment.DepthStencilAttachment
+                    : FramebufferAttachment.DepthAttachment;
 
-        _gl.FramebufferRenderbuffer(
-            FramebufferTarget.Framebuffer,
-            FramebufferAttachment.DepthStencilAttachment,
-            RenderbufferTarget.Renderbuffer,
-            rbo
-        );
+            if (depthAsTexture)
+            {
+                uint depthTex = _gl.GenTexture();
+                BindTextureInternal(depthTex, 0);
+
+                _gl.TexImage2D(
+                    TextureTarget.Texture2D,
+                    0,
+                    mapping.InternalFormat,
+                    (uint)width,
+                    (uint)height,
+                    0,
+                    mapping.PixelFormat,
+                    mapping.PixelType,
+                    null
+                );
+                _gl.TexParameter(
+                    TextureTarget.Texture2D,
+                    TextureParameterName.TextureMinFilter,
+                    (int)TextureMinFilter.Nearest
+                );
+                _gl.TexParameter(
+                    TextureTarget.Texture2D,
+                    TextureParameterName.TextureMagFilter,
+                    (int)TextureMagFilter.Nearest
+                );
+                _gl.TexParameter(
+                    TextureTarget.Texture2D,
+                    TextureParameterName.TextureWrapS,
+                    (int)TextureWrapMode.ClampToBorder
+                );
+                _gl.TexParameter(
+                    TextureTarget.Texture2D,
+                    TextureParameterName.TextureWrapT,
+                    (int)TextureWrapMode.ClampToBorder
+                );
+
+                float[] borderColor = [1.0f, 1.0f, 1.0f, 1.0f];
+                fixed (float* borderPtr = borderColor)
+                {
+                    _gl.TexParameter(
+                        TextureTarget.Texture2D,
+                        TextureParameterName.TextureBorderColor,
+                        borderPtr
+                    );
+                }
+
+                _gl.FramebufferTexture2D(
+                    FramebufferTarget.Framebuffer,
+                    attachment,
+                    TextureTarget.Texture2D,
+                    depthTex,
+                    0
+                );
+                depthTexture = new TextureHandle(depthTex);
+            }
+            else
+            {
+                rbo = _gl.GenRenderbuffer();
+                _gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo);
+                _gl.RenderbufferStorage(
+                    RenderbufferTarget.Renderbuffer,
+                    mapping.InternalFormat,
+                    (uint)width,
+                    (uint)height
+                );
+                _gl.FramebufferRenderbuffer(
+                    FramebufferTarget.Framebuffer,
+                    attachment,
+                    RenderbufferTarget.Renderbuffer,
+                    rbo
+                );
+            }
+        }
 
         BindFramebufferInternal(0);
-
-        return new RenderTarget(fbo, rbo, textures, width, height);
+        return new RenderTarget(fbo, rbo, colorTextures, depthTexture, width, height);
     }
 
     public void SetRenderTarget(RenderTarget? target)
@@ -765,15 +846,21 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             _cachedFbo = 0;
 
         _gl.DeleteFramebuffer(target.FboId);
-        _gl.DeleteRenderbuffer(target.RboId);
 
-        // delete all dynamically generated textures attached to this FBO
-        if (target.Textures != null)
+        if (target.RboId != 0)
+            _gl.DeleteRenderbuffer(target.RboId);
+
+        if (target.ColorTextures != null)
         {
-            foreach (TextureHandle tex in target.Textures)
+            foreach (TextureHandle tex in target.ColorTextures)
             {
                 DeleteTexture(tex);
             }
+        }
+
+        if (target.DepthTexture.Id != 0)
+        {
+            DeleteTexture(target.DepthTexture);
         }
     }
 
@@ -963,6 +1050,86 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
             _gl.BindFramebuffer(FramebufferTarget.Framebuffer, id);
             _cachedFbo = id;
         }
+    }
+
+    #endregion
+    #region Internals
+
+    private static (
+        InternalFormat InternalFormat,
+        PixelFormat PixelFormat,
+        PixelType PixelType
+    ) GetFormatMapping(TextureFormat format)
+    {
+        return format switch
+        {
+            TextureFormat.R8 => (InternalFormat.R8, PixelFormat.Red, PixelType.UnsignedByte),
+            TextureFormat.Rg8 => (InternalFormat.RG8, PixelFormat.RG, PixelType.UnsignedByte),
+            TextureFormat.Rgb8 => (InternalFormat.Rgb8, PixelFormat.Rgb, PixelType.UnsignedByte),
+            TextureFormat.Rgba8 => (InternalFormat.Rgba8, PixelFormat.Rgba, PixelType.UnsignedByte),
+            TextureFormat.Rgba16F => (
+                InternalFormat.Rgba16f,
+                PixelFormat.Rgba,
+                PixelType.HalfFloat
+            ),
+            TextureFormat.Rgba32F => (InternalFormat.Rgba32f, PixelFormat.Rgba, PixelType.Float),
+            TextureFormat.Depth16 => (
+                InternalFormat.DepthComponent16,
+                PixelFormat.DepthComponent,
+                PixelType.UnsignedShort
+            ),
+            TextureFormat.Depth24 => (
+                InternalFormat.DepthComponent24,
+                PixelFormat.DepthComponent,
+                PixelType.UnsignedInt
+            ),
+            TextureFormat.Depth32F => (
+                InternalFormat.DepthComponent32f,
+                PixelFormat.DepthComponent,
+                PixelType.Float
+            ),
+            TextureFormat.Depth24Stencil8 => (
+                InternalFormat.Depth24Stencil8,
+                PixelFormat.DepthStencil,
+                PixelType.UnsignedInt248
+            ),
+            _ => (InternalFormat.Rgba8, PixelFormat.Rgba, PixelType.UnsignedByte),
+        };
+    }
+
+    private static TextureMinFilter GetGlMinFilter(TextureFilter filter)
+    {
+        return filter switch
+        {
+            TextureFilter.Nearest => TextureMinFilter.Nearest,
+            TextureFilter.Linear => TextureMinFilter.Linear,
+            TextureFilter.NearestMipmapNearest => TextureMinFilter.NearestMipmapNearest,
+            TextureFilter.LinearMipmapNearest => TextureMinFilter.LinearMipmapNearest,
+            TextureFilter.NearestMipmapLinear => TextureMinFilter.NearestMipmapLinear,
+            TextureFilter.LinearMipmapLinear => TextureMinFilter.LinearMipmapLinear,
+            _ => TextureMinFilter.Linear,
+        };
+    }
+
+    private static TextureMagFilter GetGlMagFilter(TextureFilter filter)
+    {
+        return filter switch
+        {
+            TextureFilter.Nearest => TextureMagFilter.Nearest,
+            _ => TextureMagFilter.Linear,
+        };
+    }
+
+    private static TextureWrapMode GetGlWrap(TextureWrap wrap)
+    {
+        return wrap switch
+        {
+            TextureWrap.Repeat => TextureWrapMode.Repeat,
+            TextureWrap.MirroredRepeat => TextureWrapMode.MirroredRepeat,
+            TextureWrap.ClampToEdge => TextureWrapMode.ClampToEdge,
+            TextureWrap.ClampToBorder => TextureWrapMode.ClampToBorder,
+            _ => TextureWrapMode.Repeat,
+        };
     }
 
     #endregion

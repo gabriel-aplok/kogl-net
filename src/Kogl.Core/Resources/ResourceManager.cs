@@ -43,8 +43,23 @@ public static class ResourceManager
         using FileStream stream = File.OpenRead(path);
         ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
 
+        TextureFormat format =
+            image.Comp == ColorComponents.RedGreenBlueAlpha
+                ? TextureFormat.Rgba8
+                : TextureFormat.Rgb8;
+
         TextureHandle handle = KoGL.GetBackend()
-            .CreateTexture(image.Data, image.Width, image.Height, 4);
+            .CreateTexture(
+                image.Width,
+                image.Height,
+                format,
+                TextureFilter.LinearMipmapLinear,
+                TextureFilter.Linear,
+                TextureWrap.Repeat,
+                TextureWrap.Repeat,
+                image.Data
+            );
+
         return new Texture(handle, image.Width, image.Height);
     }
 

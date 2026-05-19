@@ -3,10 +3,12 @@ namespace Kogl.Abstractions.Types;
 public readonly record struct RenderTarget(
     uint FboId,
     uint RboId,
-    TextureHandle[] Textures,
+    TextureHandle[] ColorTextures,
+    TextureHandle DepthTexture,
     int Width,
     int Height
 )
 {
-    public TextureHandle Texture => Textures != null && Textures.Length > 0 ? Textures[0] : default;
+    public TextureHandle Texture =>
+        ColorTextures != null && ColorTextures.Length > 0 ? ColorTextures[0] : DepthTexture;
 }

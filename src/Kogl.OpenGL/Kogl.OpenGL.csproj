@@ -7,46 +7,101 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-    <!-- native & trimming settings -->
+    <!-- ========================================================================= -->
+    <!-- PACK METADATA                                                          -->
+    <!-- ========================================================================= -->
+    <PropertyGroup>
+        <PackageId>Kogl.OpenGL</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Gabriel Aplok</Authors>
+        <Company>FireWave Interactive</Company>
+        <Description>A lightweight, custom graphics abstraction layer inspired by OpenGL 1.1 immediate mode. Backend-agnostic, not limited to OpenGL.</Description>
+        <PackageCopyright>Copyright © $([System.DateTime]::Now.ToString('yyyy')) Gabriel Aplok</PackageCopyright>
+
+        <PackageLicenseExpression>Zlib</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>graphics;game;engine;gamedev;nativeaot;aot;trimmed;library</PackageTags>
+
+        <RepositoryUrl>https://github.com/gabriel-aplok/kogl-net</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="\" />
+        <None Include="../../assets/icon.png" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <!-- ========================================================================= -->
+    <!-- NATIVE & TRIMMING COMPATIBILITY                                           -->
+    <!-- ========================================================================= -->
     <PropertyGroup>
         <IsTrimmable>true</IsTrimmable>
         <TrimMode>full</TrimMode>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <IllinkToAllSymbols>false</IllinkToAllSymbols>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
+    <!-- ========================================================================= -->
+    <!-- DEBUG CONFIG PROFILE                                              -->
+    <!-- ========================================================================= -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+        <Optimize>false</Optimize>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>portable</DebugType>
+
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <!-- SourceLink -->
+        <PackageReference
+            Include="Microsoft.SourceLink.GitHub"
+            Version="10.0.300"
+            PrivateAssets="all"
+        />
+    </ItemGroup>
+
+    <!-- ========================================================================= -->
+    <!-- RELEASE CONFIG PROFILE                                                    -->
+    <!-- ========================================================================= -->
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <!-- core performance -->
+        <!-- Core Performance Engine Optimization -->
         <OptimizationPreference>Speed</OptimizationPreference>
         <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-
-        <!-- tiered compilation -->
         <TieredCompilation>false</TieredCompilation>
 
-        <!-- native meta-stripping -->
+        <!-- Aggressive Native Metadata Stripping -->
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <IlcTrimMetadata>true</IlcTrimMetadata>
         <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
 
-        <!-- strip string-heavy data (stack traces will show addresses, not method names) -->
+        <!-- Strips string data (Stack traces will show memory addresses, not names) -->
         <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
 
-        <!-- forces invariant culture -->
+        <!-- Forces low-overhead invariant culture -->
         <InvariantGlobalization>true</InvariantGlobalization>
         <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
 
-        <!-- hardware-targeted micro-optimizations -->
-        <!-- generates specific AVX/AVX2/AVX-512 instructions matching the CPU -->
-        <!-- x86-64-v3 -->
-        <IlcInstructionSet>x86-64-v3</IlcInstructionSet>
-
-        <!-- strips debug symbols out of the final compiled native binary completely -->
+        <!-- De-bloat all traces of debugging/symbols -->
         <StripSymbols>true</StripSymbols>
         <DebugType>none</DebugType>
         <DebugSymbols>false</DebugSymbols>
         <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+
+        <!-- Block symbol packages from generating on release packing -->
+        <IncludeSymbols>false</IncludeSymbols>
     </PropertyGroup>
 
+    <!-- ========================================================================= -->
+    <!-- DEPENDENCIES                                                              -->
+    <!-- ========================================================================= -->
     <ItemGroup>
         <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
         <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.23.0" />
@@ -54,6 +109,9 @@
         <PackageReference Include="Silk.NET.Input" Version="2.23.0" />
     </ItemGroup>
 
+    <!-- ========================================================================= -->
+    <!-- PROJECT REFERENCES                                                        -->
+    <!-- ========================================================================= -->
     <ItemGroup>
         <ProjectReference Include="..\Kogl.Abstractions\Kogl.Abstractions.csproj" />
         <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />

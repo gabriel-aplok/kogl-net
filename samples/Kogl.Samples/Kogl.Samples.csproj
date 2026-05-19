@@ -7,50 +7,9 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-    <!-- native & trimming settings -->
-    <PropertyGroup>
-        <PublishAot>true</PublishAot>
-        <PublishSingleFile>true</PublishSingleFile>
-        <SelfContained>true</SelfContained>
-        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-        <IsTrimmable>true</IsTrimmable>
-        <TrimMode>full</TrimMode>
-        <TrimmerSingleWarn>false</TrimmerSingleWarn>
-        <IllinkToAllSymbols>false</IllinkToAllSymbols>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <!-- core performance -->
-        <OptimizationPreference>Speed</OptimizationPreference>
-        <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-
-        <!-- tiered compilation -->
-        <TieredCompilation>false</TieredCompilation>
-
-        <!-- native meta-stripping -->
-        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
-        <IlcTrimMetadata>true</IlcTrimMetadata>
-        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
-
-        <!-- strip string-heavy data (stack traces will show addresses, not method names) -->
-        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
-
-        <!-- forces invariant culture -->
-        <InvariantGlobalization>true</InvariantGlobalization>
-        <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
-
-        <!-- hardware-targeted micro-optimizations -->
-        <!-- generates specific AVX/AVX2/AVX-512 instructions matching the CPU -->
-        <!-- x86-64-v3 -->
-        <IlcInstructionSet>x86-64-v3</IlcInstructionSet>
-
-        <!-- strips debug symbols out of the final compiled native binary completely -->
-        <StripSymbols>true</StripSymbols>
-        <DebugType>none</DebugType>
-        <DebugSymbols>false</DebugSymbols>
-        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-    </PropertyGroup>
-
+    <!-- ========================================================================= -->
+    <!-- ASSETS & DEPENDENCIES                                                     -->
+    <!-- ========================================================================= -->
     <ItemGroup>
         <Content Include="assets\**\*.*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -58,14 +17,81 @@
     </ItemGroup>
 
     <ItemGroup>
-        <TrimmerRootAssembly Include="Silk.NET.Windowing.Common" />
-        <TrimmerRootAssembly Include="Silk.NET.Core" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\src\Kogl.Core\Kogl.Core.csproj" />
         <ProjectReference Include="..\..\src\Kogl.FreeType\Kogl.FreeType.csproj" />
         <ProjectReference Include="..\..\src\Kogl.OpenGL\Kogl.OpenGL.csproj" />
         <ProjectReference Include="..\..\src\Kogl.Windowing\Kogl.Windowing.csproj" />
+    </ItemGroup>
+
+    <!-- ========================================================================= -->
+    <!-- DEBUG CONFIG PROFILE                                                      -->
+    <!-- ========================================================================= -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <PublishAot>false</PublishAot>
+        <PublishSingleFile>false</PublishSingleFile>
+        <SelfContained>false</SelfContained>
+        <IsTrimmable>false</IsTrimmable>
+
+        <Optimize>false</Optimize>
+        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>portable</DebugType>
+    </PropertyGroup>
+
+    <!-- ========================================================================= -->
+    <!-- RELEASE CONFIG PROFILE                                                    -->
+    <!-- ========================================================================= -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <!-- Core -->
+        <PublishAot>true</PublishAot>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+        <!-- Trimming -->
+        <IsTrimmable>true</IsTrimmable>
+        <TrimMode>full</TrimMode>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <IllinkToAllSymbols>false</IllinkToAllSymbols>
+        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+
+        <!-- Core Performance Engine Optimization -->
+        <OptimizationPreference>Speed</OptimizationPreference>
+        <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+        <TieredCompilation>false</TieredCompilation>
+
+        <!-- Aggressive Native Metadata Stripping -->
+        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+        <IlcTrimMetadata>true</IlcTrimMetadata>
+        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+
+        <!-- Strips string data (Stack traces will show memory addresses, not names) -->
+        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+
+        <!-- Forces low-overhead invariant localization -->
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
+
+        <!-- Forces low-overhead invariant culture -->
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
+
+        <!-- Generates specific AVX/AVX2 instructions matching the CPU -->
+        <IlcInstructionSet>x86-64-v3</IlcInstructionSet>
+
+        <!-- De-bloat all traces of debugging/symbols -->
+        <StripSymbols>true</StripSymbols>
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+
+        <!-- Block symbol packages from generating on release packing -->
+        <IncludeSymbols>false</IncludeSymbols>
+    </PropertyGroup>
+
+    <!-- Trimming Root Assemblies -->
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <TrimmerRootAssembly Include="Silk.NET.Windowing.Common" />
+        <TrimmerRootAssembly Include="Silk.NET.Core" />
     </ItemGroup>
 </Project>

@@ -10,15 +10,17 @@ internal class Program
         Log.Info("KoGL - Samples");
 
         // ShadowMappingExample.Start();
-        SpriteRenderingExample.Start();
-        MultiTextureMaterialExample.Start();
+        RaymarchedPrimitivesExample.Start();
+        // RaymarchedHillsExample.Start();
+        // SpriteRenderingExample.Start();
+        // MultiTextureMaterialExample.Start();
         // SimpleExample.Start();
         // MaterialExample.Start();
         // InputExample.Start();
         // TextRenderingExample.Start();
         // CameraExample.Start();
         // Cube3DExample.Start();
-        // TextureLoadingExample.Start();
+        TextureLoadingExample.Start();
         // ScissorExample.Start();
         // CustomShadersExample.Start();
         // PostProcessingExample.Start();

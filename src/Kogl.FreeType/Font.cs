@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using FreeTypeSharp;
-using Kogl.Abstractions;
 using Kogl.Abstractions.Types;
 using Kogl.Core.Resources;
 using static FreeTypeSharp.FT;

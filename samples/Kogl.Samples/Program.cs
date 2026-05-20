@@ -10,6 +10,7 @@ internal class Program
         Log.Info("KoGL - Samples");
 
         // ShadowMappingExample.Start();
+        SpriteRenderingExample.Start();
         MultiTextureMaterialExample.Start();
         // SimpleExample.Start();
         // MaterialExample.Start();

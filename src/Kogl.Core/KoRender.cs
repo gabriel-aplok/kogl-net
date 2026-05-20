@@ -1,6 +1,6 @@
 using System.Numerics;
-using Kogl.Abstractions;
-using Kogl.Abstractions.Types;
+using Kogl.Common;
+using Kogl.Common.Types;
 using Kogl.Core.Graphics;
 using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
@@ -8,8 +8,8 @@ using Kogl.Core.Resources;
 namespace Kogl.Core;
 
 /// <summary>This is the heart of the library.
-/// Old name was RenderAPI.</summary>
-public static class KoGL
+/// Old name was RenderAPI</summary>
+public static class KoRender
 {
     public const int MaxTextureSlots = 8;
 
@@ -520,7 +520,7 @@ void main() {
     #endregion
     #region States
 
-    /// <summary>Resets all internal render states to defaults.</summary>
+    /// <summary>Resets all internal render states to defaults</summary>
     public static void ResetStates()
     {
         for (int i = 0; i < MaxTextureSlots; i++)
@@ -548,39 +548,39 @@ void main() {
         DisableStencilTest();
     }
 
-    /// <summary>Enables depth testing.</summary>
+    /// <summary>Enables depth testing</summary>
     public static void EnableDepthTest()
     {
         _backend.SetDepthTest(true);
     }
 
-    /// <summary>Disables depth testing.</summary>
+    /// <summary>Disables depth testing</summary>
     public static void DisableDepthTest()
     {
         _backend.SetDepthTest(false);
     }
 
-    /// <summary>Enables blending.</summary>
+    /// <summary>Enables blending</summary>
     public static void EnableBlending()
     {
         Flush();
         _backend.SetBlending(true);
     }
 
-    /// <summary>Disables blending.</summary>
+    /// <summary>Disables blending</summary>
     public static void DisableBlending()
     {
         Flush();
         _backend.SetBlending(false);
     }
 
-    /// <summary>Enables culling.</summary>
+    /// <summary>Enables culling</summary>
     public static void EnableCulling(CullFaceState mode = CullFaceState.Back)
     {
         _backend.SetCulling(true, mode);
     }
 
-    /// <summary>Disables culling.</summary>
+    /// <summary>Disables culling</summary>
     public static void DisableCulling()
     {
         _backend.SetCulling(false);

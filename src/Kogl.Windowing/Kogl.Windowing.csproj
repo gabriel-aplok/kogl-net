@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Library</OutputType>
+        <RootNamespace>Kogl.Windowing</RootNamespace>
+        <AssemblyName>kolpa_wnd</AssemblyName>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -112,7 +114,7 @@
     <!-- PROJECT REFERENCES                                                        -->
     <!-- ========================================================================= -->
     <ItemGroup>
-        <ProjectReference Include="..\Kogl.Abstractions\Kogl.Abstractions.csproj" />
+        <ProjectReference Include="..\Kogl.Common\Kogl.Common.csproj" />
         <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />
         <ProjectReference Include="..\Kogl.Input\Kogl.Input.csproj" />
         <ProjectReference Include="..\Kogl.OpenGL\Kogl.OpenGL.csproj" />

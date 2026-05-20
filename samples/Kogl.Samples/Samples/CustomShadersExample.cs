@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Windowing;
@@ -63,64 +63,64 @@ void main() {
     FragColor = vec4(finalRGB, 1.0) * fCol;
 }";
 
-            _customShader = KoGL.CreateShader(vs, fs);
+            _customShader = KoRender.CreateShader(vs, fs);
         }
 
-        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, 800, 600, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, 800, 600, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         // draw a standard quad using the default shader
-        KoGL.UseDefaultShader();
-        KoGL.PushMatrix();
-        KoGL.Translate(150, 200, 0);
+        KoRender.UseDefaultShader();
+        KoRender.PushMatrix();
+        KoRender.Translate(150, 200, 0);
 
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 0, 0, 1);
-        KoGL.Vertex2(0, 0);
-        KoGL.Color4(1, 1, 0, 1);
-        KoGL.Vertex2(200, 0);
-        KoGL.Color4(0, 1, 0, 1);
-        KoGL.Vertex2(200, 200);
-        KoGL.Color4(0, 0, 1, 1);
-        KoGL.Vertex2(0, 200);
-        KoGL.End();
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 0, 0, 1);
+        KoRender.Vertex2(0, 0);
+        KoRender.Color4(1, 1, 0, 1);
+        KoRender.Vertex2(200, 0);
+        KoRender.Color4(0, 1, 0, 1);
+        KoRender.Vertex2(200, 200);
+        KoRender.Color4(0, 0, 1, 1);
+        KoRender.Vertex2(0, 200);
+        KoRender.End();
 
-        KoGL.PopMatrix();
+        KoRender.PopMatrix();
 
         // draw an animated quad using the custom shader
-        KoGL.UseShader(_customShader);
+        KoRender.UseShader(_customShader);
 
         // setting a uniform automatically flushes the batcher
-        KoGL.SetUniform("uTime", _time);
-        KoGL.SetUniform("uTint", new Vector3(0.5f, 0.8f, 1.0f));
+        KoRender.SetUniform("uTime", _time);
+        KoRender.SetUniform("uTint", new Vector3(0.5f, 0.8f, 1.0f));
 
-        KoGL.PushMatrix();
-        KoGL.Translate(450, 200, 0);
+        KoRender.PushMatrix();
+        KoRender.Translate(450, 200, 0);
 
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 1, 1, 1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex2(0, 0);
-        KoGL.Color4(1, 1, 1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex2(200, 0);
-        KoGL.Color4(1, 1, 1, 1);
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex2(200, 200);
-        KoGL.Color4(1, 1, 1, 1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex2(0, 200);
-        KoGL.End();
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 1, 1, 1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex2(0, 0);
+        KoRender.Color4(1, 1, 1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex2(200, 0);
+        KoRender.Color4(1, 1, 1, 1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex2(200, 200);
+        KoRender.Color4(1, 1, 1, 1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex2(0, 200);
+        KoRender.End();
 
-        KoGL.PopMatrix();
+        KoRender.PopMatrix();
 
         // final dispatch to GPU
-        KoGL.Flush();
+        KoRender.Flush();
     }
 }

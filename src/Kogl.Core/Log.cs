@@ -60,19 +60,19 @@ public static class Log
     private const string _red = "\u001b[31m";
     private const string _boldRed = "\u001b[1;31m";
 
-    /// <summary>Sets the minimum log level required to process a log entry.</summary>
+    /// <summary>Sets the minimum log level required to process a log entry</summary>
     public static void SetMinLogLevel(LogLevel level)
     {
         _minLogLevel = level;
     }
 
-    /// <summary>Enables or disables file logging.</summary>
+    /// <summary>Enables or disables file logging</summary>
     public static void SetFileLogging(bool enabled)
     {
         _enableFileLogging = enabled;
     }
 
-    /// <summary>Initializes the file logger.</summary>
+    /// <summary>Initializes the file logger</summary>
     public static void InitFileLogger()
     {
         try
@@ -283,7 +283,7 @@ public static class Log
         }
     }
 
-    /// <summary>Clears the in-memory log queue.</summary>
+    /// <summary>Clears the in-memory log queue</summary>
     public static void ClearHistory()
     {
         lock (_lock)
@@ -292,7 +292,7 @@ public static class Log
         }
     }
 
-    /// <summary>Ensures all logs are completely flushed and the session file handle is safely freed.</summary>
+    /// <summary>Ensures all logs are completely flushed and the session file handle is safely freed</summary>
     public static void Shutdown()
     {
         lock (_lock)

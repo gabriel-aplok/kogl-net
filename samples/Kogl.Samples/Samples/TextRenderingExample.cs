@@ -40,15 +40,15 @@ internal class TextRenderingExample
     {
         _time += (float)dt;
 
-        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
-        KoGL.DisableDepthTest(); // 2d text mode
+        KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoRender.DisableDepthTest(); // 2d text mode
 
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, 800, 600, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, 800, 600, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         // basic Text
         KoGLText.DrawText(
@@ -69,7 +69,7 @@ internal class TextRenderingExample
         );
 
         // shadow
-        KoGL.Color4(0, 0, 0, 0.5f);
+        KoRender.Color4(0, 0, 0, 0.5f);
         KoGLText.DrawText(
             _openSansFont,
             "Sdf Shadow",
@@ -97,6 +97,6 @@ internal class TextRenderingExample
             TextAlignment.Center
         );
 
-        KoGL.Flush();
+        KoRender.Flush();
     }
 }

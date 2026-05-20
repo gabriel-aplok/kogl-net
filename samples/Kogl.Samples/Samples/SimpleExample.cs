@@ -1,4 +1,4 @@
-﻿using Kogl.Abstractions.Types;
+﻿using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Windowing;
@@ -22,17 +22,17 @@ internal class SimpleExample
 
     private static void RenderLoop(double dt)
     {
-        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, 800, 600, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, 800, 600, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         // draw a standard quad using the default shader
-        KoGL.UseDefaultShader();
+        KoRender.UseDefaultShader();
 
         // text
         // KoGLText.DrawText(
@@ -42,23 +42,23 @@ internal class SimpleExample
         //     new System.Numerics.Vector4(1, 1, 1, 1)
         // );
 
-        KoGL.PushMatrix();
-        KoGL.Translate(200, 200, 0);
+        KoRender.PushMatrix();
+        KoRender.Translate(200, 200, 0);
 
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 0, 0, 1);
-        KoGL.Vertex2(0, 0);
-        KoGL.Color4(1, 1, 0, 1);
-        KoGL.Vertex2(200, 0);
-        KoGL.Color4(0, 1, 0, 1);
-        KoGL.Vertex2(200, 200);
-        KoGL.Color4(0, 0, 1, 1);
-        KoGL.Vertex2(0, 200);
-        KoGL.End();
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 0, 0, 1);
+        KoRender.Vertex2(0, 0);
+        KoRender.Color4(1, 1, 0, 1);
+        KoRender.Vertex2(200, 0);
+        KoRender.Color4(0, 1, 0, 1);
+        KoRender.Vertex2(200, 200);
+        KoRender.Color4(0, 0, 1, 1);
+        KoRender.Vertex2(0, 200);
+        KoRender.End();
 
-        KoGL.PopMatrix();
+        KoRender.PopMatrix();
 
         // final dispatch to GPU
-        KoGL.Flush();
+        KoRender.Flush();
     }
 }

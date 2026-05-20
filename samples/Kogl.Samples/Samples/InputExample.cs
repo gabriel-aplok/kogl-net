@@ -1,5 +1,5 @@
 using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Graphics;
 using Kogl.Core.Rendering;
@@ -63,28 +63,28 @@ internal class InputExample
         UpdateInput((float)dt);
 
         // render world
-        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
-        KoGL.EnableDepthTest();
-        KoGL.DisableBlending();
+        KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoRender.EnableDepthTest();
+        KoRender.DisableBlending();
 
-        KoGL.BeginCamera(_camera);
+        KoRender.BeginCamera(_camera);
         DrawWorld();
-        KoGL.EndCamera();
+        KoRender.EndCamera();
 
         // render ui
-        KoGL.DisableDepthTest();
-        KoGL.EnableBlending();
+        KoRender.DisableDepthTest();
+        KoRender.EnableBlending();
 
         // match screen coords (0,0 is top-left)
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         DrawUI();
 
-        KoGL.Flush();
+        KoRender.Flush();
     }
 
     private static void UpdateInput(float dt)
@@ -133,25 +133,25 @@ internal class InputExample
     private static void DrawWorld()
     {
         // draw reference grid
-        KoGL.Begin(PrimitiveMode.Lines);
-        KoGL.Color4(0.5f, 0.5f, 0.5f, 1.0f);
+        KoRender.Begin(PrimitiveMode.Lines);
+        KoRender.Color4(0.5f, 0.5f, 0.5f, 1.0f);
         for (int i = -10; i <= 10; i++)
         {
-            KoGL.Vertex3(i, 0, -10);
-            KoGL.Vertex3(i, 0, 10);
-            KoGL.Vertex3(-10, 0, i);
-            KoGL.Vertex3(10, 0, i);
+            KoRender.Vertex3(i, 0, -10);
+            KoRender.Vertex3(i, 0, 10);
+            KoRender.Vertex3(-10, 0, i);
+            KoRender.Vertex3(10, 0, i);
         }
-        KoGL.End();
+        KoRender.End();
 
         // draw floor
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(0.3f, 0.3f, 0.3f, 1.0f);
-        KoGL.Vertex3(-10, 0, -10);
-        KoGL.Vertex3(10, 0, -10);
-        KoGL.Vertex3(10, 0, 10);
-        KoGL.Vertex3(-10, 0, 10);
-        KoGL.End();
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(0.3f, 0.3f, 0.3f, 1.0f);
+        KoRender.Vertex3(-10, 0, -10);
+        KoRender.Vertex3(10, 0, -10);
+        KoRender.Vertex3(10, 0, 10);
+        KoRender.Vertex3(-10, 0, 10);
+        KoRender.End();
     }
 
     private static void DrawUI()

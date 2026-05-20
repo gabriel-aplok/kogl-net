@@ -1,6 +1,6 @@
 using System.Numerics;
 using System.Text;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 
 namespace Kogl.FreeType;
@@ -53,11 +53,11 @@ void main() {
     if (FragColor.a < 0.01) discard;
 }";
 
-        _sdfShader = KoGL.CreateShader(vs, fs);
+        _sdfShader = KoRender.CreateShader(vs, fs);
         _sdfShaderInitialized = true;
     }
 
-    /// <summary>Draws a string to the screen.</summary>
+    /// <summary>Draws a string to the screen</summary>
     public static void DrawText(
         Font font,
         string text,
@@ -70,30 +70,30 @@ void main() {
         if (string.IsNullOrEmpty(text))
             return;
 
-        KoGL.UseTexture(font.AtlasTexture);
+        KoRender.UseTexture(font.AtlasTexture);
 
         if (font.IsSdf)
         {
             EnsureSdfShader();
-            KoGL.UseShader(_sdfShader);
+            KoRender.UseShader(_sdfShader);
 
-            Matrix4x4 mvp = KoGL.GetModelViewMatrix() * KoGL.GetProjectionMatrix();
-            KoGL.SetUniform("uMVP", mvp);
+            Matrix4x4 mvp = KoRender.GetModelViewMatrix() * KoRender.GetProjectionMatrix();
+            KoRender.SetUniform("uMVP", mvp);
 
             // smoothing should scale with the font size/zoom to keep edges crisp
             // standard value is ~0.25 / (font_size * scale)
             float smoothing = 0.125f / (font.Size * scale);
-            KoGL.SetUniform("uSmoothing", smoothing);
+            KoRender.SetUniform("uSmoothing", smoothing);
         }
         else
         {
-            KoGL.UseDefaultShader();
+            KoRender.UseDefaultShader();
         }
 
         // push to the stack to respect parent transforms easily
-        KoGL.PushMatrix();
-        KoGL.Translate(position.X, position.Y, 0);
-        KoGL.Scale(scale, scale, 1.0f);
+        KoRender.PushMatrix();
+        KoRender.Translate(position.X, position.Y, 0);
+        KoRender.Scale(scale, scale, 1.0f);
 
         // handle alignment offset
         ReadOnlySpan<char> span = text.AsSpan();
@@ -107,8 +107,8 @@ void main() {
         }
 
         // batch rendering
-        KoGL.Color4(color.X, color.Y, color.Z, color.W);
-        KoGL.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(color.X, color.Y, color.Z, color.W);
+        KoRender.Begin(PrimitiveMode.Quads);
 
         float cursorX = 0;
         float cursorY = font.Size; // base alignment
@@ -135,24 +135,24 @@ void main() {
                 float h = glyph.Height;
 
                 // push quad vertices directly into the batcher
-                KoGL.TexCoord2(glyph.U0, glyph.V0);
-                KoGL.Vertex2(xpos, ypos);
-                KoGL.TexCoord2(glyph.U1, glyph.V0);
-                KoGL.Vertex2(xpos + w, ypos);
-                KoGL.TexCoord2(glyph.U1, glyph.V1);
-                KoGL.Vertex2(xpos + w, ypos + h);
-                KoGL.TexCoord2(glyph.U0, glyph.V1);
-                KoGL.Vertex2(xpos, ypos + h);
+                KoRender.TexCoord2(glyph.U0, glyph.V0);
+                KoRender.Vertex2(xpos, ypos);
+                KoRender.TexCoord2(glyph.U1, glyph.V0);
+                KoRender.Vertex2(xpos + w, ypos);
+                KoRender.TexCoord2(glyph.U1, glyph.V1);
+                KoRender.Vertex2(xpos + w, ypos + h);
+                KoRender.TexCoord2(glyph.U0, glyph.V1);
+                KoRender.Vertex2(xpos, ypos + h);
             }
 
             cursorX += glyph.Advance;
         }
 
-        KoGL.End();
-        KoGL.PopMatrix();
+        KoRender.End();
+        KoRender.PopMatrix();
     }
 
-    /// <summary>Measures the pixel dimensions of a string without allocating arrays.</summary>
+    /// <summary>Measures the pixel dimensions of a string without allocating arrays</summary>
     public static Vector2 Measure(Font font, ReadOnlySpan<char> text)
     {
         float maxWidth = 0;

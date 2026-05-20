@@ -1,4 +1,4 @@
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 
 namespace Kogl.FreeType;
@@ -18,7 +18,8 @@ internal class FontAtlas : IDisposable
         Size = size;
         byte[] emptyData = new byte[size * size * 4];
 
-        Texture = KoGL.GetBackend()
+        Texture = KoRender
+            .GetBackend()
             .CreateTexture(
                 size,
                 size,
@@ -67,7 +68,7 @@ internal class FontAtlas : IDisposable
         }
 
         // upload glyph to gpu
-        KoGL.UpdateTexture(
+        KoRender.UpdateTexture(
             Texture,
             _currentX,
             _currentY,
@@ -92,6 +93,6 @@ internal class FontAtlas : IDisposable
 
     public void Dispose()
     {
-        KoGL.DeleteTexture(Texture);
+        KoRender.DeleteTexture(Texture);
     }
 }

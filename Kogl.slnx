@@ -1,6 +1,6 @@
 <Solution>
     <Folder Name="/src/">
-        <Project Path="src/Kogl.Abstractions/Kogl.Abstractions.csproj" />
+        <Project Path="src/Kogl.Common/Kogl.Common.csproj" />
         <Project Path="src/Kogl.Core/Kogl.Core.csproj" />
         <Project Path="src/Kogl.FreeType/Kogl.FreeType.csproj" />
         <Project Path="src/Kogl.Input/Kogl.Input.csproj" />

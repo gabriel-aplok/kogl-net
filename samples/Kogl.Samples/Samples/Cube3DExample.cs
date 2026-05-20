@@ -1,4 +1,4 @@
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Windowing;
@@ -22,14 +22,14 @@ internal class Cube3DExample
     {
         _angle += (float)dt * 45f;
 
-        KoGL.Clear(0.1f, 0.1f, 0.12f, 1.0f);
+        KoRender.Clear(0.1f, 0.1f, 0.12f, 1.0f);
 
         // enable depth test
-        KoGL.EnableDepthTest();
+        KoRender.EnableDepthTest();
 
         // projection matrix (perspective)
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
 
         if (_useFrustum)
         {
@@ -38,76 +38,76 @@ internal class Cube3DExample
             float bottom = -0.05f;
             float top = 0.05f;
 
-            KoGL.Frustum(left, right, bottom, top, 0.1f, 100.0f);
+            KoRender.Frustum(left, right, bottom, top, 0.1f, 100.0f);
         }
         else
         {
-            KoGL.Perspective(45.0f, KoGL.GetAspectRatio(), 0.1f, 100.0f);
+            KoRender.Perspective(45.0f, KoRender.GetAspectRatio(), 0.1f, 100.0f);
         }
 
         // modelView matrix (camera & object)
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         // move the camera back 5 units
-        KoGL.Translate(0, -1, -10);
+        KoRender.Translate(0, -1, -10);
 
         // rotate the cube on multiple axes
-        KoGL.Rotate(_angle, 1, 1, 0);
+        KoRender.Rotate(_angle, 1, 1, 0);
 
-        KoGL.UseDefaultShader();
+        KoRender.UseDefaultShader();
 
         // draw the cube using 6 quads
-        KoGL.Begin(PrimitiveMode.Quads);
+        KoRender.Begin(PrimitiveMode.Quads);
 
         // ff (red)
-        KoGL.Color4(1, 0, 0, 1);
-        KoGL.Vertex3(-1, -1, 1);
-        KoGL.Vertex3(1, -1, 1);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.Vertex3(-1, 1, 1);
+        KoRender.Color4(1, 0, 0, 1);
+        KoRender.Vertex3(-1, -1, 1);
+        KoRender.Vertex3(1, -1, 1);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.Vertex3(-1, 1, 1);
 
         // bf (orange)
-        KoGL.Color4(1, 0.5f, 0, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.Vertex3(-1, 1, -1);
-        KoGL.Vertex3(1, 1, -1);
-        KoGL.Vertex3(1, -1, -1);
+        KoRender.Color4(1, 0.5f, 0, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.Vertex3(-1, 1, -1);
+        KoRender.Vertex3(1, 1, -1);
+        KoRender.Vertex3(1, -1, -1);
 
         // tf (blue)
-        KoGL.Color4(0, 0, 1, 1);
-        KoGL.Vertex3(-1, 1, -1);
-        KoGL.Vertex3(-1, 1, 1);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.Vertex3(1, 1, -1);
+        KoRender.Color4(0, 0, 1, 1);
+        KoRender.Vertex3(-1, 1, -1);
+        KoRender.Vertex3(-1, 1, 1);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.Vertex3(1, 1, -1);
 
         // bf (yellow)
-        KoGL.Color4(1, 1, 0, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.Vertex3(1, -1, -1);
-        KoGL.Vertex3(1, -1, 1);
-        KoGL.Vertex3(-1, -1, 1);
+        KoRender.Color4(1, 1, 0, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.Vertex3(1, -1, -1);
+        KoRender.Vertex3(1, -1, 1);
+        KoRender.Vertex3(-1, -1, 1);
 
         // rf (green)
-        KoGL.Color4(0, 1, 0, 1);
-        KoGL.Vertex3(1, -1, -1);
-        KoGL.Vertex3(1, 1, -1);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.Vertex3(1, -1, 1);
+        KoRender.Color4(0, 1, 0, 1);
+        KoRender.Vertex3(1, -1, -1);
+        KoRender.Vertex3(1, 1, -1);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.Vertex3(1, -1, 1);
 
         // lf (purple)
-        KoGL.Color4(1, 0, 1, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.Vertex3(-1, -1, 1);
-        KoGL.Vertex3(-1, 1, 1);
-        KoGL.Vertex3(-1, 1, -1);
+        KoRender.Color4(1, 0, 1, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.Vertex3(-1, -1, 1);
+        KoRender.Vertex3(-1, 1, 1);
+        KoRender.Vertex3(-1, 1, -1);
 
-        KoGL.End();
+        KoRender.End();
 
         // final dispatch to GPU
-        KoGL.Flush();
+        KoRender.Flush();
 
         // disable depth test
-        KoGL.DisableDepthTest();
+        KoRender.DisableDepthTest();
     }
 }

@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Library</OutputType>
+        <RootNamespace>Kogl.Common</RootNamespace>
+        <AssemblyName>kolpa_cmn</AssemblyName>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -11,7 +13,7 @@
     <!-- PACK METADATA                                                          -->
     <!-- ========================================================================= -->
     <PropertyGroup>
-        <PackageId>Kogl.Abstractions</PackageId>
+        <PackageId>Kogl.Common</PackageId>
         <Version>1.0.0</Version>
         <Authors>Gabriel Aplok</Authors>
         <Company>FireWave Interactive</Company>

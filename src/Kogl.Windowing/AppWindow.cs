@@ -52,7 +52,7 @@ public class AppWindow
             _controller = new ImGuiController(_gl, _window, _input);
 
             OpenGLBackend backend = new(_gl);
-            KoGL.Initialize(backend);
+            KoRender.Initialize(backend);
 
             InputBackend inputBackend = new(_input);
             Input.InputManager.Initialize(inputBackend);
@@ -93,7 +93,7 @@ public class AppWindow
         Width = size.X;
         Height = size.Y;
 
-        KoGL.SetViewport(0, 0, size.X, size.Y);
+        KoRender.SetViewport(0, 0, size.X, size.Y);
 
         OnResizeEvent?.Invoke(size.X, size.Y);
     }

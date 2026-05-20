@@ -10,8 +10,8 @@ internal class Program
         Log.Info("KoGL - Samples");
 
         // ShadowMappingExample.Start();
-        RaymarchedPrimitivesExample.Start();
-        // RaymarchedHillsExample.Start();
+        // RaymarchedPrimitivesExample.Start();
+        RaymarchedHillsExample.Start();
         // SpriteRenderingExample.Start();
         // MultiTextureMaterialExample.Start();
         // SimpleExample.Start();

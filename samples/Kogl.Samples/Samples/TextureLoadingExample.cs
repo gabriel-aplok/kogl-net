@@ -1,4 +1,4 @@
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
@@ -29,59 +29,59 @@ internal class TextureLoadingExample
 
     private static void RenderLoop(double dt)
     {
-        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, 800, 600, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, 800, 600, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         // draw a standard quad using the default shader
-        KoGL.UseDefaultShader();
-        KoGL.UseDefaultTexture();
+        KoRender.UseDefaultShader();
+        KoRender.UseDefaultTexture();
 
-        KoGL.PushMatrix();
-        KoGL.Translate(100, 100, 0);
+        KoRender.PushMatrix();
+        KoRender.Translate(100, 100, 0);
 
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 0, 0, 1);
-        KoGL.Vertex2(0, 0);
-        KoGL.Color4(1, 1, 0, 1);
-        KoGL.Vertex2(200, 0);
-        KoGL.Color4(0, 1, 0, 1);
-        KoGL.Vertex2(200, 200);
-        KoGL.Color4(0, 0, 1, 1);
-        KoGL.Vertex2(0, 200);
-        KoGL.End();
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 0, 0, 1);
+        KoRender.Vertex2(0, 0);
+        KoRender.Color4(1, 1, 0, 1);
+        KoRender.Vertex2(200, 0);
+        KoRender.Color4(0, 1, 0, 1);
+        KoRender.Vertex2(200, 200);
+        KoRender.Color4(0, 0, 1, 1);
+        KoRender.Vertex2(0, 200);
+        KoRender.End();
 
-        KoGL.PopMatrix();
+        KoRender.PopMatrix();
 
         // draw the logo
         if (_logo != null)
         {
-            KoGL.UseTexture(_logo.Handle);
+            KoRender.UseTexture(_logo.Handle);
 
-            KoGL.PushMatrix();
-            KoGL.Translate(400, 100, 0);
+            KoRender.PushMatrix();
+            KoRender.Translate(400, 100, 0);
 
-            KoGL.Begin(PrimitiveMode.Quads);
-            KoGL.Color4(1, 1, 1, 1);
-            KoGL.TexCoord2(0, 0);
-            KoGL.Vertex2(0, 0);
-            KoGL.TexCoord2(1, 0);
-            KoGL.Vertex2(200, 0);
-            KoGL.TexCoord2(1, 1);
-            KoGL.Vertex2(200, 200);
-            KoGL.TexCoord2(0, 1);
-            KoGL.Vertex2(0, 200);
-            KoGL.End();
+            KoRender.Begin(PrimitiveMode.Quads);
+            KoRender.Color4(1, 1, 1, 1);
+            KoRender.TexCoord2(0, 0);
+            KoRender.Vertex2(0, 0);
+            KoRender.TexCoord2(1, 0);
+            KoRender.Vertex2(200, 0);
+            KoRender.TexCoord2(1, 1);
+            KoRender.Vertex2(200, 200);
+            KoRender.TexCoord2(0, 1);
+            KoRender.Vertex2(0, 200);
+            KoRender.End();
 
-            KoGL.PopMatrix();
+            KoRender.PopMatrix();
         }
 
         // final dispatch to GPU
-        KoGL.Flush();
+        KoRender.Flush();
     }
 }

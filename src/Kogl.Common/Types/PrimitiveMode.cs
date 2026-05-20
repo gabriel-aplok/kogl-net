@@ -1,4 +1,4 @@
-namespace Kogl.Abstractions.Types;
+namespace Kogl.Common.Types;
 
 public enum PrimitiveMode
 {

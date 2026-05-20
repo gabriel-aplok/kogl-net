@@ -1,4 +1,4 @@
-﻿using Kogl.Abstractions.Types;
+﻿using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Windowing;
@@ -22,63 +22,63 @@ internal class ScissorExample
         _rotation += (float)dt * 50f;
 
         // clear the whole screen
-        KoGL.Clear(0.05f, 0.05f, 0.08f, 1.0f);
+        KoRender.Clear(0.05f, 0.05f, 0.08f, 1.0f);
 
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, 800, 600, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, 800, 600, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         // draw a background "cntainer" to show where the scissor box is
-        KoGL.UseDefaultShader();
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(0.15f, 0.15f, 0.2f, 1.0f); // lighter gray-blue
-        KoGL.Vertex2(200, 150);
-        KoGL.Vertex2(600, 150);
-        KoGL.Vertex2(600, 450);
-        KoGL.Vertex2(200, 450);
-        KoGL.End();
+        KoRender.UseDefaultShader();
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(0.15f, 0.15f, 0.2f, 1.0f); // lighter gray-blue
+        KoRender.Vertex2(200, 150);
+        KoRender.Vertex2(600, 150);
+        KoRender.Vertex2(600, 450);
+        KoRender.Vertex2(200, 450);
+        KoRender.End();
 
         // begin scissor
         // clip everything to the bounds of the container we just drew
-        KoGL.BeginScissor(200, 150, 400, 300);
+        KoRender.BeginScissor(200, 150, 400, 300);
 
         // draw a large rotating quad that would normally overflow the container
-        KoGL.PushMatrix();
-        KoGL.Translate(400, 300, 0); // move to center of container
-        KoGL.Rotate(_rotation, 0, 0, 1);
-        KoGL.Translate(-150, -150, 0); // center the quad on its own axis
+        KoRender.PushMatrix();
+        KoRender.Translate(400, 300, 0); // move to center of container
+        KoRender.Rotate(_rotation, 0, 0, 1);
+        KoRender.Translate(-150, -150, 0); // center the quad on its own axis
 
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 0, 0, 1); // red
-        KoGL.Vertex2(0, 0);
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 0, 0, 1); // red
+        KoRender.Vertex2(0, 0);
 
-        KoGL.Color4(0, 1, 0, 1); // green
-        KoGL.Vertex2(300, 0);
+        KoRender.Color4(0, 1, 0, 1); // green
+        KoRender.Vertex2(300, 0);
 
-        KoGL.Color4(0, 0, 1, 1); // blue
-        KoGL.Vertex2(300, 300);
+        KoRender.Color4(0, 0, 1, 1); // blue
+        KoRender.Vertex2(300, 300);
 
-        KoGL.Color4(1, 1, 0, 1); // yellow
-        KoGL.Vertex2(0, 300);
-        KoGL.End();
-        KoGL.PopMatrix();
+        KoRender.Color4(1, 1, 0, 1); // yellow
+        KoRender.Vertex2(0, 300);
+        KoRender.End();
+        KoRender.PopMatrix();
 
         // end scissor
-        KoGL.EndScissor();
+        KoRender.EndScissor();
 
         // draw something outside the scissor (to prove the test is off)
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 1, 1, 0.5f); // semi-transparent white hint
-        KoGL.Vertex2(10, 10);
-        KoGL.Vertex2(50, 10);
-        KoGL.Vertex2(50, 50);
-        KoGL.Vertex2(10, 50);
-        KoGL.End();
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 1, 1, 0.5f); // semi-transparent white hint
+        KoRender.Vertex2(10, 10);
+        KoRender.Vertex2(50, 10);
+        KoRender.Vertex2(50, 50);
+        KoRender.Vertex2(10, 50);
+        KoRender.End();
 
         // final dispatch to GPU
-        KoGL.Flush();
+        KoRender.Flush();
     }
 }

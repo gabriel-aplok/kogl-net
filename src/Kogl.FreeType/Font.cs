@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 using FreeTypeSharp;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core.Resources;
 using static FreeTypeSharp.FT;
 using static FreeTypeSharp.FT_LOAD;

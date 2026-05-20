@@ -1,7 +1,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace Kogl.Abstractions.Types;
+namespace Kogl.Common.Types;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct VertexData(

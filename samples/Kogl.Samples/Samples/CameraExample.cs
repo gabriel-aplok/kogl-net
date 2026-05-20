@@ -1,5 +1,5 @@
 using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Graphics;
 using Kogl.Windowing;
@@ -27,8 +27,8 @@ internal class CameraExample
     {
         _time += (float)dt;
 
-        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
-        KoGL.EnableDepthTest();
+        KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoRender.EnableDepthTest();
 
         // orbit the camera in a circle, constantly looking at the center (0,0,0)
         _camera.Position.X = MathF.Sin(_time) * 8f;
@@ -36,80 +36,80 @@ internal class CameraExample
         _camera.LookAt(Vector3.Zero);
 
         // apply projection and view matrices
-        KoGL.BeginCamera(_camera);
-        KoGL.UseDefaultShader();
+        KoRender.BeginCamera(_camera);
+        KoRender.UseDefaultShader();
 
         // draw a reference grid (lines)
-        KoGL.Begin(PrimitiveMode.Lines);
-        KoGL.Color4(0.3f, 0.3f, 0.3f, 1.0f);
+        KoRender.Begin(PrimitiveMode.Lines);
+        KoRender.Color4(0.3f, 0.3f, 0.3f, 1.0f);
         for (int i = -5; i <= 5; i++)
         {
-            KoGL.Vertex3(i, 0, -5);
-            KoGL.Vertex3(i, 0, 5);
-            KoGL.Vertex3(-5, 0, i);
-            KoGL.Vertex3(5, 0, i);
+            KoRender.Vertex3(i, 0, -5);
+            KoRender.Vertex3(i, 0, 5);
+            KoRender.Vertex3(-5, 0, i);
+            KoRender.Vertex3(5, 0, i);
         }
-        KoGL.End();
+        KoRender.End();
 
         // draw a central object (cube)
-        KoGL.PushMatrix();
-        KoGL.Translate(0, 0.5f, 0);
+        KoRender.PushMatrix();
+        KoRender.Translate(0, 0.5f, 0);
         DrawCube();
-        KoGL.PopMatrix();
+        KoRender.PopMatrix();
 
         // flush and reset matrices back to Identity
-        KoGL.EndCamera();
+        KoRender.EndCamera();
 
-        KoGL.DisableDepthTest();
+        KoRender.DisableDepthTest();
     }
 
     private static void DrawCube()
     {
         // draw the cube using 6 quads
-        KoGL.Begin(PrimitiveMode.Quads);
+        KoRender.Begin(PrimitiveMode.Quads);
 
         // ff (red)
-        KoGL.Color4(1, 0, 0, 1);
-        KoGL.Vertex3(-1, -1, 1);
-        KoGL.Vertex3(1, -1, 1);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.Vertex3(-1, 1, 1);
+        KoRender.Color4(1, 0, 0, 1);
+        KoRender.Vertex3(-1, -1, 1);
+        KoRender.Vertex3(1, -1, 1);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.Vertex3(-1, 1, 1);
 
         // bf (orange)
-        KoGL.Color4(1, 0.5f, 0, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.Vertex3(-1, 1, -1);
-        KoGL.Vertex3(1, 1, -1);
-        KoGL.Vertex3(1, -1, -1);
+        KoRender.Color4(1, 0.5f, 0, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.Vertex3(-1, 1, -1);
+        KoRender.Vertex3(1, 1, -1);
+        KoRender.Vertex3(1, -1, -1);
 
         // tf (blue)
-        KoGL.Color4(0, 0, 1, 1);
-        KoGL.Vertex3(-1, 1, -1);
-        KoGL.Vertex3(-1, 1, 1);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.Vertex3(1, 1, -1);
+        KoRender.Color4(0, 0, 1, 1);
+        KoRender.Vertex3(-1, 1, -1);
+        KoRender.Vertex3(-1, 1, 1);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.Vertex3(1, 1, -1);
 
         // bf (yellow)
-        KoGL.Color4(1, 1, 0, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.Vertex3(1, -1, -1);
-        KoGL.Vertex3(1, -1, 1);
-        KoGL.Vertex3(-1, -1, 1);
+        KoRender.Color4(1, 1, 0, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.Vertex3(1, -1, -1);
+        KoRender.Vertex3(1, -1, 1);
+        KoRender.Vertex3(-1, -1, 1);
 
         // rf (green)
-        KoGL.Color4(0, 1, 0, 1);
-        KoGL.Vertex3(1, -1, -1);
-        KoGL.Vertex3(1, 1, -1);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.Vertex3(1, -1, 1);
+        KoRender.Color4(0, 1, 0, 1);
+        KoRender.Vertex3(1, -1, -1);
+        KoRender.Vertex3(1, 1, -1);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.Vertex3(1, -1, 1);
 
         // lf (purple)
-        KoGL.Color4(1, 0, 1, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.Vertex3(-1, -1, 1);
-        KoGL.Vertex3(-1, 1, 1);
-        KoGL.Vertex3(-1, 1, -1);
+        KoRender.Color4(1, 0, 1, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.Vertex3(-1, -1, 1);
+        KoRender.Vertex3(-1, 1, 1);
+        KoRender.Vertex3(-1, 1, -1);
 
-        KoGL.End();
+        KoRender.End();
     }
 }

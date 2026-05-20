@@ -1,11 +1,11 @@
 using System.Numerics;
-using Kogl.Abstractions;
-using Kogl.Abstractions.Types;
+using Kogl.Common;
+using Kogl.Common.Types;
 using Silk.NET.OpenGL;
 
 namespace Kogl.OpenGL;
 
-/// <summary>The OpenGL backend, focused on Desktop OpenGL.</summary>
+/// <summary>The OpenGL backend, focused on Desktop OpenGL</summary>
 public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
 {
     private readonly GL _gl = glContext;

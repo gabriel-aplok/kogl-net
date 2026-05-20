@@ -2,12 +2,14 @@ using System.Numerics;
 
 namespace Kogl.Core.Rendering;
 
+/// <summary>The state of the matrix stack</summary>
 public enum MatrixState
 {
     ModelView,
     Projection,
 }
 
+/// <summary>A matrix stack that can be used to push and pop matrices</summary>
 public class MatrixStack
 {
     private readonly Stack<Matrix4x4> _modelViewStack = new(32);

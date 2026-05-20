@@ -1,15 +1,15 @@
 using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 
 namespace Kogl.Core.Resources;
 
-/// <summary>Atlas container that maps localized sprite IDs to precise regions inside underlying texture sheets.</summary>
+/// <summary>Atlas container that maps localized sprite IDs to precise regions inside underlying texture sheets</summary>
 public class SpriteAtlas : IDisposable
 {
     private readonly Dictionary<string, SpriteRegion> _regions = new(StringComparer.Ordinal);
     private readonly List<TextureHandle> _pages = [];
 
-    /// <summary>Retrieves a sprite config region registered within the atlas pages.</summary>
+    /// <summary>Retrieves a sprite config region registered within the atlas pages</summary>
     public SpriteRegion Get(string regionName)
     {
         if (_regions.TryGetValue(regionName, out SpriteRegion region))
@@ -24,7 +24,7 @@ public class SpriteAtlas : IDisposable
         return default;
     }
 
-    /// <summary>Explicitly registers a pre-calculated sub-texture region within this atlas.</summary>
+    /// <summary>Explicitly registers a pre-calculated sub-texture region within this atlas</summary>
     public void RegisterRegion(string name, in SpriteRegion region)
     {
         _regions[name] = region;
@@ -34,7 +34,7 @@ public class SpriteAtlas : IDisposable
         }
     }
 
-    /// <summary>Utility helper to create a region using pixel metrics relative to a specific texture sheet.</summary>
+    /// <summary>Utility helper to create a region using pixel metrics relative to a specific texture sheet</summary>
     public void AddPixelRegion(
         string name,
         TextureHandle texture,

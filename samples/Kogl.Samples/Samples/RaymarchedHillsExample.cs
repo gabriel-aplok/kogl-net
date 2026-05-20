@@ -1,5 +1,5 @@
 using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Input;
@@ -376,46 +376,46 @@ void main()
     FragColor = vec4(col, 1.0);
 }";
 
-            _raymarchShader = KoGL.CreateShader(vs, fsRaymarch);
+            _raymarchShader = KoRender.CreateShader(vs, fsRaymarch);
         }
 
         // target backbuffer screen directly
-        KoGL.SetRenderTarget(null);
-        KoGL.Clear(0.0f, 0.0f, 0.0f, 1.0f);
+        KoRender.SetRenderTarget(null);
+        KoRender.Clear(0.0f, 0.0f, 0.0f, 1.0f);
 
         // ortho camera
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, _width, _height, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, _width, _height, 0, -1, 1);
 
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         // bind procedural landscape shader
-        KoGL.UseShader(_raymarchShader);
+        KoRender.UseShader(_raymarchShader);
 
         // pass uniforms required by procedural raymarching
-        KoGL.SetUniform("uTime", _time);
-        KoGL.SetUniform("uResolution", new Vector2(_width, _height));
-        KoGL.SetUniform("uMouse", _mousePos);
+        KoRender.SetUniform("uTime", _time);
+        KoRender.SetUniform("uResolution", new Vector2(_width, _height));
+        KoRender.SetUniform("uMouse", _mousePos);
 
         // draw a full-screen quad to execute the fragment shader across every pixel
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 1, 1, 1);
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 1, 1, 1);
 
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex2(0, 0);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex2(0, 0);
 
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex2(_width, 0);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex2(_width, 0);
 
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex2(_width, _height);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex2(_width, _height);
 
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex2(0, _height);
-        KoGL.End();
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex2(0, _height);
+        KoRender.End();
 
-        KoGL.Flush();
+        KoRender.Flush();
     }
 }

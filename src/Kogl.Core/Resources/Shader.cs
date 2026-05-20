@@ -1,4 +1,4 @@
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 
 namespace Kogl.Core.Resources;
 
@@ -44,7 +44,7 @@ public sealed class Shader(ShaderHandle handle) : Resource
     /// <summary>Creates a new shader</summary>
     public static Shader Create(string vertexSrc, string fragmentSrc)
     {
-        ShaderHandle handle = KoGL.GetBackend().CreateShader(vertexSrc, fragmentSrc);
+        ShaderHandle handle = KoRender.GetBackend().CreateShader(vertexSrc, fragmentSrc);
         return new Shader(handle);
     }
 }

@@ -1,5 +1,5 @@
 using System.Numerics;
-using Kogl.Abstractions;
+using Kogl.Common;
 
 namespace Kogl.Core.Graphics;
 
@@ -53,7 +53,7 @@ public static class GlobalUniforms
     /// <summary>Applies the global uniforms to a shader</summary>
     public static void ApplyTo(Resources.Shader shader)
     {
-        IGraphicsBackend backend = KoGL.GetBackend();
+        IGraphicsBackend backend = KoRender.GetBackend();
         foreach (KeyValuePair<string, object> kvp in _globals)
         {
             if (kvp.Value is int i)

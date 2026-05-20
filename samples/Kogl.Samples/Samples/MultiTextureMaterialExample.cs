@@ -1,5 +1,5 @@
 using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Graphics;
 using Kogl.Core.Rendering;
@@ -155,14 +155,14 @@ void main() {
         _time += (float)dt;
         UpdateInput((float)dt);
 
-        KoGL.Clear(0.11f, 0.13f, 0.16f, 1.0f);
-        KoGL.EnableDepthTest();
+        KoRender.Clear(0.11f, 0.13f, 0.16f, 1.0f);
+        KoRender.EnableDepthTest();
 
-        KoGL.BeginCamera(_camera);
+        KoRender.BeginCamera(_camera);
         DrawWorld();
-        KoGL.EndCamera();
+        KoRender.EndCamera();
 
-        KoGL.DisableDepthTest();
+        KoRender.DisableDepthTest();
         DrawUI();
     }
 
@@ -209,15 +209,15 @@ void main() {
 
     private static void DrawWorld()
     {
-        KoGL.Begin(PrimitiveMode.Lines);
+        KoRender.Begin(PrimitiveMode.Lines);
         for (int i = -10; i <= 10; i++)
         {
-            KoGL.Vertex3(i, 0, -10);
-            KoGL.Vertex3(i, 0, 10);
-            KoGL.Vertex3(-10, 0, i);
-            KoGL.Vertex3(10, 0, i);
+            KoRender.Vertex3(i, 0, -10);
+            KoRender.Vertex3(i, 0, 10);
+            KoRender.Vertex3(-10, 0, i);
+            KoRender.Vertex3(10, 0, i);
         }
-        KoGL.End();
+        KoRender.End();
 
         DrawMaterialCube(new Vector3(-2, 1, 0), _brickMaterial);
         DrawMaterialCube(new Vector3(2, 1, 0), _blueMaterial);
@@ -235,99 +235,99 @@ void main() {
 
     private static void DrawMaterialCube(Vector3 position, Material mat)
     {
-        KoGL.PushMatrix();
-        KoGL.Translate(position.X, position.Y, position.Z);
-        KoGL.ApplyMaterial(mat);
+        KoRender.PushMatrix();
+        KoRender.Translate(position.X, position.Y, position.Z);
+        KoRender.ApplyMaterial(mat);
 
-        KoGL.EnableCulling(CullFaceState.Back);
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 1, 1, 1);
+        KoRender.EnableCulling(CullFaceState.Back);
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 1, 1, 1);
 
         // Front (+Z)
-        KoGL.Normal3(0, 0, 1);
-        KoGL.Tangent4(1, 0, 0, 1); // tangent = +X, handedness +1
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(-1, -1, 1);
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(1, -1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(-1, 1, 1);
+        KoRender.Normal3(0, 0, 1);
+        KoRender.Tangent4(1, 0, 0, 1); // tangent = +X, handedness +1
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-1, -1, 1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(1, -1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-1, 1, 1);
 
         // Back (-Z)
-        KoGL.Normal3(0, 0, -1);
-        KoGL.Tangent4(-1, 0, 0, 1); // tangent = -X
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(-1, 1, -1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(1, 1, -1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(1, -1, -1);
+        KoRender.Normal3(0, 0, -1);
+        KoRender.Tangent4(-1, 0, 0, 1); // tangent = -X
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-1, 1, -1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(1, 1, -1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(1, -1, -1);
 
         // Top (+Y)
-        KoGL.Normal3(0, 1, 0);
-        KoGL.Tangent4(1, 0, 0, 1); // tangent = +X
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(-1, 1, -1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(-1, 1, 1);
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(1, 1, -1);
+        KoRender.Normal3(0, 1, 0);
+        KoRender.Tangent4(1, 0, 0, 1); // tangent = +X
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-1, 1, -1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-1, 1, 1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(1, 1, -1);
 
         // Bottom (-Y)
-        KoGL.Normal3(0, -1, 0);
-        KoGL.Tangent4(1, 0, 0, -1); // handedness flipped
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(1, -1, -1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(1, -1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(-1, -1, 1);
+        KoRender.Normal3(0, -1, 0);
+        KoRender.Tangent4(1, 0, 0, -1); // handedness flipped
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(1, -1, -1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(1, -1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-1, -1, 1);
 
         // Right (+X)
-        KoGL.Normal3(1, 0, 0);
-        KoGL.Tangent4(0, 0, 1, 1); // tangent = +Z
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(1, -1, -1);
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(1, 1, -1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(1, -1, 1);
+        KoRender.Normal3(1, 0, 0);
+        KoRender.Tangent4(0, 0, 1, 1); // tangent = +Z
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(1, -1, -1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(1, 1, -1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(1, -1, 1);
 
         // Left (-X)
-        KoGL.Normal3(-1, 0, 0);
-        KoGL.Tangent4(0, 0, -1, 1); // tangent = -Z
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(-1, -1, 1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(-1, 1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(-1, 1, -1);
+        KoRender.Normal3(-1, 0, 0);
+        KoRender.Tangent4(0, 0, -1, 1); // tangent = -Z
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-1, -1, 1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-1, 1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-1, 1, -1);
 
-        KoGL.End();
-        KoGL.PopMatrix();
+        KoRender.End();
+        KoRender.PopMatrix();
     }
 
     private static void DrawUI()
     {
-        KoGL.EnableBlending();
+        KoRender.EnableBlending();
 
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         string pos = $"Pos: {_camera.Position:F1}";
         KoGLText.DrawText(_uiFont, pos, new Vector2(10, 10), new Vector4(0.2f, 0.8f, 0.2f, 1));

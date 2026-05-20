@@ -1,5 +1,5 @@
 using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Graphics;
 using Kogl.Core.Rendering;
@@ -111,17 +111,17 @@ void main() {
         _time += (float)dt;
         UpdateInput((float)dt);
 
-        KoGL.Clear(0.1f, 0.1f, 0.15f, 1.0f);
-        KoGL.EnableDepthTest();
+        KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
+        KoRender.EnableDepthTest();
 
-        KoGL.BeginCamera(_camera);
+        KoRender.BeginCamera(_camera);
 
         GlobalUniforms.SetFloat("uTime", _time);
 
         DrawWorld();
 
-        KoGL.EndCamera();
-        KoGL.DisableDepthTest();
+        KoRender.EndCamera();
+        KoRender.DisableDepthTest();
 
         DrawUI();
     }
@@ -162,17 +162,17 @@ void main() {
 
     private static void DrawWorld()
     {
-        KoGL.ApplyMaterial(_gridMaterial);
+        KoRender.ApplyMaterial(_gridMaterial);
 
-        KoGL.Begin(PrimitiveMode.Lines);
+        KoRender.Begin(PrimitiveMode.Lines);
         for (int i = -10; i <= 10; i++)
         {
-            KoGL.Vertex3(i, 0, -10);
-            KoGL.Vertex3(i, 0, 10);
-            KoGL.Vertex3(-10, 0, i);
-            KoGL.Vertex3(10, 0, i);
+            KoRender.Vertex3(i, 0, -10);
+            KoRender.Vertex3(i, 0, 10);
+            KoRender.Vertex3(-10, 0, i);
+            KoRender.Vertex3(10, 0, i);
         }
-        KoGL.End();
+        KoRender.End();
 
         DrawMaterialCube(new Vector3(-2, 1, 0), _redMaterial);
         DrawMaterialCube(new Vector3(2, 1, 0), _bluePulseMaterial);
@@ -180,89 +180,89 @@ void main() {
 
     private static void DrawMaterialCube(Vector3 position, Material mat)
     {
-        KoGL.PushMatrix();
-        KoGL.Translate(position.X, position.Y, position.Z);
+        KoRender.PushMatrix();
+        KoRender.Translate(position.X, position.Y, position.Z);
 
-        KoGL.ApplyMaterial(mat);
-        KoGL.UseTexture(_logoTex.Handle);
+        KoRender.ApplyMaterial(mat);
+        KoRender.UseTexture(_logoTex.Handle);
 
-        KoGL.Begin(PrimitiveMode.Quads);
-        KoGL.Color4(1, 1, 1, 1);
+        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Color4(1, 1, 1, 1);
 
         // Front
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(-1, -1, 1);
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(1, -1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(-1, 1, 1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-1, -1, 1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(1, -1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-1, 1, 1);
 
         // Back
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(-1, 1, -1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(1, 1, -1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(1, -1, -1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-1, 1, -1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(1, 1, -1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(1, -1, -1);
 
         // Top
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(-1, 1, -1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(-1, 1, 1);
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(1, 1, -1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-1, 1, -1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-1, 1, 1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(1, 1, -1);
 
         // Bottom
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(1, -1, -1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(1, -1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(-1, -1, 1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(1, -1, -1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(1, -1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-1, -1, 1);
 
         // Right
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(1, -1, -1);
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(1, 1, -1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(1, 1, 1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(1, -1, 1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(1, -1, -1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(1, 1, -1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(1, 1, 1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(1, -1, 1);
 
         // Left
-        KoGL.TexCoord2(1, 1);
-        KoGL.Vertex3(-1, -1, -1);
-        KoGL.TexCoord2(0, 1);
-        KoGL.Vertex3(-1, -1, 1);
-        KoGL.TexCoord2(0, 0);
-        KoGL.Vertex3(-1, 1, 1);
-        KoGL.TexCoord2(1, 0);
-        KoGL.Vertex3(-1, 1, -1);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-1, -1, -1);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-1, -1, 1);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-1, 1, 1);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-1, 1, -1);
 
-        KoGL.End();
-        KoGL.PopMatrix();
+        KoRender.End();
+        KoRender.PopMatrix();
     }
 
     private static void DrawUI()
     {
-        KoGL.DisableDepthTest();
-        KoGL.EnableBlending();
+        KoRender.DisableDepthTest();
+        KoRender.EnableBlending();
 
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, 800, 600, 0, -1, 1);
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, 800, 600, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         KoGLText.DrawText(
             _uiFont,

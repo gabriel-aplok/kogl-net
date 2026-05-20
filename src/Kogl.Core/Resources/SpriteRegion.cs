@@ -1,9 +1,9 @@
 using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 
 namespace Kogl.Core.Resources;
 
-/// <summary>Sub-region slice of a texture.</summary>
+/// <summary>Sub-region slice of a texture</summary>
 public readonly record struct SpriteRegion(
     TextureHandle Texture,
     Vector2 Position,

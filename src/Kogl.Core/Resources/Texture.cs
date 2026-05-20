@@ -1,4 +1,4 @@
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 
 namespace Kogl.Core.Resources;
 
@@ -11,6 +11,6 @@ public class Texture(TextureHandle handle, int width, int height) : Resource
 
     protected override void Dispose(bool disposing)
     {
-        KoGL.DeleteTexture(Handle);
+        KoRender.DeleteTexture(Handle);
     }
 }

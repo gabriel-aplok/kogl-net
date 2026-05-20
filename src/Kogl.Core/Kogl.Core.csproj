@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Library</OutputType>
+        <RootNamespace>Kogl.Core</RootNamespace>
+        <AssemblyName>kolpa_core</AssemblyName>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -110,7 +112,7 @@
     <!-- PROJECT REFERENCES                                                        -->
     <!-- ========================================================================= -->
     <ItemGroup>
-        <ProjectReference Include="..\Kogl.Abstractions\Kogl.Abstractions.csproj" />
+        <ProjectReference Include="..\Kogl.Common\Kogl.Common.csproj" />
         <ProjectReference Include="..\Kogl.Input\Kogl.Input.csproj" />
     </ItemGroup>
 </Project>

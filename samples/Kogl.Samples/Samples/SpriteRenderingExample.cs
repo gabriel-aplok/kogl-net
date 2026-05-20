@@ -45,14 +45,14 @@ internal class SpriteRenderingExample
     {
         _time += (float)dt;
 
-        KoGL.Clear(1.0f, 1.0f, 1.0f, 1.0f);
+        KoRender.Clear(1.0f, 1.0f, 1.0f, 1.0f);
 
-        KoGL.EnableBlending();
-        KoGL.MatrixMode(MatrixState.Projection);
-        KoGL.LoadIdentity();
-        KoGL.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
-        KoGL.MatrixMode(MatrixState.ModelView);
-        KoGL.LoadIdentity();
+        KoRender.EnableBlending();
+        KoRender.MatrixMode(MatrixState.Projection);
+        KoRender.LoadIdentity();
+        KoRender.Ortho(0, _app.Width, _app.Height, 0, -1, 1);
+        KoRender.MatrixMode(MatrixState.ModelView);
+        KoRender.LoadIdentity();
 
         SpriteRenderer.Draw(_atlas.Get("player_idle"), new Vector2(250, 250));
 
@@ -77,6 +77,6 @@ internal class SpriteRenderingExample
 
         KoGLText.DrawText(_uiFont, "aaaaa", new Vector2(10, 10), new Vector4(0.2f, 0.8f, 0.2f, 1));
 
-        KoGL.Flush();
+        KoRender.Flush();
     }
 }

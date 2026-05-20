@@ -50,7 +50,7 @@ public static class InputMap
         return false;
     }
 
-    /// <summary>Returns an axis value from -1.0f to 1.0f based on bound actions.</summary>
+    /// <summary>Returns an axis value from -1.0f to 1.0f based on bound actions</summary>
     public static float GetAxis(string negativeAction, string positiveAction)
     {
         float val = 0;
@@ -61,7 +61,7 @@ public static class InputMap
         return val;
     }
 
-    /// <summary>Returns a normalized 2D direction vector.</summary>
+    /// <summary>Returns a normalized 2D direction vector</summary>
     public static Vector2 GetVector(
         string leftAction,
         string rightAction,

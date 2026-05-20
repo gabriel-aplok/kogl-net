@@ -1,5 +1,5 @@
 using System.Numerics;
-using Kogl.Abstractions;
+using Kogl.Common;
 
 namespace Kogl.Core.Resources;
 
@@ -82,7 +82,7 @@ public class Material : Resource
 
     public void Apply()
     {
-        IGraphicsBackend backend = KoGL.GetBackend();
+        IGraphicsBackend backend = KoRender.GetBackend();
         backend.BindShader(Shader.Handle);
         backend.SetDepthTest(DepthTest);
         backend.SetBlending(Blending);
@@ -120,7 +120,7 @@ public class Material : Resource
                     break;
                 case ShaderPropertyType.Texture2D:
                     Texture tex = (Texture)val;
-                    KoGL.UseTexture(tex.Handle, textureSlot);
+                    KoRender.UseTexture(tex.Handle, textureSlot);
                     backend.SetUniformInt(Shader.Handle, prop.Name, textureSlot);
                     textureSlot++;
                     break;

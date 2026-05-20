@@ -1,6 +1,6 @@
 using System.Numerics;
-using Kogl.Abstractions;
-using Kogl.Abstractions.Types;
+using Kogl.Common;
+using Kogl.Common.Types;
 
 namespace Kogl.Core.Rendering;
 
@@ -65,7 +65,7 @@ internal class Batcher(IGraphicsBackend backend)
             ShaderHandle savedShader = _currentShader;
 
             End();
-            Flush(KoGL.GetProjectionMatrix());
+            Flush(KoRender.GetProjectionMatrix());
 
             Begin(savedMode, in savedTextures, savedShader);
         }
@@ -100,7 +100,6 @@ internal class Batcher(IGraphicsBackend backend)
 
         if (batchVertexCount <= 0)
         {
-            // drop empty context generations safely to keep clean command queues
             _batchCount--;
             _isBuildingBatch = false;
             return;
@@ -172,7 +171,7 @@ internal class Batcher(IGraphicsBackend backend)
     {
         if (_batchCount >= _maxBatches)
         {
-            Flush(KoGL.GetProjectionMatrix());
+            Flush(KoRender.GetProjectionMatrix());
         }
 
         _batches[_batchCount] = new RenderBatch

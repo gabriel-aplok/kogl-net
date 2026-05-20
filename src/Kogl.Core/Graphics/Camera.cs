@@ -10,22 +10,24 @@ public enum CameraProjection
     Frustum,
 }
 
-/// <summary>A camera</summary>
+/// <summary>A camera. You're not limited to using this camera, you can make your own if you want</summary>
 public class Camera
 {
-    public Vector3 Position = Vector3.Zero;
-    public Vector3 Rotation = Vector3.Zero;
-
     public CameraProjection Projection = CameraProjection.Perspective;
     public float Fov = 45f;
     public float OrthoSize = 10f;
     public float Near = 0.1f;
     public float Far = 1000f;
 
+    public Vector3 Position = Vector3.Zero;
+    public Vector3 Rotation = Vector3.Zero;
+
     public Vector3 Front { get; private set; } = -Vector3.UnitZ;
     public Vector3 Up { get; private set; } = Vector3.UnitY;
     public Vector3 Right { get; private set; } = Vector3.UnitX;
 
+    public float ViewportWidth { get; set; } = 800f;
+    public float ViewportHeight { get; set; } = 600f;
     public float AspectRatio { get; set; } = 800f / 600f;
 
     public float FrustumLeft = -1f;
@@ -33,7 +35,7 @@ public class Camera
     public float FrustumBottom = -1f;
     public float FrustumTop = 1f;
 
-    /// <summary>Looks at a target.</summary>
+    /// <summary>Looks at a target</summary>
     public void LookAt(Vector3 target)
     {
         Vector3 direction = target - Position;
@@ -48,7 +50,17 @@ public class Camera
         UpdateVectors();
     }
 
-    /// <summary>Updates the camera directional vectors based on the current Rotation angles.</summary>
+    /// <summary>Updates the viewport</summary>
+    public void UpdateViewport(float width, float height, bool updateAspectRatio = true)
+    {
+        ViewportWidth = width;
+        ViewportHeight = height;
+
+        if (updateAspectRatio)
+            AspectRatio = width / height;
+    }
+
+    /// <summary>Updates the camera vectors</summary>
     private void UpdateVectors()
     {
         float pitch = Rotation.X * (MathF.PI / 180f);

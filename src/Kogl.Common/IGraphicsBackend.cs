@@ -1,7 +1,7 @@
 using System.Numerics;
-using Kogl.Abstractions.Types;
+using Kogl.Common.Types;
 
-namespace Kogl.Abstractions;
+namespace Kogl.Common;
 
 public interface IGraphicsBackend : IDisposable
 {

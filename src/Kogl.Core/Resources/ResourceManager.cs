@@ -1,3 +1,4 @@
+using Kogl.Common;
 using Kogl.Common.Types;
 using StbImageSharp;
 
@@ -18,6 +19,7 @@ public static class ResourceManager
         T resource = typeof(T) switch
         {
             var t when t == typeof(Texture) => (T)(object)LoadTexture(path),
+            var t when t == typeof(Shader) => (T)(object)LoadShaderFromFile(path),
             _ => throw new NotSupportedException(
                 $"Resource type {typeof(T).Name} is not supported."
             ),
@@ -28,6 +30,127 @@ public static class ResourceManager
 
         _cache[path] = resource;
         return resource;
+    }
+
+    /// <summary>
+    /// Compiles a shader instance explicitly from raw string sources. This instance will not be added to the disk cache automatically.
+    /// </summary>
+    public static Shader LoadShader(string name, string vertexSource, string fragmentSource)
+    {
+        ShaderHandle handle = KoRender.GetBackend().CreateShader(vertexSource, fragmentSource);
+        Shader shader = new(handle);
+        shader.Name = name;
+        shader.Path = string.Empty;
+        return shader;
+    }
+
+    private static Shader LoadShaderFromFile(string path)
+    {
+        if (!File.Exists(path))
+            throw new FileNotFoundException($"Shader source file not found: {path}");
+
+        string extension = Path.GetExtension(path).ToLowerInvariant();
+        string vertexSource;
+        string fragmentSource;
+
+        if (extension == ".glsl" || extension == ".shader")
+        {
+            // unified shader
+            string fullSource = File.ReadAllText(path);
+            (vertexSource, fragmentSource) = ParseUnifiedShaderSource(fullSource);
+
+            Log.Info("SHADER", $"Loaded unified shader: {path}");
+        }
+        else if (extension == ".vert" || extension == ".vs")
+        {
+            // vertex shader
+            vertexSource = File.ReadAllText(path);
+            string fragPath = Path.ChangeExtension(path, ".frag");
+            if (!File.Exists(fragPath))
+                fragPath = Path.ChangeExtension(path, ".fs");
+
+            if (!File.Exists(fragPath))
+                throw new FileNotFoundException(
+                    $"Matching fragment shader counterpart not found for vertex target: {path}"
+                );
+
+            fragmentSource = File.ReadAllText(fragPath);
+
+            Log.Info("SHADER", $"Loaded vertex shader: {path}");
+        }
+        else if (extension == ".frag" || extension == ".fs")
+        {
+            // fragment shader
+            fragmentSource = File.ReadAllText(path);
+            string vertPath = Path.ChangeExtension(path, ".vert");
+            if (!File.Exists(vertPath))
+                vertPath = Path.ChangeExtension(path, ".vs");
+
+            if (!File.Exists(vertPath))
+                throw new FileNotFoundException(
+                    $"Matching vertex shader counterpart not found for fragment target: {path}"
+                );
+
+            vertexSource = File.ReadAllText(vertPath);
+
+            Log.Info("SHADER", $"Loaded fragment shader: {path}");
+        }
+        else
+        {
+            throw new NotSupportedException(
+                $"Unrecognized shader file format extension: {extension}"
+            );
+        }
+
+        ShaderHandle handle = KoRender.GetBackend().CreateShader(vertexSource, fragmentSource);
+        return new Shader(handle);
+    }
+
+    private static (string vertex, string fragment) ParseUnifiedShaderSource(string fullSource)
+    {
+        string[] lines = fullSource.Split(['\r', '\n'], StringSplitOptions.None);
+
+        System.Text.StringBuilder vertBuilder = new();
+        System.Text.StringBuilder fragBuilder = new();
+        System.Text.StringBuilder? currentBuilder = null;
+
+        foreach (string line in lines)
+        {
+            string trimmed = line.Trim();
+            if (trimmed.StartsWith("#type", StringComparison.OrdinalIgnoreCase))
+            {
+                string stage = trimmed["#type".Length..].Trim().ToLowerInvariant();
+                if (stage == "vertex" || stage == "vert" || stage == "vs")
+                {
+                    currentBuilder = vertBuilder;
+                }
+                else if (stage == "fragment" || stage == "frag" || stage == "fs")
+                {
+                    currentBuilder = fragBuilder;
+                }
+                else
+                {
+                    currentBuilder = null;
+                }
+                continue;
+            }
+
+            currentBuilder?.AppendLine(line);
+        }
+
+        string vertexResult = vertBuilder.ToString();
+        string fragmentResult = fragBuilder.ToString();
+
+        if (string.IsNullOrWhiteSpace(vertexResult))
+            throw new InvalidDataException(
+                "Parsed unified shader does not contain a valid '#type vertex' block."
+            );
+        if (string.IsNullOrWhiteSpace(fragmentResult))
+            throw new InvalidDataException(
+                "Parsed unified shader does not contain a valid '#type fragment' block."
+            );
+
+        return (vertexResult, fragmentResult);
     }
 
     private static Texture LoadTexture(string path)

@@ -35,7 +35,7 @@ public class AppWindow
         GlfwInput.RegisterPlatform();
 
         WindowOptions options = WindowOptions.Default;
-        options.Size = new Silk.NET.Maths.Vector2D<int>(width, height);
+        options.Size = new Vector2D<int>(width, height);
         options.Title = title;
         options.API = new GraphicsAPI(
             ContextAPI.OpenGL,
@@ -43,11 +43,15 @@ public class AppWindow
             ContextFlags.Default,
             new APIVersion(4, 6)
         );
+        options.VSync = false;
+        // options.WindowState = WindowState.Maximized;
 
         _window = Window.Create(options);
 
         _window.Load += () =>
         {
+            _window.Center();
+
             _gl = _window.CreateOpenGL();
             _input = _window.CreateInput();
             _controller = new ImGuiController(_gl, _window, _input);

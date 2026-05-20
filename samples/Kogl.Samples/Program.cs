@@ -9,6 +9,9 @@ internal class Program
     {
         Log.Info("KoGL - Samples");
 
+        CustomShadersExample.Start();
+        CustomShaders2Example.Start();
+        AssetManagerExample.Start();
         TextureLoadingExample.Start();
         // ShadowMappingExample.Start();
         RaymarchedPrimitivesExample.Start();
@@ -22,7 +25,6 @@ internal class Program
         CameraExample.Start();
         Cube3DExample.Start();
         ScissorExample.Start();
-        CustomShadersExample.Start();
         PostProcessingExample.Start();
     }
 }

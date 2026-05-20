@@ -1,4 +1,4 @@
-﻿using Kogl.Core;
+﻿using Kogl.Common;
 using Kogl.Samples.Samples;
 
 namespace Kogl.Samples;
@@ -9,20 +9,20 @@ internal class Program
     {
         Log.Info("KoGL - Samples");
 
-        // ShadowMappingExample.Start();
-        // RaymarchedPrimitivesExample.Start();
-        RaymarchedHillsExample.Start();
-        // SpriteRenderingExample.Start();
-        // MultiTextureMaterialExample.Start();
-        // SimpleExample.Start();
-        // MaterialExample.Start();
-        // InputExample.Start();
-        // TextRenderingExample.Start();
-        // CameraExample.Start();
-        // Cube3DExample.Start();
         TextureLoadingExample.Start();
-        // ScissorExample.Start();
-        // CustomShadersExample.Start();
-        // PostProcessingExample.Start();
+        // ShadowMappingExample.Start();
+        RaymarchedPrimitivesExample.Start();
+        RaymarchedHillsExample.Start();
+        SpriteRenderingExample.Start();
+        MultiTextureMaterialExample.Start();
+        SimpleExample.Start();
+        MaterialExample.Start();
+        InputExample.Start();
+        TextRenderingExample.Start();
+        CameraExample.Start();
+        Cube3DExample.Start();
+        ScissorExample.Start();
+        CustomShadersExample.Start();
+        PostProcessingExample.Start();
     }
 }

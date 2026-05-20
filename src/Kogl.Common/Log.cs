@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Kogl.Core;
+namespace Kogl.Common;
 
 /// <summary>The log level</summary>
 public enum LogLevel

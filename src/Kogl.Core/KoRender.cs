@@ -168,9 +168,16 @@ void main() {
     }
 
     /// <summary>Sets the current matrix to an orthographic projection</summary>
-    public static void Ortho(float l, float r, float b, float t, float zn, float zf)
+    public static void Ortho(
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float zNear,
+        float zFar
+    )
     {
-        _matrices.Ortho(l, r, b, t, zn, zf);
+        _matrices.Ortho(left, right, bottom, top, zNear, zFar);
     }
 
     /// <summary>Sets the current matrix to a perspective projection</summary>
@@ -181,9 +188,16 @@ void main() {
     }
 
     /// <summary>Sets the current matrix to a perspective projection</summary>
-    public static void Frustum(float l, float r, float b, float t, float zn, float zf)
+    public static void Frustum(
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float zNear,
+        float zFar
+    )
     {
-        _matrices.Frustum(l, r, b, t, zn, zf);
+        _matrices.Frustum(left, right, bottom, top, zNear, zFar);
     }
 
     /// <summary>Returns the current projection matrix</summary>

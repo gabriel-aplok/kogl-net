@@ -8,7 +8,6 @@ public class Material : Resource
 {
     public Shader Shader { get; }
 
-    // states
     public bool DepthTest { get; set; } = true;
     public bool Blending { get; set; } = true;
 
@@ -75,9 +74,9 @@ public class Material : Resource
 
     public object? GetParameter(string name)
     {
-        if (_parameters.TryGetValue(name, out object? value))
-            return value;
-        return _parent?.GetParameter(name);
+        return _parameters.TryGetValue(name, out object? value)
+            ? value
+            : _parent?.GetParameter(name);
     }
 
     public void Apply()
@@ -128,8 +127,9 @@ public class Material : Resource
         }
     }
 
-    protected override void Dispose(bool disposing)
+    protected override void DisposeManaged()
     {
         Log.Info("Material Disposed");
+        _parameters.Clear();
     }
 }

@@ -9,7 +9,7 @@ public class Texture(TextureHandle handle, int width, int height) : Resource
     public int Width { get; } = width;
     public int Height { get; } = height;
 
-    protected override void Dispose(bool disposing)
+    protected override void DisposeManaged()
     {
         KoRender.DeleteTexture(Handle);
     }

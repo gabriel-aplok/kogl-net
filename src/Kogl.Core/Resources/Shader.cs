@@ -1,3 +1,4 @@
+using Kogl.Common;
 using Kogl.Common.Types;
 
 namespace Kogl.Core.Resources;
@@ -36,9 +37,10 @@ public sealed class Shader(ShaderHandle handle) : Resource
         _properties.Add(new ShaderProperty(name, type));
     }
 
-    protected override void Dispose(bool disposing)
+    protected override void DisposeManaged()
     {
         Log.Info("Shader Disposed");
+        // TODO: KoRender.DeleteShader(Handle);
     }
 
     /// <summary>Creates a new shader</summary>

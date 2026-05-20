@@ -1,25 +1,25 @@
+using Kogl.Common;
+
 namespace Kogl.Core.Resources;
 
-public abstract class Resource : IDisposable
+public abstract class Resource : Disposable
 {
     public string Name { get; internal set; } = string.Empty;
     public string Path { get; internal set; } = string.Empty;
-    public bool IsDisposed { get; private set; }
 
-    public void Dispose()
+    public bool IsDisposed => HasDisposed;
+
+    protected override void Dispose(bool disposing)
     {
-        if (IsDisposed)
+        if (!disposing)
             return;
 
-        Dispose(true);
-        IsDisposed = true;
-        GC.SuppressFinalize(this);
+        // Release managed resources here
+        DisposeManaged();
     }
 
-    protected abstract void Dispose(bool disposing);
-
-    ~Resource()
-    {
-        Dispose(false);
-    }
+    /// <summary>
+    /// Override this method to release managed resources.
+    /// </summary>
+    protected virtual void DisposeManaged() { }
 }

@@ -16,7 +16,8 @@ internal class TextureLoadingExample
 
         app.OnLoad += static () =>
         {
-            _logo = ResourceManager.Load<Texture>("assets/container.jpg");
+            // _logo = ResourceManager.Load<Texture>("assets/container.jpg");
+            _logo = ResourceManager.Load<Texture>("assets/logo.png");
         };
         app.OnRender += RenderLoop;
         app.OnUnload += static () =>
@@ -68,14 +69,23 @@ internal class TextureLoadingExample
 
             KoRender.Begin(PrimitiveMode.Quads);
             KoRender.Color4(1, 1, 1, 1);
-            KoRender.TexCoord2(0, 0);
-            KoRender.Vertex2(0, 0);
-            KoRender.TexCoord2(1, 0);
-            KoRender.Vertex2(200, 0);
-            KoRender.TexCoord2(1, 1);
-            KoRender.Vertex2(200, 200);
+
+            // Top-Left corner: Map to U=0, V=1
             KoRender.TexCoord2(0, 1);
+            KoRender.Vertex2(0, 0);
+
+            // Top-Right corner: Map to U=1, V=1
+            KoRender.TexCoord2(1, 1);
+            KoRender.Vertex2(200, 0);
+
+            // Bottom-Right corner: Map to U=1, V=0
+            KoRender.TexCoord2(1, 0);
+            KoRender.Vertex2(200, 200);
+
+            // Bottom-Left corner: Map to U=0, V=0
+            KoRender.TexCoord2(0, 0);
             KoRender.Vertex2(0, 200);
+
             KoRender.End();
 
             KoRender.PopMatrix();

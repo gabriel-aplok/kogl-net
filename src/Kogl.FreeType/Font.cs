@@ -8,6 +8,7 @@ using static FreeTypeSharp.FT_Render_Mode_;
 
 namespace Kogl.FreeType;
 
+/// <summary>A font</summary>
 public unsafe class Font : Resource
 {
     private static FT_LibraryRec_* _library;
@@ -23,30 +24,27 @@ public unsafe class Font : Resource
 
     public int LineHeight => (int)((long)_face->size->metrics.height >> 6);
 
-    public static Font Load(string path, uint size)
-    {
-        if (!_libraryInitialized)
-        {
-            FT_LibraryRec_* lib;
-            FT_Error error = FT_Init_FreeType(&lib);
-            if (error != FT_Error.FT_Err_Ok)
-                throw new Exception($"FreeType: Could not initialize library. Error: {error}");
-
-            _library = lib;
-            _libraryInitialized = true;
-        }
-
-        return new Font(path, size);
-    }
-
-    public static Font LoadSdf(string path, uint size)
-    {
-        Font font = Load(path, size);
-        font.IsSdf = true;
-        return font;
-    }
-
     private Font(string path, uint size)
+    {
+        _face = LoadFace(path);
+        FT_Set_Pixel_Sizes(_face, 0, size);
+
+        Size = (int)size;
+        _atlas = new FontAtlas();
+    }
+
+    private static void InitializeLibrary()
+    {
+        FT_LibraryRec_* lib;
+        FT_Error error = FT_Init_FreeType(&lib);
+        if (error != FT_Error.FT_Err_Ok)
+            throw new Exception($"FreeType: Could not initialize library. Error: {error}");
+
+        _library = lib;
+        _libraryInitialized = true;
+    }
+
+    private static FT_FaceRec_* LoadFace(string path)
     {
         IntPtr pathPtr = Marshal.StringToHGlobalAnsi(path);
         try
@@ -56,27 +54,39 @@ public unsafe class Font : Resource
             if (error != FT_Error.FT_Err_Ok)
                 throw new Exception($"FreeType: Failed to load font at {path}. Error: {error}");
 
-            _face = face;
+            return face;
         }
         finally
         {
             Marshal.FreeHGlobal(pathPtr);
         }
-
-        FT_Set_Pixel_Sizes(_face, 0, size);
-
-        Size = (int)size;
-        _atlas = new FontAtlas();
     }
 
+    /// <summary>Loads a font from a file</summary>
+    public static Font Load(string path, uint size)
+    {
+        if (!_libraryInitialized)
+            InitializeLibrary();
+
+        return new Font(path, size);
+    }
+
+    /// <summary>Loads an SDF font from a file</summary>
+    public static Font LoadSdf(string path, uint size)
+    {
+        Font font = Load(path, size);
+        font.IsSdf = true;
+        return font;
+    }
+
+    /// <summary>Retrieves the glyph for the given codepoint</summary>
     public FontGlyph GetGlyph(uint codepoint)
     {
-        if (_glyphs.TryGetValue(codepoint, out FontGlyph cachedGlyph))
-            return cachedGlyph;
+        if (_glyphs.TryGetValue(codepoint, out FontGlyph cached))
+            return cached;
 
         uint glyphIndex = FT_Get_Char_Index(_face, codepoint);
         FT_Load_Glyph(_face, glyphIndex, FT_LOAD_DEFAULT);
-
         FT_Render_Glyph(_face->glyph, IsSdf ? FT_RENDER_MODE_SDF : FT_RENDER_MODE_NORMAL);
 
         FT_GlyphSlotRec_* slot = _face->glyph;
@@ -91,8 +101,8 @@ public unsafe class Font : Resource
             v1 = 0;
         if (width > 0 && height > 0)
         {
-            ReadOnlySpan<byte> bitmapData = new(bitmap.buffer, width * height);
-            _atlas.TryAddGlyph(bitmapData, width, height, out u0, out v0, out u1, out v1);
+            ReadOnlySpan<byte> data = new(bitmap.buffer, width * height);
+            _atlas.TryAddGlyph(data, width, height, out u0, out v0, out u1, out v1);
         }
 
         FontGlyph glyph = new(
@@ -111,7 +121,7 @@ public unsafe class Font : Resource
         return glyph;
     }
 
-    protected override void Dispose(bool disposing)
+    protected override void DisposeManaged()
     {
         if (_face != null)
         {
@@ -119,5 +129,6 @@ public unsafe class Font : Resource
         }
 
         _atlas.Dispose();
+        _glyphs.Clear();
     }
 }

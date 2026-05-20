@@ -1,6 +1,6 @@
 using System.Numerics;
 using ImGuiNET;
-using Kogl.Core;
+using Kogl.Common;
 
 namespace Kogl.Windowing.ImGuiImpl;
 

@@ -1,3 +1,4 @@
+using Kogl.Common;
 using Kogl.Core;
 using Kogl.OpenGL;
 using Silk.NET.Input;

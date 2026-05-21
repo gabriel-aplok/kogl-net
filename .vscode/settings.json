@@ -1,14 +1,35 @@
+// this is just for my files organization, sorry for the mess.
 {
   "files.exclude": {
+    // basic
     "**/.git": true,
+    // dotnet
     "**/**.lscache": true,
-    "**/bin**": true,
-    "**/obj**": true
+    "**/bin/**": true,
+    "**/obj/**": true,
+    // my mess
+    "**/assets/**": true,
+    "**/.editorconfig": true,
+    "**/.gitattributes": true,
+    "**/.gitignore": true,
+    "**/dotnet-tools.json": true,
+    "**/LICENSE.txt": true,
+    "**/website": true
   },
   "search.exclude": {
+    // basic
     "**/.git": true,
-    "**/files**": true,
-    "**/bin**": true,
-    "**/obj**": true
+    // dotnet
+    "**/**.lscache": true,
+    "**/bin/**": true,
+    "**/obj/**": true,
+    // my mess
+    "**/files/**": true,
+    "**/.editorconfig": true,
+    "**/.gitattributes": true,
+    "**/.gitignore": true,
+    "**/dotnet-tools.json": true,
+    "**/LICENSE.txt": true,
+    "**/website": true
   }
 }

@@ -23,7 +23,7 @@ internal class ObjLoaderTestExample
 
     public static void Start()
     {
-        AppWindow app = new(1280, 720, "KoGL - High Level OBJ Loader and Camera Diagnostics");
+        AppWindow app = new(1280, 720, "KoGL - Model Loader Example");
 
         app.OnLoad += () =>
         {

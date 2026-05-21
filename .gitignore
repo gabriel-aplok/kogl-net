@@ -60,3 +60,4 @@ website
 # lol
 files/**
 files
+script_gen_**

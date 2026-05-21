@@ -78,8 +78,6 @@ public static class ResourceManager
             // unified shader
             string fullSource = File.ReadAllText(path);
             (vertexSource, fragmentSource) = ParseUnifiedShaderSource(fullSource);
-
-            Log.Info("SHADER", $"Loaded unified shader: {path}");
         }
         else if (extension == ".vert" || extension == ".vs")
         {
@@ -95,8 +93,6 @@ public static class ResourceManager
                 );
 
             fragmentSource = File.ReadAllText(fragPath);
-
-            Log.Info("SHADER", $"Loaded vertex shader: {path}");
         }
         else if (extension == ".frag" || extension == ".fs")
         {
@@ -112,8 +108,6 @@ public static class ResourceManager
                 );
 
             vertexSource = File.ReadAllText(vertPath);
-
-            Log.Info("SHADER", $"Loaded fragment shader: {path}");
         }
         else
         {

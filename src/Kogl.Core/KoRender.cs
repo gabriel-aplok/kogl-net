@@ -86,9 +86,8 @@ in vec2 fTex;
 in vec4 fCol;
 out vec4 FragColor;
 uniform sampler2D uTex;
-uniform vec4 uTint;
 void main() {
-    FragColor = texture(uTex, fTex) * fCol * uTint;
+    FragColor = texture(uTex, fTex) * fCol;
 }";
 
         // create default shader
@@ -97,11 +96,11 @@ void main() {
 
         Shader defaultShader = new(_defaultShader) { Name = "DefaultShader" };
         defaultShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
-        defaultShader.AddProperty("uTint", ShaderPropertyType.Vec4);
 
         _defaultMaterial = new Material(defaultShader);
         _defaultMaterial.SetTexture("uTex", new Texture(_defaultTexture, 1, 1));
-        _defaultMaterial.SetVector4("uTint", Vector4.One);
+
+        ApplyMaterial(_defaultMaterial);
     }
 
     #endregion
@@ -414,10 +413,10 @@ void main() {
             int matIdx = model.MeshMaterialIndices[i];
             Material mat = model.Materials[matIdx];
 
-            if (tint.HasValue)
-            {
-                mat.SetVector4("uTint", tint.Value);
-            }
+            // if (tint.HasValue)
+            // {
+            //     mat.SetVector4("uTint", tint.Value);
+            // }
 
             DrawMesh(model.Meshes[i], mat, transform);
         }

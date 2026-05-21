@@ -10,6 +10,7 @@ internal class Program
         Log.Info("KoGL - Samples");
 
         SampleGizmo.Start();
+        MultiTextureMaterialExample.Start();
         ObjLoaderTestExample.Start();
         CustomShadersExample.Start();
         CustomShaders2Example.Start();
@@ -19,7 +20,6 @@ internal class Program
         RaymarchedPrimitivesExample.Start();
         RaymarchedHillsExample.Start();
         SpriteRenderingExample.Start();
-        MultiTextureMaterialExample.Start();
         SimpleExample.Start();
         MaterialExample.Start();
         InputExample.Start();

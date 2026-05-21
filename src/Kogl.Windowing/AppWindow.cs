@@ -34,61 +34,61 @@ public class AppWindow
     public int Width { get; private set; }
     public int Height { get; private set; }
 
-    /// <summary>Gets or sets the display title of the application window.</summary>
+    /// <summary>Gets or sets the display title of the application window</summary>
     public string Title
     {
         get => _window.Title;
         set => _window.Title = value;
     }
 
-    /// <summary>Gets or sets whether vertical synchronization is enabled.</summary>
+    /// <summary>Gets or sets whether vertical synchronization is enabled</summary>
     public bool VSync
     {
         get => _window.VSync;
         set => _window.VSync = value;
     }
 
-    /// <summary>Gets or sets the screen position of the window frame.</summary>
+    /// <summary>Gets or sets the screen position of the window frame</summary>
     public Vector2D<int> Position
     {
         get => _window.Position;
         set => _window.Position = value;
     }
 
-    /// <summary>Gets or sets the size vectors of the window layout area.</summary>
+    /// <summary>Gets or sets the size vectors of the window layout area</summary>
     public Vector2D<int> Size
     {
         get => _window.Size;
         set => _window.Size = value;
     }
 
-    /// <summary>Checks or updates the window's state to full monitor presentation mode.</summary>
+    /// <summary>Checks or updates the window's state to full monitor presentation mode</summary>
     public bool Fullscreen
     {
         get => _window.WindowState == WindowState.Fullscreen;
         set => _window.WindowState = value ? WindowState.Fullscreen : WindowState.Normal;
     }
 
-    /// <summary>Checks or updates if the window frame should strip its default operating system borders.</summary>
+    /// <summary>Checks or updates if the window frame should strip its default operating system borders</summary>
     public bool Borderless
     {
         get => _window.WindowBorder == WindowBorder.Hidden;
         set => _window.WindowBorder = value ? WindowBorder.Hidden : WindowBorder.Resizable;
     }
 
-    /// <summary>Indicates whether the window context has active input focus.</summary>
+    /// <summary>Indicates whether the window context has active input focus</summary>
     public bool IsVisible => _window.IsVisible;
 
-    /// <summary>Indicates whether the host window system loop has been scheduled to close.</summary>
+    /// <summary>Indicates whether the host window system loop has been scheduled to close</summary>
     public bool ShouldClose => _window.IsClosing;
 
-    /// <summary>Returns the measured Frames Per Second calculated on an exact 1-second rolling interval.</summary>
+    /// <summary>Returns the measured Frames Per Second calculated on an exact 1-second rolling interval</summary>
     public int Fps { get; private set; }
 
-    /// <summary>Returns the precise delta execution time of the previous frame update step in seconds.</summary>
+    /// <summary>Returns the precise delta execution time of the previous frame update step in seconds</summary>
     public double FrameTime { get; private set; }
 
-    /// <summary>Exposes total operational duration since the engine runtime layer was loaded.</summary>
+    /// <summary>Exposes total operational duration since the engine runtime layer was loaded</summary>
     public double Time => _window.Time;
 
     #endregion
@@ -197,31 +197,31 @@ public class AppWindow
         };
     }
 
-    /// <summary>Enters the main blocking framework execution frame loop context.</summary>
+    /// <summary>Enters the main blocking framework execution frame loop context</summary>
     public void Run()
     {
         _window.Run();
     }
 
-    /// <summary>Forces an immediate shutdown instruction to break out of the native window presentation loop.</summary>
+    /// <summary>Forces an immediate shutdown instruction to break out of the native window presentation loop</summary>
     public void Close()
     {
         _window.Close();
     }
 
-    /// <summary>Minimizes the window container display frame down into the system taskbar structure.</summary>
+    /// <summary>Minimizes the window container display frame down into the system taskbar structure</summary>
     public void Minimize()
     {
         _window.WindowState = WindowState.Minimized;
     }
 
-    /// <summary>Maximizes the window container layer bounds to fill the current desktop layout grid space.</summary>
+    /// <summary>Maximizes the window container layer bounds to fill the current desktop layout grid space</summary>
     public void Maximize()
     {
         _window.WindowState = WindowState.Maximized;
     }
 
-    /// <summary>Restores the structural screen state of the window configuration back to an unscaled normal presentation window.</summary>
+    /// <summary>Restores the structural screen state of the window configuration back to an unscaled normal presentation window</summary>
     public void Restore()
     {
         _window.WindowState = WindowState.Normal;

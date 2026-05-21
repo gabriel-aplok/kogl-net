@@ -1,5 +1,6 @@
 namespace Kogl.Common.Types;
 
+/// <summary>Face culling mode.</summary>
 public enum CullFaceState
 {
     Front,
@@ -7,12 +8,14 @@ public enum CullFaceState
     FrontAndBack,
 }
 
+/// <summary>Polygon front face winding order</summary>
 public enum FrontFaceState
 {
-    Ccw,
-    Cw,
+    Ccw, // Counter-clockwise
+    Cw, // Clockwise
 }
 
+/// <summary>Polygon rasterization mode</summary>
 public enum PolygonState
 {
     Fill,
@@ -20,6 +23,7 @@ public enum PolygonState
     Point,
 }
 
+/// <summary>Blending factor</summary>
 public enum BlendingFactorState
 {
     Zero,
@@ -34,6 +38,7 @@ public enum BlendingFactorState
     OneMinusDstColor,
 }
 
+/// <summary>Blend equation</summary>
 public enum BlendEquationState
 {
     Add,
@@ -41,6 +46,7 @@ public enum BlendEquationState
     ReverseSubtract,
 }
 
+/// <summary>Depth comparison function</summary>
 public enum DepthFunctionState
 {
     Never,
@@ -53,18 +59,20 @@ public enum DepthFunctionState
     Always,
 }
 
+/// <summary>Stencil comparison function</summary>
 public enum StencilFunctionState
 {
-    Never = 0x200,
-    Less = 0x201,
-    Equal = 0x202,
-    Lequal = 0x203,
-    Greater = 0x204,
-    NotEqual = 0x205,
-    Gequal = 0x206,
-    Always = 0x207,
+    Never,
+    Less,
+    Equal,
+    Lequal,
+    Greater,
+    NotEqual,
+    Gequal,
+    Always,
 }
 
+/// <summary>Stencil operation</summary>
 public enum StencilOpState
 {
     Keep,
@@ -77,6 +85,7 @@ public enum StencilOpState
     Invert,
 }
 
+/// <summary>Logical operation for color blending</summary>
 public enum LogicOpState
 {
     Clear,

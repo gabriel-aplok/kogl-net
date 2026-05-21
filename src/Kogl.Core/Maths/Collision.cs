@@ -1,7 +1,6 @@
-// FILE: src/Kogl.Core/Graphics/Collision.cs
 using System.Numerics;
 
-namespace Kogl.Core.Graphics;
+namespace Kogl.Core.Maths;
 
 /// <summary>A collection of collision functions</summary>
 public static class Collision

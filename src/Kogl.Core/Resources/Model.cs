@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace Kogl.Core.Resources;
 
-/// <summary>3D Model structure composed of multiple sub-meshes and materials.</summary>
+/// <summary>3D Model structure composed of multiple sub-meshes and materials</summary>
 public class Model : Resource
 {
     public Mesh[] Meshes { get; set; } = [];

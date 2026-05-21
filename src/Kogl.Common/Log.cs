@@ -48,7 +48,7 @@ public static class Log
     public static bool EnableConsoleColors { get; set; } = true;
     public static bool EnableFileLogging => _enableFileLogging;
 
-    // triggered whenever a new log arrives (useful for real-time imgui auto-scroll)
+    // triggered whenever a new log arrives
     public static event Action<LogEntry>? OnLogReceived;
 
     // ANSI escape codes
@@ -121,7 +121,7 @@ public static class Log
 
         lock (_lock)
         {
-            // add to ImGui history buffer
+            // add to history buffer
             _history.Add(entry);
             if (_history.Count > MaxHistoryItems)
             {
@@ -272,7 +272,7 @@ public static class Log
     }
 
     #endregion
-    #region ImGui Integration API
+    #region Editor Integration API
 
     /// <summary>Returns a snapshot copy of the current log history in a thread-safe manner</summary>
     public static LogEntry[] GetHistorySnapshot()

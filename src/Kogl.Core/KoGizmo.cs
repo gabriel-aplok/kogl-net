@@ -1,8 +1,9 @@
 using System.Numerics;
 using Kogl.Common.Types;
+using Kogl.Core.Maths;
 using Kogl.Input;
 
-namespace Kogl.Core.Graphics;
+namespace Kogl.Core;
 
 [Flags]
 public enum GizmoFlags

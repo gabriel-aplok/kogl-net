@@ -73,7 +73,7 @@ public interface IGraphicsBackend : IDisposable
     public void SetTextureCompareMode(TextureHandle texture, TextureCompare mode);
     public void SetTextureBorderColor(TextureHandle texture, Vector4 color);
 
-    // RenderTargets
+    // RenderTargets (Frame Buffers)
     public RenderTarget CreateRenderTarget(
         int width,
         int height,

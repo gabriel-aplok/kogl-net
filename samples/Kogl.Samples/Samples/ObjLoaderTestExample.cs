@@ -46,7 +46,7 @@ internal class ObjLoaderTestExample
 
             _modelMaterial = new Material(_modelShader);
             _modelMaterial.SetTexture("uMainTex", _modelTexture);
-            _modelMaterial.SetVector4("uTint", new Vector4(1f, 0f, 0f, 1f));
+            // _modelMaterial.SetVector4("uTint", new Vector4(1f, 0f, 0f, 1f));
         };
 
         app.OnRender += (dt) =>

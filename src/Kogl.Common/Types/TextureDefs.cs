@@ -1,7 +1,9 @@
 namespace Kogl.Common.Types;
 
+/// <summary>Immutable handle to a GPU texture</summary>
 public readonly record struct TextureHandle(uint Id);
 
+/// <summary>Texture internal format</summary>
 public enum TextureFormat
 {
     None,
@@ -17,6 +19,7 @@ public enum TextureFormat
     Depth24Stencil8,
 }
 
+/// <summary>Texture sampling filter</summary>
 public enum TextureFilter
 {
     Nearest,
@@ -27,6 +30,7 @@ public enum TextureFilter
     LinearMipmapLinear,
 }
 
+/// <summary>Texture wrapping mode</summary>
 public enum TextureWrap
 {
     Repeat,
@@ -35,6 +39,7 @@ public enum TextureWrap
     ClampToBorder,
 }
 
+/// <summary>Depth texture comparison mode</summary>
 public enum TextureCompare
 {
     None,

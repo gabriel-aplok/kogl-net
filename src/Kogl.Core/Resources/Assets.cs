@@ -15,7 +15,7 @@ public static class Assets
 
     public static event Action<string, object>? OnAssetHotReloaded;
 
-    /// <summary>Synchronously requests an asset. Increments reference tracking. Loads it instantly if not cached.</summary>
+    /// <summary>Synchronously requests an asset. Increments reference tracking. Loads it instantly if not cached</summary>
     public static T Load<T>(string virtualPath)
         where T : class
     {
@@ -34,7 +34,7 @@ public static class Assets
         }
     }
 
-    /// <summary>Asynchronously streams an asset using background processing.</summary>
+    /// <summary>Asynchronously streams an asset using background processing</summary>
     public static Task<T> LoadAsync<T>(string virtualPath)
         where T : class
     {
@@ -62,7 +62,7 @@ public static class Assets
         });
     }
 
-    /// <summary>Lowers reference counts. If it reaches 0, structural cleanup invokes Dispose() on the graphics subsystem.</summary>
+    /// <summary>Lowers reference counts. If it reaches 0, structural cleanup invokes Dispose() on the graphics subsystem</summary>
     public static void Unload(string virtualPath)
     {
         lock (_lock)
@@ -78,7 +78,7 @@ public static class Assets
         }
     }
 
-    /// <summary>Forces a background reload of an active asset structure and shifts references live.</summary>
+    /// <summary>Forces a background reload of an active asset structure and shifts references live</summary>
     public static void Reload(string virtualPath)
     {
         lock (_lock)

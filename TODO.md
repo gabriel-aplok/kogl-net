@@ -1,6 +1,8 @@
 ## Reorganize the entire codebase
 
-For now I'm just designing a simple game framework, but soon I want to scale it up further, so as development progresses I'll reorganize the code and improve everything.
+For now I'm just designing a simple game framework and messing around with it, but soon I want to scale it up further, so as development progresses I'll reorganize the code and improve everything.
+
+> I know, I have to start fixing this quickly so it doesn't snowball.
 
 ## Rich Text
 

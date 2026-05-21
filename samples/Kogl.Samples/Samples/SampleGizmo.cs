@@ -2,6 +2,7 @@ using System.Numerics;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Graphics;
+using Kogl.Core.Maths;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
@@ -59,7 +60,7 @@ public class SampleGizmo
         // The ID pattern safely protects collision checks against
         // overlaps if drawing multiple gizmos in sequence
         // ----------------------------------------------------
-        bool interacting = KoGizmo.DrawGizmo3D(100, GizmoFlags.All, ref _myCubeTransform);
+        bool interacting = KoGizmo.DrawGizmo3D(100, GizmoFlags.Translate, ref _myCubeTransform);
 
         // draw the cube
         KoRender.PushMatrix();

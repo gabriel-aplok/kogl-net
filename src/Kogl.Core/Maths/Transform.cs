@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Kogl.Core.Graphics;
+namespace Kogl.Core.Maths;
 
 public struct Transform
 {

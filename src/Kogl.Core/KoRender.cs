@@ -27,13 +27,15 @@ public static class KoRender
     private static Vector4 _currentColor = Vector4.One;
     private static Vector3 _currentNormal = Vector3.UnitZ;
     private static Vector4 _currentTangent = new(1, 0, 0, 1);
-
-    private static readonly TextureHandle[] _currentTextures = new TextureHandle[MaxTextureSlots];
     private static ShaderHandle _currentShaderHandle;
+    private static readonly TextureHandle[] _currentTextures = new TextureHandle[MaxTextureSlots];
 
     private static uint _cachedFboId = 0;
     private static int _screenWidth = 800;
     private static int _screenHeight = 600;
+
+    public static int ViewportWidth => _screenWidth;
+    public static int ViewportHeight => _screenHeight;
 
     #region Init
 
@@ -93,11 +95,11 @@ void main() {
         _defaultShader = _backend.CreateShader(vs, fs);
         _currentShaderHandle = _defaultShader;
 
-        Shader defaultShaderObj = new(_defaultShader) { Name = "DefaultShader" };
-        defaultShaderObj.AddProperty("uTex", ShaderPropertyType.Texture2D);
-        defaultShaderObj.AddProperty("uTint", ShaderPropertyType.Vec4);
+        Shader defaultShader = new(_defaultShader) { Name = "DefaultShader" };
+        defaultShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
+        defaultShader.AddProperty("uTint", ShaderPropertyType.Vec4);
 
-        _defaultMaterial = new Material(defaultShaderObj);
+        _defaultMaterial = new Material(defaultShader);
         _defaultMaterial.SetTexture("uTex", new Texture(_defaultTexture, 1, 1));
         _defaultMaterial.SetVector4("uTint", Vector4.One);
     }

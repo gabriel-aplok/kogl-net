@@ -1,11 +1,13 @@
 ﻿using System.Globalization;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using Kogl.Common;
+using Kogl.Common.Types;
+using Kogl.Core.Resources;
 
 namespace Kogl.Core.ModelParser;
 
-// I just got it from my software renderer, so I will port it to the framework internals soon.
-// ref: https://github.com/gabriel-aplok/csharp-software-renderer-3d
-
+/// <summary>OBJ file parser</summary>
 public static class OBJFileLoader
 {
     private readonly record struct VertexKey(int Position, int Normal, int UV);
@@ -24,25 +26,29 @@ public static class OBJFileLoader
         }
     }
 
-    public static IOBJHandle CreateHandle() => new OBJHandle();
-
-    public static bool Load(IOBJHandle handle, string path)
+    private class Cluster(int matIndex, int startIndex)
     {
-        if (!File.Exists(path) || handle is not OBJHandle objHandle)
+        public int MaterialIndex = matIndex;
+        public int StartIndex = startIndex;
+        public int IndexCount = 0;
+    }
+
+    public static Model Load(string path)
+    {
+        if (!File.Exists(path))
         {
-            Console.WriteLine($"Invalid path or handle. Path = {path}");
-            return false;
+            Log.Error("MODEL", $"Invalid path. Path = {path}");
+            return new Model();
         }
 
         List<Vector3> positionList = [];
         List<Vector3> normalList = [];
         List<Vector2> uvList = [];
-
         List<VertexIndex> vertexIndexList = [];
         List<Cluster> clusterList = [];
-        List<Material> materialList = [];
+        List<string> materialNames = [];
 
-        foreach (var lineString in File.ReadLines(path))
+        foreach (string lineString in File.ReadLines(path))
         {
             ReadOnlySpan<char> line = lineString.AsSpan().Trim();
             if (line.IsEmpty || line[0] == '#')
@@ -74,13 +80,13 @@ public static class OBJFileLoader
             else if (prefix.SequenceEqual("usemtl"))
             {
                 string materialName = data.ToString();
-                Material? material = materialList.FirstOrDefault(m => m.Name == materialName);
-                if (material == null)
+                int mIdx = materialNames.IndexOf(materialName);
+                if (mIdx == -1)
                 {
-                    material = new Material(materialList.Count, materialName);
-                    materialList.Add(material);
+                    mIdx = materialNames.Count;
+                    materialNames.Add(materialName);
                 }
-                clusterList.Add(new Cluster(material.Index, vertexIndexList.Count));
+                clusterList.Add(new Cluster(mIdx, vertexIndexList.Count));
             }
         }
 
@@ -93,30 +99,32 @@ public static class OBJFileLoader
             clusterList[^1].IndexCount = vertexIndexList.Count - clusterList[^1].StartIndex;
         }
 
-        ConstructGeometry(
-            objHandle,
+        return ConstructGeometry(
             vertexIndexList,
             positionList,
             normalList,
             uvList,
             clusterList,
-            materialList
+            materialNames
         );
-        return true;
     }
 
-    private static void ConstructGeometry(
-        OBJHandle objHandle,
+    private static Model ConstructGeometry(
         List<VertexIndex> vertexIndexList,
         List<Vector3> positions,
         List<Vector3> normals,
         List<Vector2> uvs,
         List<Cluster> clusters,
-        List<Material> materials
+        List<string> materialNames
     )
     {
-        List<Vertex> vertices = [];
-        List<int> indices = new(vertexIndexList.Count);
+        Model model = new();
+        List<Mesh> subMeshes = [];
+        List<int> meshMatIndices = [];
+
+        // resolve raw global vertices to strip redundancy
+        List<VertexData> globalVertices = [];
+        List<int> globalIndices = new(vertexIndexList.Count);
         Dictionary<VertexKey, int> vertexCache = [];
 
         foreach (VertexIndex vIndex in vertexIndexList)
@@ -126,30 +134,71 @@ public static class OBJFileLoader
             int uvIdx = GetRealIndex(vIndex.UV, uvs.Count);
 
             VertexKey key = new(posIdx, normIdx, uvIdx);
-
             if (vertexCache.TryGetValue(key, out int cacheIndex))
             {
-                indices.Add(cacheIndex);
+                globalIndices.Add(cacheIndex);
             }
             else
             {
-                Vertex vertex = new()
-                {
-                    Position = posIdx >= 0 ? positions[posIdx] : default,
-                    Normal = normIdx >= 0 ? normals[normIdx] : default,
-                    UV = uvIdx >= 0 ? uvs[uvIdx] : new Vector2(-1, -1),
-                };
+                VertexData vertex = new(
+                    posIdx >= 0 ? positions[posIdx] : Vector3.Zero,
+                    uvIdx >= 0 ? uvs[uvIdx] : Vector2.Zero,
+                    Vector4.One, // ensure standard visibility
+                    normIdx >= 0 ? normals[normIdx] : Vector3.UnitZ,
+                    new Vector4(1, 0, 0, 1)
+                );
 
-                vertices.Add(vertex);
-                indices.Add(vertices.Count - 1);
-                vertexCache[key] = vertices.Count - 1;
+                globalVertices.Add(vertex);
+                globalIndices.Add(globalVertices.Count - 1);
+                vertexCache[key] = globalVertices.Count - 1;
             }
         }
 
-        objHandle.Vertices = [.. vertices];
-        objHandle.Indices = [.. indices];
-        objHandle.Clusters = [.. clusters];
-        objHandle.Materials = [.. materials];
+        // split into distinct GPU sub-meshes per material cluster
+        foreach (Cluster cluster in clusters)
+        {
+            if (cluster.IndexCount == 0)
+                continue;
+
+            List<VertexData> subVerts = [];
+            List<ushort> subIndices = [];
+            Dictionary<int, ushort> globalToLocal = [];
+
+            for (int i = 0; i < cluster.IndexCount; i++)
+            {
+                int globalIdx = globalIndices[cluster.StartIndex + i];
+                if (!globalToLocal.TryGetValue(globalIdx, out ushort localIdx))
+                {
+                    localIdx = (ushort)subVerts.Count;
+                    subVerts.Add(globalVertices[globalIdx]);
+                    globalToLocal[globalIdx] = localIdx;
+                }
+                subIndices.Add(localIdx);
+            }
+
+            MeshHandle handle = KoRender
+                .GetBackend()
+                .CreateMesh(
+                    CollectionsMarshal.AsSpan(subVerts),
+                    CollectionsMarshal.AsSpan(subIndices)
+                );
+            subMeshes.Add(new Mesh(handle, subIndices.Count));
+            meshMatIndices.Add(cluster.MaterialIndex);
+        }
+
+        model.Meshes = [.. subMeshes];
+        model.MeshMaterialIndices = [.. meshMatIndices];
+
+        // fallback materials generator
+        model.Materials = new Material[Math.Max(1, materialNames.Count)];
+        for (int i = 0; i < model.Materials.Length; i++)
+        {
+            Material mat = KoRender.DefaultMaterial.CreateInstance();
+            mat.Name = materialNames.Count > i ? materialNames[i] : "DefaultObjMaterial";
+            model.Materials[i] = mat;
+        }
+
+        return model;
     }
 
     private static void ParseFace(
@@ -159,7 +208,6 @@ public static class OBJFileLoader
     )
     {
         List<VertexIndex> vIndexList = [];
-
         while (!data.IsEmpty)
         {
             int nextSpace = data.IndexOf(' ');
@@ -253,6 +301,8 @@ public static class OBJFileLoader
         }
     }
 
-    private static int GetRealIndex(int index, int maxCount) =>
-        index < 0 ? maxCount + index : index;
+    private static int GetRealIndex(int index, int maxCount)
+    {
+        return index < 0 ? maxCount + index : index;
+    }
 }

@@ -42,6 +42,11 @@ public interface IGraphicsBackend : IDisposable
     public void SetScissor(int x, int y, int width, int height);
     public void SetScissorEnabled(bool enabled);
 
+    // Static Meshes
+    public MeshHandle CreateMesh(ReadOnlySpan<VertexData> vertices, ReadOnlySpan<ushort> indices);
+    public void DeleteMesh(MeshHandle mesh);
+    public void DrawMesh(MeshHandle mesh, int indexCount);
+
     // Textures
     public TextureHandle CreateTexture(
         int width,

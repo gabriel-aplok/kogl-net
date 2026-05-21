@@ -176,6 +176,10 @@ public static class Assets
         {
             return ResourceManager.Load<Shader>(physicalPath);
         }
+        if (type == typeof(Model))
+        {
+            return ResourceManager.Load<Model>(physicalPath);
+        }
 
         throw new NotSupportedException(
             $"Asset system type loading rule not mapped for: {type.Name}"

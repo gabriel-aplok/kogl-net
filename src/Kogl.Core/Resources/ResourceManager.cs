@@ -9,6 +9,8 @@ public static class ResourceManager
 {
     private static readonly Dictionary<string, Resource> _cache = [];
 
+    #region API
+
     /// <summary>Loads a resource of type T. If it's already loaded, returns the cached version</summary>
     public static T Load<T>(string path)
         where T : Resource
@@ -20,6 +22,7 @@ public static class ResourceManager
         {
             var t when t == typeof(Texture) => (T)(object)LoadTexture(path),
             var t when t == typeof(Shader) => (T)(object)LoadShaderFromFile(path),
+            var t when t == typeof(Model) => (T)(object)ModelParser.OBJFileLoader.Load(path),
             _ => throw new NotSupportedException(
                 $"Resource type {typeof(T).Name} is not supported."
             ),
@@ -32,15 +35,32 @@ public static class ResourceManager
         return resource;
     }
 
+    /// <summary>Unloads a specific resource and disposes its GPU data</summary>
+    public static void Unload(string path)
+    {
+        if (_cache.Remove(path, out Resource? resource))
+            resource.Dispose();
+    }
+
+    /// <summary>Clears the entire cache and disposes all resources</summary>
+    public static void UnloadAll()
+    {
+        foreach (Resource resource in _cache.Values)
+            resource.Dispose();
+
+        _cache.Clear();
+    }
+
+    #endregion
+    #region Shaders
+
     /// <summary>
     /// Compiles a shader instance explicitly from raw string sources. This instance will not be added to the disk cache automatically.
     /// </summary>
     public static Shader LoadShader(string name, string vertexSource, string fragmentSource)
     {
         ShaderHandle handle = KoRender.GetBackend().CreateShader(vertexSource, fragmentSource);
-        Shader shader = new(handle);
-        shader.Name = name;
-        shader.Path = string.Empty;
+        Shader shader = new(handle) { Name = name, Path = string.Empty };
         return shader;
     }
 
@@ -153,6 +173,9 @@ public static class ResourceManager
         return (vertexResult, fragmentResult);
     }
 
+    #endregion
+    #region Textures
+
     private static Texture LoadTexture(string path)
     {
         if (!File.Exists(path))
@@ -184,19 +207,5 @@ public static class ResourceManager
         return new Texture(handle, image.Width, image.Height);
     }
 
-    /// <summary>Unloads a specific resource and disposes its GPU data</summary>
-    public static void Unload(string path)
-    {
-        if (_cache.Remove(path, out Resource? resource))
-            resource.Dispose();
-    }
-
-    /// <summary>Clears the entire cache and disposes all resources</summary>
-    public static void UnloadAll()
-    {
-        foreach (Resource resource in _cache.Values)
-            resource.Dispose();
-
-        _cache.Clear();
-    }
+    #endregion
 }

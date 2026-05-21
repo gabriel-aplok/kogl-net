@@ -9,6 +9,7 @@ internal class Program
     {
         Log.Info("KoGL - Samples");
 
+        ObjLoaderTestExample.Start();
         CustomShadersExample.Start();
         CustomShaders2Example.Start();
         AssetManagerExample.Start();

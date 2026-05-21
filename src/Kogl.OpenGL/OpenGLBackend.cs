@@ -41,6 +41,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
     private readonly uint[] _cachedTextures = new uint[8];
     private int _activeTextureSlot = -1;
 
+    private readonly Dictionary<uint, (uint Vbo, uint Ebo)> _meshBuffers = [];
     private readonly Dictionary<(uint, string), int> _uniformLocations = [];
 
     #region Initialization
@@ -537,6 +538,121 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         void* offset = (void*)(batch.IndexOffset * sizeof(ushort));
         _gl.DrawElements(glMode, (uint)batch.IndexCount, DrawElementsType.UnsignedShort, offset);
     }
+
+    #region Static Meshes
+
+    public MeshHandle CreateMesh(ReadOnlySpan<VertexData> vertices, ReadOnlySpan<ushort> indices)
+    {
+        uint vao = _gl.GenVertexArray();
+        BindVaoInternal(vao);
+
+        uint vbo = _gl.GenBuffer();
+        BindVboInternal(vbo);
+
+        fixed (VertexData* ptr = vertices)
+        {
+            _gl.BufferData(
+                BufferTargetARB.ArrayBuffer,
+                (nuint)(vertices.Length * sizeof(VertexData)),
+                ptr,
+                BufferUsageARB.StaticDraw
+            );
+        }
+
+        uint ebo = _gl.GenBuffer();
+        BindEboInternal(ebo);
+
+        fixed (ushort* ptr = indices)
+        {
+            _gl.BufferData(
+                BufferTargetARB.ElementArrayBuffer,
+                (nuint)(indices.Length * sizeof(ushort)),
+                ptr,
+                BufferUsageARB.StaticDraw
+            );
+        }
+
+        // attrs setup (NOTE: Always keep it up to date to the batcher too)
+        _gl.EnableVertexAttribArray(0);
+        _gl.VertexAttribPointer(
+            0,
+            3,
+            VertexAttribPointerType.Float,
+            false,
+            (uint)sizeof(VertexData),
+            (void*)0
+        );
+
+        _gl.EnableVertexAttribArray(1);
+        _gl.VertexAttribPointer(
+            1,
+            2,
+            VertexAttribPointerType.Float,
+            false,
+            (uint)sizeof(VertexData),
+            (void*)12
+        );
+
+        _gl.EnableVertexAttribArray(2);
+        _gl.VertexAttribPointer(
+            2,
+            4,
+            VertexAttribPointerType.Float,
+            false,
+            (uint)sizeof(VertexData),
+            (void*)20
+        );
+
+        _gl.EnableVertexAttribArray(3);
+        _gl.VertexAttribPointer(
+            3,
+            3,
+            VertexAttribPointerType.Float,
+            false,
+            (uint)sizeof(VertexData),
+            (void*)32
+        );
+
+        _gl.EnableVertexAttribArray(4);
+        _gl.VertexAttribPointer(
+            4,
+            4,
+            VertexAttribPointerType.Float,
+            false,
+            (uint)sizeof(VertexData),
+            (void*)48
+        );
+
+        BindVaoInternal(0);
+
+        _meshBuffers[vao] = (vbo, ebo);
+        return new MeshHandle(vao);
+    }
+
+    public void DeleteMesh(MeshHandle mesh)
+    {
+        if (_meshBuffers.Remove(mesh.Id, out (uint Vbo, uint Ebo) buffers))
+        {
+            if (_cachedVao == mesh.Id)
+                _cachedVao = 0;
+            _gl.DeleteVertexArray(mesh.Id);
+            _gl.DeleteBuffer(buffers.Vbo);
+            _gl.DeleteBuffer(buffers.Ebo);
+        }
+    }
+
+    public void DrawMesh(MeshHandle mesh, int indexCount)
+    {
+        BindVaoInternal(mesh.Id);
+        _gl.DrawElements(
+            PrimitiveType.Triangles,
+            (uint)indexCount,
+            DrawElementsType.UnsignedShort,
+            null
+        );
+    }
+
+    #endregion
 
     public TextureHandle CreateTexture(
         int width,

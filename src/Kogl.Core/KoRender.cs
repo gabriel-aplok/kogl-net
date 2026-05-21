@@ -11,12 +11,14 @@ namespace Kogl.Core;
 /// Old name was RenderAPI</summary>
 public static class KoRender
 {
+    public static Material DefaultMaterial => _defaultMaterial;
     public const int MaxTextureSlots = 8;
 
     private static IGraphicsBackend _backend = null!;
     private static Batcher _batcher = null!;
     private static readonly MatrixStack _matrices = new();
 
+    private static Material _defaultMaterial = null!;
     private static TextureHandle _defaultTexture;
     private static ShaderHandle _defaultShader;
 
@@ -82,13 +84,22 @@ in vec2 fTex;
 in vec4 fCol;
 out vec4 FragColor;
 uniform sampler2D uTex;
+uniform vec4 uTint;
 void main() {
-    FragColor = texture(uTex, fTex) * fCol;
+    FragColor = texture(uTex, fTex) * fCol * uTint;
 }";
 
         // create default shader
         _defaultShader = _backend.CreateShader(vs, fs);
         _currentShaderHandle = _defaultShader;
+
+        Shader defaultShaderObj = new(_defaultShader) { Name = "DefaultShader" };
+        defaultShaderObj.AddProperty("uTex", ShaderPropertyType.Texture2D);
+        defaultShaderObj.AddProperty("uTint", ShaderPropertyType.Vec4);
+
+        _defaultMaterial = new Material(defaultShaderObj);
+        _defaultMaterial.SetTexture("uTex", new Texture(_defaultTexture, 1, 1));
+        _defaultMaterial.SetVector4("uTint", Vector4.One);
     }
 
     #endregion
@@ -350,6 +361,63 @@ void main() {
         if (target == null)
         {
             _backend.SetViewport(0, 0, _screenWidth, _screenHeight);
+        }
+    }
+
+    #endregion
+    #region Static Rendering
+
+    /// <summary>Submit a GPU-mesh instanly for rendering</summary>
+    public static void DrawMesh(Mesh mesh, Material material, Matrix4x4 transform)
+    {
+        Flush();
+
+        ApplyMaterial(material);
+
+        Matrix4x4 mvp = transform * _matrices.ModelView * _matrices.Projection;
+        _backend.SetUniformMatrix4x4(material.Shader.Handle, "uMVP", mvp);
+
+        _backend.DrawMesh(mesh.Handle, mesh.IndexCount);
+    }
+
+    /// <summary>Renders a loaded multi-mesh model</summary>
+    public static void DrawModel(
+        Model model,
+        Vector3 position,
+        float scale = 1.0f,
+        Vector4? tint = null
+    )
+    {
+        DrawModelEx(model, position, Vector3.UnitY, 0.0f, new Vector3(scale), tint);
+    }
+
+    /// <summary>Renders a loaded multi-mesh model</summary>
+    public static void DrawModelEx(
+        Model model,
+        Vector3 position,
+        Vector3 rotationAxis,
+        float rotationAngle,
+        Vector3 scale,
+        Vector4? tint = null
+    )
+    {
+        Matrix4x4 transform =
+            Matrix4x4.CreateScale(scale)
+            * Matrix4x4.CreateFromAxisAngle(rotationAxis, rotationAngle)
+            * Matrix4x4.CreateTranslation(position)
+            * model.Transform;
+
+        for (int i = 0; i < model.Meshes.Length; i++)
+        {
+            int matIdx = model.MeshMaterialIndices[i];
+            Material mat = model.Materials[matIdx];
+
+            if (tint.HasValue)
+            {
+                mat.SetVector4("uTint", tint.Value);
+            }
+
+            DrawMesh(model.Meshes[i], mat, transform);
         }
     }
 

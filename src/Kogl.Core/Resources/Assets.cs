@@ -67,7 +67,7 @@ public static class Assets
     {
         lock (_lock)
         {
-            if (!_registry.TryGetValue(virtualPath, out var entry))
+            if (!_registry.TryGetValue(virtualPath, out AssetEntry? entry))
                 return;
 
             entry.ReferenceCount--;
@@ -196,7 +196,7 @@ public static class Assets
         // cascading unloads across orphaned dependencies
         foreach (string dependencyPath in entry.Dependencies)
         {
-            if (_registry.TryGetValue(dependencyPath, out var depEntry))
+            if (_registry.TryGetValue(dependencyPath, out AssetEntry? depEntry))
             {
                 depEntry.Dependents.Remove(entry.VirtualPath);
                 Unload(dependencyPath);
@@ -206,7 +206,7 @@ public static class Assets
 
     private static void TrackDependency(string assetPath, string dependencyVirtualPath)
     {
-        if (!_registry.TryGetValue(assetPath, out var entry))
+        if (!_registry.TryGetValue(assetPath, out AssetEntry? entry))
             return;
 
         AssetEntry depEntry = GetOrCreateEntry(dependencyVirtualPath, typeof(Shader)); // structural lookup fallback

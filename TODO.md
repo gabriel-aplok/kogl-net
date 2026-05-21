@@ -1,3 +1,7 @@
+## Reorganize the entire codebase
+
+For now I'm just designing a simple game framework, but soon I want to scale it up further, so as development progresses I'll reorganize the code and improve everything.
+
 ## Rich Text
 
 Implementing a simple markup parser (like <color=red>) by swapping RenderApi.Color4 mid-string

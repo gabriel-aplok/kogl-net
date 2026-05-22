@@ -15,21 +15,13 @@ internal class CustomShadersExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Custom Shaders");
+        AppWindow app = new(800, 600, "KoGL - Custom Shaders And Textures");
 
         // Hook the OnLoad event properly so we don't have to load on frame 1 anymore lol
         app.OnLoad += static () =>
         {
             _customShader = Assets.Load<Shader>("res://shaders/custom_wave.glsl");
-
-            // Wire live hot-reloading context safely
-            Assets.OnAssetHotReloaded += (path, asset) =>
-            {
-                if (path == "res://shaders/custom_wave.glsl")
-                {
-                    _customShader = (Shader)asset;
-                }
-            };
+            // _customShader = ResourceManager.Load<Shader>("assets/shaders/custom_wave.glsl");
         };
 
         app.OnRender += RenderLoop;
@@ -37,6 +29,7 @@ internal class CustomShadersExample
         app.OnUnload += static () =>
         {
             Assets.Unload("res://shaders/custom_wave.glsl");
+            // ResourceManager.Unload("assets/shaders/custom_wave.glsl");
         };
 
         app.Run();

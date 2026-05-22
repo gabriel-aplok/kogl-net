@@ -10,6 +10,7 @@ public class Material : Resource
 {
     public Shader Shader { get; }
 
+    // TODO: Add all the compatible states
     public bool DepthTest { get; set; } = true;
     public bool Blending { get; set; } = true;
 
@@ -29,51 +30,61 @@ public class Material : Resource
         Blending = parent.Blending;
     }
 
+    /// <summary>Creates an instance of the material</summary>
     public Material CreateInstance()
     {
         return new Material(this);
     }
 
+    /// <summary>Sets a parameter</summary>
     public void SetInt(string name, int value)
     {
         _parameters[name] = value;
     }
 
+    /// <summary>Sets a parameter</summary>
     public void SetFloat(string name, float value)
     {
         _parameters[name] = value;
     }
 
+    /// <summary>Sets a parameter</summary>
     public void SetBool(string name, bool value)
     {
         _parameters[name] = value;
     }
 
+    /// <summary>Sets a parameter</summary>
     public void SetVector2(string name, Vector2 value)
     {
         _parameters[name] = value;
     }
 
+    /// <summary>Sets a parameter</summary>
     public void SetVector3(string name, Vector3 value)
     {
         _parameters[name] = value;
     }
 
+    /// <summary>Sets a parameter</summary>
     public void SetVector4(string name, Vector4 value)
     {
         _parameters[name] = value;
     }
 
+    /// <summary>Sets a parameter</summary>
     public void SetMatrix4x4(string name, Matrix4x4 value)
     {
         _parameters[name] = value;
     }
 
+    /// <summary>Sets a parameter</summary>
     public void SetTexture(string name, Texture texture)
     {
         _parameters[name] = texture;
     }
 
+    /// <summary>Retrieves a parameter</summary>
     public object? GetParameter(string name)
     {
         return _parameters.TryGetValue(name, out object? value)
@@ -81,6 +92,7 @@ public class Material : Resource
             : _parent?.GetParameter(name);
     }
 
+    /// <summary>Applies the material</summary>
     public void Apply()
     {
         IGraphicsBackend backend = KoRender.GetBackend();
@@ -131,7 +143,6 @@ public class Material : Resource
 
     protected override void DisposeManaged()
     {
-        Log.Info("Material Disposed");
         _parameters.Clear();
     }
 }

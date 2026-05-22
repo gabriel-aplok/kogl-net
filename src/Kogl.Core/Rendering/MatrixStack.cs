@@ -93,6 +93,12 @@ public class MatrixStack
         );
     }
 
+    /// <summary>Rotates the current matrix</summary>
+    public void Rotate(Quaternion quaternion)
+    {
+        Multiply(Matrix4x4.CreateFromQuaternion(quaternion));
+    }
+
     /// <summary>Sets the current matrix to an orthographic projection</summary>
     public void Ortho(float left, float right, float bottom, float top, float zNear, float zFar)
     {

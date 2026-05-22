@@ -155,31 +155,31 @@ public class AppWindow
             ImGui.Text($"fps: {Fps}");
             ImGui.End();
 
-            if (ImGui.BeginMainMenuBar())
-            {
-                if (ImGui.BeginMenu("File"))
-                {
-                    ImGui.MenuItem("New");
-                    ImGui.MenuItem("Open");
-                    ImGui.MenuItem("Save");
-                    ImGui.EndMenu();
-                }
+            // if (ImGui.BeginMainMenuBar())
+            // {
+            //     if (ImGui.BeginMenu("File"))
+            //     {
+            //         ImGui.MenuItem("New");
+            //         ImGui.MenuItem("Open");
+            //         ImGui.MenuItem("Save");
+            //         ImGui.EndMenu();
+            //     }
 
-                if (ImGui.BeginMenu("Edit"))
-                {
-                    ImGui.MenuItem("Undo");
-                    ImGui.MenuItem("Redo");
-                    ImGui.EndMenu();
-                }
+            //     if (ImGui.BeginMenu("Edit"))
+            //     {
+            //         ImGui.MenuItem("Undo");
+            //         ImGui.MenuItem("Redo");
+            //         ImGui.EndMenu();
+            //     }
 
-                if (ImGui.BeginMenu("Help"))
-                {
-                    ImGui.MenuItem("About");
-                    ImGui.EndMenu();
-                }
+            //     if (ImGui.BeginMenu("Help"))
+            //     {
+            //         ImGui.MenuItem("About");
+            //         ImGui.EndMenu();
+            //     }
 
-                ImGui.EndMainMenuBar();
-            }
+            //     ImGui.EndMainMenuBar();
+            // }
 
             _controller?.Render();
 

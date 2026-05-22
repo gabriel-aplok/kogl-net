@@ -12,14 +12,13 @@ public static class Assets
         StringComparer.OrdinalIgnoreCase
     );
     private static readonly Lock _lock = new();
-
     public static event Action<string, object>? OnAssetHotReloaded;
 
-    /// <summary>Synchronously requests an asset. Increments reference tracking. Loads it instantly if not cached</summary>
-    public static T Load<T>(string virtualPath)
+    /// <summary>Loads an asset</summary>
+    public static T Load<T>(string path)
         where T : class
     {
-        AssetEntry entry = GetOrCreateEntry(virtualPath, typeof(T));
+        AssetEntry entry = GetOrCreateEntry(path, typeof(T));
 
         lock (_lock)
         {
@@ -34,7 +33,7 @@ public static class Assets
         }
     }
 
-    /// <summary>Asynchronously streams an asset using background processing</summary>
+    /// <summary>Loads an asset asynchronously</summary>
     public static Task<T> LoadAsync<T>(string virtualPath)
         where T : class
     {
@@ -78,7 +77,19 @@ public static class Assets
         }
     }
 
-    /// <summary>Forces a background reload of an active asset structure and shifts references live</summary>
+    /// <summary>Clears the entire cache and disposes all resources</summary>
+    public static void UnloadAll()
+    {
+        lock (_lock)
+        {
+            foreach (AssetEntry entry in _registry.Values)
+            {
+                Unload(entry.VirtualPath);
+            }
+        }
+    }
+
+    /// <summary>Reloads an asset</summary>
     public static void Reload(string virtualPath)
     {
         lock (_lock)
@@ -115,6 +126,18 @@ public static class Assets
             {
                 Log.Error("ASSETS", $"Failed hot-reload sequence on {virtualPath}: {ex.Message}");
                 entry.AssetInstance = oldInstance; // fallback gracefully
+            }
+        }
+    }
+
+    /// <summary>Clears the entire cache and disposes all resources</summary>
+    public static void ReloadAll()
+    {
+        lock (_lock)
+        {
+            foreach (AssetEntry entry in _registry.Values)
+            {
+                Reload(entry.VirtualPath);
             }
         }
     }

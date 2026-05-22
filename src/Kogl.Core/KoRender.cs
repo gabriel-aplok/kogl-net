@@ -178,6 +178,12 @@ void main() {
         _matrices.Rotate(angle, x, y, 0);
     }
 
+    /// <summary>Rotates the current matrix</summary>
+    public static void Rotate(Quaternion quaternion)
+    {
+        _matrices.Rotate(quaternion);
+    }
+
     /// <summary>Sets the current matrix to an orthographic projection</summary>
     public static void Ortho(
         float left,

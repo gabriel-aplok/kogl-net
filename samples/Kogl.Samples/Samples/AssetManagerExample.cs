@@ -21,20 +21,8 @@ internal class AssetManagerExample
 
         app.OnLoad += () =>
         {
-            // synchronous invocation using clean virtual absolute mappings
             _logoTexture = Assets.Load<Texture>("res://textures/logo.png");
-
-            // continuous asynchronous file system processing pipeline task execution
             _backgroundLoadingTask = Assets.LoadAsync<Texture>("res://textures/container.jpg");
-
-            // register to hot reload event stream
-            Assets.OnAssetHotReloaded += (path, asset) =>
-            {
-                if (path == "res://textures/logo.png")
-                {
-                    _logoTexture = (Texture)asset;
-                }
-            };
         };
 
         app.OnRender += (dt) =>

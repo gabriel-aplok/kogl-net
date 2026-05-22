@@ -9,8 +9,9 @@ internal class Program
     {
         Log.Info("KoGL - Samples");
 
-        SampleGizmo.Start();
+        JitterPhysicsDropExample.Start();
         MultiTextureMaterialExample.Start();
+        SampleGizmo.Start();
         ObjLoaderTestExample.Start();
         CustomShadersExample.Start();
         CustomShaders2Example.Start();

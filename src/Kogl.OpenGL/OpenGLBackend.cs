@@ -1,4 +1,5 @@
 using System.Numerics;
+using Kogl.Common;
 using Kogl.Common.Agnostics;
 using Kogl.Common.Types;
 using Silk.NET.OpenGL;
@@ -1013,6 +1014,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         if (status == 0)
         {
             string log = _gl.GetProgramInfoLog(prog);
+            LogCat.Critical("OPENGL", $"Shader Link Failed:\n{log}");
             throw new Exception($"Shader Link Failed: {log}");
         }
 
@@ -1032,6 +1034,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         if (status == 0)
         {
             string log = _gl.GetShaderInfoLog(shader);
+            LogCat.Error("OPENGL", $"{type} Compilation Failed:\n{log}");
             throw new Exception($"{type} Compilation Failed: {log}");
         }
         return shader;

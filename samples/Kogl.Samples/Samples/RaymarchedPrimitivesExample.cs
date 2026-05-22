@@ -3,6 +3,7 @@ using Kogl.Common.InputManagement;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
+using Kogl.Core.Resources;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
@@ -10,7 +11,7 @@ namespace Kogl.Samples.Samples;
 internal class RaymarchedPrimitivesExample
 {
     private static float _time = 0f;
-    private static ShaderHandle _primitivesShader;
+    private static Shader _primitivesShader;
     private static Vector2 _mousePos = Vector2.Zero;
 
     private static int _width = 800;
@@ -46,7 +47,7 @@ internal class RaymarchedPrimitivesExample
                     : CursorMode.Locked;
         }
 
-        if (_primitivesShader.Id == 0)
+        if (_primitivesShader.Handle.Id == 0)
         {
             string vs =
                 @"#version 330 core
@@ -202,7 +203,7 @@ void main()
     FragColor = vec4(col, 1.0);
 }";
 
-            _primitivesShader = KoRender.CreateShader(vs, fsPrimitives);
+            _primitivesShader = Shader.Create(vs, fsPrimitives);
         }
 
         KoRender.SetRenderTarget(null);

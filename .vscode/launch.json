@@ -11,17 +11,24 @@
   ]
 }
 // {
-//   "version": "0.3.0",
+//   "version": "0.2.0",
 //   "configurations": [
 //     {
-//       "name": "C#: Samples Debug",
+//       "name": ".NET Core Launch (console)",
 //       "type": "coreclr",
 //       "request": "launch",
-//       "program": "${workspaceFolder}/samples/Kogl.Samples/bin/Debug/net10.0/Kogl.Samples.dll",
+//       "preLaunchTask": "build",
+//       "program": "${workspaceFolder}/samples/Kogl.Samples/bin/Debug/net10.0/kolpa_smp.exe",
 //       "args": [],
 //       "cwd": "${workspaceFolder}/samples/Kogl.Samples",
-//       "stopAtEntry": false,
-//       "console": "externalTerminal"
+//       "console": "externalTerminal",
+//       "stopAtEntry": false
+//     },
+//     {
+//       "name": ".NET Core Attach",
+//       "type": "coreclr",
+//       "request": "attach",
+//       "processId": "${command:pickProcess}"
 //     }
 //   ]
 // }

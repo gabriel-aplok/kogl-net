@@ -10,23 +10,26 @@ namespace Kogl.Core;
 /// Old name was RenderAPI</summary>
 public static class KoRender
 {
-    public static Material DefaultMaterial => _defaultMaterial;
     public const int MaxTextureSlots = 8;
+
+    public static Material DefaultMaterial => _defaultMaterial;
+    public static Shader DefaultShader => _defaultShader;
+    public static TextureHandle DefaultTexture => _defaultTexture;
 
     private static IGraphicsBackend _backend = null!;
     private static Batcher _batcher = null!;
     private static readonly MatrixStack _matrices = new();
 
     private static Material _defaultMaterial = null!;
+    private static Shader _defaultShader = null!;
     private static TextureHandle _defaultTexture;
-    private static Shader _defaultShader;
 
-    private static Material? _currentMaterial;
+    private static Material _currentMaterial = null!;
+    private static Shader _currentShader = null!;
     private static Vector2 _currentTexCoord = Vector2.Zero;
     private static Vector4 _currentColor = Vector4.One;
     private static Vector3 _currentNormal = Vector3.UnitZ;
     private static Vector4 _currentTangent = new(1, 0, 0, 1);
-    private static ShaderHandle _currentShaderHandle;
     private static readonly TextureHandle[] _currentTextures = new TextureHandle[MaxTextureSlots];
 
     private static uint _cachedFboId = 0;
@@ -98,8 +101,9 @@ public static class KoRender
             """;
 
         // create default shader
-        _defaultShader = Shader.Create(vs, fs);
-        _currentShaderHandle = _defaultShader.Handle;
+        // _defaultShader = Shader.Create(vs, fs);
+        _defaultShader = Assets.Load<Shader>("res://shaders/std.glsl");
+        _currentShader = _defaultShader;
 
         _defaultShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
 
@@ -326,7 +330,7 @@ public static class KoRender
             Slot7 = _currentTextures[7],
         };
 
-        _batcher.Begin(mode, set, _currentShaderHandle);
+        _batcher.Begin(mode, set, _currentShader.Handle);
     }
 
     /// <summary>Ends rendering</summary>
@@ -510,7 +514,7 @@ public static class KoRender
         Flush();
 
         _currentMaterial = material;
-        _currentShaderHandle = material.Shader.Handle;
+        _currentShader = material.Shader;
 
         material.Apply();
         GlobalUniforms.ApplyTo(material.Shader);
@@ -519,7 +523,7 @@ public static class KoRender
     /// <summary>Uses the default shader</summary>
     public static void UseDefaultShader()
     {
-        _currentShaderHandle = _defaultShader.Handle;
+        _currentShader = _defaultShader;
     }
 
     /// <summary>Creates a shader</summary>
@@ -530,9 +534,9 @@ public static class KoRender
     }
 
     /// <summary>Uses a shader</summary>
-    public static void UseShader(ShaderHandle shader)
+    public static void UseShader(Shader shader)
     {
-        _currentShaderHandle = shader.Id == 0 ? _defaultShader.Handle : shader;
+        _currentShader = shader.Handle.Id == 0 ? _defaultShader : shader;
     }
 
     /// <summary>Creates a texture</summary>
@@ -808,49 +812,49 @@ public static class KoRender
     public static void SetUniform(string name, int value)
     {
         Flush();
-        _backend.SetUniformInt(_currentShaderHandle, name, value);
+        _backend.SetUniformInt(_currentShader.Handle, name, value);
     }
 
     /// <summary>Sets a float uniform</summary>
     public static void SetUniform(string name, float value)
     {
         Flush();
-        _backend.SetUniformFloat(_currentShaderHandle, name, value);
+        _backend.SetUniformFloat(_currentShader.Handle, name, value);
     }
 
     /// <summary>Sets a bool uniform</summary>
     public static void SetUniform(string name, bool value)
     {
         Flush();
-        _backend.SetUniformBool(_currentShaderHandle, name, value);
+        _backend.SetUniformBool(_currentShader.Handle, name, value);
     }
 
     /// <summary>Sets a vector2 uniform</summary>
     public static void SetUniform(string name, in Vector2 value)
     {
         Flush();
-        _backend.SetUniformVec2(_currentShaderHandle, name, value);
+        _backend.SetUniformVec2(_currentShader.Handle, name, value);
     }
 
     /// <summary>Sets a vector3 uniform</summary>
     public static void SetUniform(string name, in Vector3 value)
     {
         Flush();
-        _backend.SetUniformVec3(_currentShaderHandle, name, value);
+        _backend.SetUniformVec3(_currentShader.Handle, name, value);
     }
 
     /// <summary>Sets a vector4 uniform</summary>
     public static void SetUniform(string name, in Vector4 value)
     {
         Flush();
-        _backend.SetUniformVec4(_currentShaderHandle, name, value);
+        _backend.SetUniformVec4(_currentShader.Handle, name, value);
     }
 
     /// <summary>Sets a matrix 4x4 uniform</summary>
     public static void SetUniform(string name, in Matrix4x4 value)
     {
         Flush();
-        _backend.SetUniformMatrix4x4(_currentShaderHandle, name, value);
+        _backend.SetUniformMatrix4x4(_currentShader.Handle, name, value);
     }
 
     /// <summary>Returns the graphics backend</summary>

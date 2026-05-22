@@ -202,10 +202,6 @@ internal static class JitterCarBridgeExample
         {
             _camera.UpdateViewport(width, height);
         };
-        _app.OnUnload += () =>
-        {
-            Assets.UnloadAll();
-        };
         _app.Run();
         _app.Maximize();
     }

@@ -147,7 +147,6 @@ void main() {
         };
         _app.OnUnload += () =>
         {
-            Assets.UnloadAll();
             _uiFont?.Dispose();
         };
         _app.Run();

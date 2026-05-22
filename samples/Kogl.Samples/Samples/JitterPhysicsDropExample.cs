@@ -167,7 +167,6 @@ internal class JitterPhysicsDropExample
         };
         _app.OnUnload += () =>
         {
-            Assets.UnloadAll();
             _uiFont?.Dispose();
         };
         _app.Run();

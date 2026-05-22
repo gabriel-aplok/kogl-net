@@ -2,12 +2,13 @@ using System.Numerics;
 using System.Text;
 using Kogl.Common.Types;
 using Kogl.Core;
+using Kogl.Core.Resources;
 
 namespace Kogl.FreeType;
 
 public static class KoGLText
 {
-    private static ShaderHandle _sdfShader;
+    private static Shader _sdfShader;
     private static bool _sdfShaderInitialized;
 
     private static void EnsureSdfShader()
@@ -53,7 +54,7 @@ void main() {
     if (FragColor.a < 0.01) discard;
 }";
 
-        _sdfShader = KoRender.CreateShader(vs, fs);
+        _sdfShader = Shader.Create(vs, fs);
         _sdfShaderInitialized = true;
     }
 

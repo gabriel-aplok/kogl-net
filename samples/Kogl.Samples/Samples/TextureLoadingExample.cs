@@ -20,10 +20,6 @@ internal class TextureLoadingExample
             _logo = ResourceManager.Load<Texture>("assets/logo.png");
         };
         app.OnRender += RenderLoop;
-        app.OnUnload += static () =>
-        {
-            ResourceManager.UnloadAll();
-        };
 
         app.Run();
     }

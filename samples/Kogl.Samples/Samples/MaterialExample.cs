@@ -99,7 +99,6 @@ void main() {
         app.OnRender += RenderLoop;
         app.OnUnload += () =>
         {
-            ResourceManager.UnloadAll();
             _uiFont?.Dispose();
         };
         app.Run();

@@ -2,6 +2,7 @@
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
+using Kogl.Core.Resources;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
@@ -9,24 +10,13 @@ namespace Kogl.Samples.Samples;
 internal class CustomShaders2Example
 {
     private static float _time = 0f;
-    private static ShaderHandle _customShader;
+    private static Shader _customShader = null!;
 
     public static void Start()
     {
         AppWindow app = new(800, 600, "Kolpa - Custom 2 Shaders");
-        app.OnRender += RenderLoop;
 
-        // wait for initialize to complete before creating shader
-        // TODO: hook an OnLoad event. I will load it on frame 1 here to test lol
-
-        app.Run();
-    }
-
-    private static void RenderLoop(double dt)
-    {
-        _time += (float)dt;
-
-        if (_customShader.Id == 0)
+        app.OnLoad += static () =>
         {
             string vs =
                 @"#version 330 core
@@ -63,8 +53,16 @@ void main() {
     FragColor = vec4(finalRGB, 1.0) * fCol;
 }";
 
-            _customShader = KoRender.CreateShader(vs, fs);
-        }
+            _customShader = Shader.Create(vs, fs);
+        };
+        app.OnRender += RenderLoop;
+
+        app.Run();
+    }
+
+    private static void RenderLoop(double dt)
+    {
+        _time += (float)dt;
 
         KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
 

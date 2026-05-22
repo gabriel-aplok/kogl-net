@@ -3,14 +3,15 @@ using Kogl.Common.InputManagement;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
+using Kogl.Core.Resources;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
 
 internal class RaymarchedHillsExample
 {
+    private static Shader _raymarchShader = null!;
     private static float _time = 0f;
-    private static ShaderHandle _raymarchShader;
 
     private static Vector2 _mousePos = Vector2.Zero;
 
@@ -48,7 +49,7 @@ internal class RaymarchedHillsExample
                     : CursorMode.Locked;
         }
 
-        if (_raymarchShader.Id == 0)
+        if (_raymarchShader.Handle.Id == 0)
         {
             string vs =
                 @"#version 330 core
@@ -376,7 +377,7 @@ void main()
     FragColor = vec4(col, 1.0);
 }";
 
-            _raymarchShader = KoRender.CreateShader(vs, fsRaymarch);
+            _raymarchShader = Shader.Create(vs, fsRaymarch);
         }
 
         // target backbuffer screen directly

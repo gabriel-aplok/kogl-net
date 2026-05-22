@@ -37,8 +37,9 @@ public static class OBJFileLoader
     {
         if (!File.Exists(path))
         {
-            LogCat.Error("MODEL", $"Invalid path. Path = {path}");
-            return new Model();
+            LogCat.Error("MODEL", $"Invalid path. OBJ file not found. Path = {path}");
+            throw new FileNotFoundException($"OBJ file not found: {path}");
+            // return new Model();
         }
 
         List<Vector3> positionList = [];

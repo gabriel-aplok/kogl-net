@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using FreeTypeSharp;
+using Kogl.Common;
 using Kogl.Common.Types;
 using Kogl.Core.Resources;
 using static FreeTypeSharp.FT;
@@ -38,8 +39,10 @@ public unsafe class Font : Resource
         FT_LibraryRec_* lib;
         FT_Error error = FT_Init_FreeType(&lib);
         if (error != FT_Error.FT_Err_Ok)
+        {
+            LogCat.Critical("FREETYPE", $"Could not initialize library. Error: {error}");
             throw new Exception($"FreeType: Could not initialize library. Error: {error}");
-
+        }
         _library = lib;
         _libraryInitialized = true;
     }
@@ -52,8 +55,10 @@ public unsafe class Font : Resource
             FT_FaceRec_* face;
             FT_Error error = FT_New_Face(_library, (byte*)pathPtr, 0, &face);
             if (error != FT_Error.FT_Err_Ok)
+            {
+                LogCat.Error("FREETYPE", $"Failed to load font at {path}. Error: {error}");
                 throw new Exception($"FreeType: Failed to load font at {path}. Error: {error}");
-
+            }
             return face;
         }
         finally

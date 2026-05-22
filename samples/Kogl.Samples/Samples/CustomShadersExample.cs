@@ -69,7 +69,7 @@ internal class CustomShadersExample
         // draw an animated quad using the custom shader loaded from the asset pipeline
         if (_customShader != null && _customShader.Handle.Id != 0)
         {
-            KoRender.UseShader(_customShader.Handle);
+            KoRender.UseShader(_customShader);
 
             // setting a uniform automatically flushes the batcher
             KoRender.SetUniform("uTime", _time);

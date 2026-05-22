@@ -5,7 +5,7 @@
     "**/.git": true,
     // dotnet
     "**/**.lscache": true,
-    "**/bin/**": true,
+    "**/bin/**": false,
     "**/obj/**": true,
     // my mess
     "assets/**": true,

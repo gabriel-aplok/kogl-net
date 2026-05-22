@@ -2,6 +2,7 @@
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
+using Kogl.Core.Resources;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
@@ -9,8 +10,8 @@ namespace Kogl.Samples.Samples;
 internal class PostProcessingExample
 {
     private static float _time = 0f;
-    private static ShaderHandle _sceneShader;
-    private static ShaderHandle _postProcessShader;
+    private static Shader _sceneShader;
+    private static Shader _postProcessShader;
     private static RenderTarget _renderTarget;
 
     public static void Start()
@@ -28,7 +29,7 @@ internal class PostProcessingExample
     {
         _time += (float)dt;
 
-        if (_sceneShader.Id == 0)
+        if (_sceneShader.Handle.Id == 0)
         {
             // create the render target (match window size for 1:1 pixel mapping)
             _renderTarget = KoRender.CreateRenderTarget(800, 600);
@@ -38,7 +39,7 @@ internal class PostProcessingExample
                 "#version 330 core\nlayout(location=0) in vec3 aPos; layout(location=1) in vec2 aTex; layout(location=2) in vec4 aCol; out vec2 fTex; out vec4 fCol; uniform mat4 uMVP; void main() { gl_Position = uMVP * vec4(aPos, 1.0); fTex = aTex; fCol = aCol; }";
             string fsScene =
                 "#version 330 core\nin vec2 fTex; in vec4 fCol; out vec4 FragColor; uniform float uTime; void main() { float wave = sin(fTex.x * 10.0 + uTime * 3.0) * 0.5 + 0.5; vec3 colorA = vec3(0.1, 0.5, 0.8); vec3 colorB = vec3(0.8, 0.2, 0.1); FragColor = vec4(mix(colorA, colorB, wave), 1.0) * fCol; }";
-            _sceneShader = KoRender.CreateShader(vs, fsScene);
+            _sceneShader = Shader.Create(vs, fsScene);
 
             // post-process shader (crt / vignette effect)
             string fsPost =
@@ -73,7 +74,7 @@ internal class PostProcessingExample
 
                 FragColor = texColor;
             }";
-            _postProcessShader = KoRender.CreateShader(vs, fsPost);
+            _postProcessShader = Shader.Create(vs, fsPost);
         }
 
         // ==========================================

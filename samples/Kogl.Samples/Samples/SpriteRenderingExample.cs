@@ -37,7 +37,6 @@ internal class SpriteRenderingExample
 
         _app.OnUnload += () =>
         {
-            ResourceManager.UnloadAll();
             _uiFont?.Dispose();
             _atlas?.Dispose();
         };

@@ -1,5 +1,6 @@
 using System.IO.Hashing;
 using System.Text;
+using Kogl.Common;
 using Kogl.Common.Types;
 using StbImageSharp;
 
@@ -107,7 +108,10 @@ public static class ResourceManager
     private static Shader LoadShaderFromFile(string path)
     {
         if (!File.Exists(path))
+        {
+            LogCat.Error("RESOURCE", $"Shader source file not found: {path}");
             throw new FileNotFoundException($"Shader source file not found: {path}");
+        }
 
         string extension = Path.GetExtension(path).ToLowerInvariant();
         string vertexSource;
@@ -128,9 +132,15 @@ public static class ResourceManager
                 fragPath = Path.ChangeExtension(path, ".fs");
 
             if (!File.Exists(fragPath))
+            {
+                LogCat.Error(
+                    "RESOURCE",
+                    $"Matching fragment shader counterpart not found for vertex target: {path}"
+                );
                 throw new FileNotFoundException(
                     $"Matching fragment shader counterpart not found for vertex target: {path}"
                 );
+            }
 
             fragmentSource = File.ReadAllText(fragPath);
         }
@@ -143,14 +153,21 @@ public static class ResourceManager
                 vertPath = Path.ChangeExtension(path, ".vs");
 
             if (!File.Exists(vertPath))
+            {
+                LogCat.Error(
+                    "RESOURCE",
+                    $"Matching vertex shader counterpart not found for fragment target: {path}"
+                );
                 throw new FileNotFoundException(
                     $"Matching vertex shader counterpart not found for fragment target: {path}"
                 );
+            }
 
             vertexSource = File.ReadAllText(vertPath);
         }
         else
         {
+            LogCat.Error("RESOURCE", $"Unrecognized shader file format extension: {extension}");
             throw new NotSupportedException(
                 $"Unrecognized shader file format extension: {extension}"
             );
@@ -213,7 +230,10 @@ public static class ResourceManager
     private static Texture LoadTexture(string path)
     {
         if (!File.Exists(path))
+        {
+            LogCat.Error("RESOURCE", $"Texture file not found: {path}");
             throw new FileNotFoundException($"Texture file not found: {path}");
+        }
 
         StbImage.stbi_set_flip_vertically_on_load(1);
 

@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Kogl.Core.Graphics;
+namespace Kogl.Core.Rendering;
 
 /// <summary>The projection mode</summary>
 public enum CameraProjection
@@ -60,6 +60,13 @@ public class Camera
             AspectRatio = width / height;
     }
 
+    /// <summary>Lerps the camera</summary>
+    public void Lerp(Vector3 targetPos, Vector3 targetRot, float alpha)
+    {
+        Position = Vector3.Lerp(Position, targetPos, alpha);
+        Rotation = Vector3.Lerp(Rotation, targetRot, alpha);
+    }
+
     /// <summary>Updates the camera vectors</summary>
     private void UpdateVectors()
     {
@@ -112,12 +119,5 @@ public class Camera
             ),
             _ => Matrix4x4.Identity,
         };
-    }
-
-    /// <summary>Lerps the camera</summary>
-    public void Lerp(Vector3 targetPos, Vector3 targetRot, float alpha)
-    {
-        Position = Vector3.Lerp(Position, targetPos, alpha);
-        Rotation = Vector3.Lerp(Rotation, targetRot, alpha);
     }
 }

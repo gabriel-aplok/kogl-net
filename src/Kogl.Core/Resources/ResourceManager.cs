@@ -1,3 +1,7 @@
+using System.Buffers.Text;
+using System.IO.Hashing;
+using System.Security.Cryptography;
+using System.Text;
 using Kogl.Common;
 using Kogl.Common.Types;
 using StbImageSharp;
@@ -8,6 +12,7 @@ namespace Kogl.Core.Resources;
 public static class ResourceManager
 {
     private static readonly Dictionary<string, Resource> _cache = [];
+    private static readonly UTF8Encoding _safeUtf8 = new(false, false);
 
     #region API
 
@@ -28,8 +33,9 @@ public static class ResourceManager
             ),
         };
 
-        resource.Path = path;
+        resource.UniqueId = GetId(path);
         resource.Name = Path.GetFileNameWithoutExtension(path);
+        resource.Path = path;
 
         _cache[path] = resource;
         return resource;
@@ -51,6 +57,43 @@ public static class ResourceManager
         _cache.Clear();
     }
 
+    /// <summary>Generates 64-bit asset id from a unique path.</summary>
+    public static ulong GetId(ReadOnlySpan<char> assetPath)
+    {
+        if (assetPath.IsEmpty)
+            return 0;
+
+        // sanitize & normalize paths into a fixed stack buffer (up to 512 characters)
+        int pathLength = assetPath.Length;
+
+        // use stack memory
+        Span<char> normalizedChars =
+            pathLength <= 512 ? (stackalloc char[512])[..pathLength] : new char[pathLength];
+
+        for (int i = 0; i < pathLength; i++)
+        {
+            char c = assetPath[i];
+
+            // normalize slashes
+            if (c == '\\')
+                c = '/';
+
+            // enforce lowercase for case-insensitivity
+            normalizedChars[i] = char.ToLowerInvariant(c);
+        }
+
+        // transcode normalized chars to utf-8 bytes
+        int maxByteCount = _safeUtf8.GetMaxByteCount(pathLength);
+        Span<byte> utf8Bytes =
+            maxByteCount <= 1024 ? (stackalloc byte[1024])[..maxByteCount] : new byte[maxByteCount];
+
+        int actualByteCount = _safeUtf8.GetBytes(normalizedChars, utf8Bytes);
+        Span<byte> finalPayload = utf8Bytes[..actualByteCount];
+
+        // compute the 64-bit hash
+        return XxHash3.HashToUInt64(finalPayload);
+    }
+
     #endregion
     #region Shaders
 
@@ -59,7 +102,7 @@ public static class ResourceManager
     /// </summary>
     public static Shader LoadShader(string name, string vertexSource, string fragmentSource)
     {
-        ShaderHandle handle = KoRender.GetBackend().CreateShader(vertexSource, fragmentSource);
+        ShaderHandle handle = KoRender.CreateShader(vertexSource, fragmentSource);
         Shader shader = new(handle) { Name = name, Path = string.Empty };
         return shader;
     }
@@ -124,9 +167,9 @@ public static class ResourceManager
     {
         string[] lines = fullSource.Split(['\r', '\n'], StringSplitOptions.None);
 
-        System.Text.StringBuilder vertBuilder = new();
-        System.Text.StringBuilder fragBuilder = new();
-        System.Text.StringBuilder? currentBuilder = null;
+        StringBuilder vertBuilder = new();
+        StringBuilder fragBuilder = new();
+        StringBuilder? currentBuilder = null;
 
         foreach (string line in lines)
         {

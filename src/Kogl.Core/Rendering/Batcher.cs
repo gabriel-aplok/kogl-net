@@ -1,5 +1,5 @@
 using System.Numerics;
-using Kogl.Common;
+using Kogl.Common.Agnostics;
 using Kogl.Common.Types;
 
 namespace Kogl.Core.Rendering;

@@ -1,9 +1,7 @@
 ﻿using System.Numerics;
-using System.Resources;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
-using Kogl.Core.Resources;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;
@@ -15,7 +13,7 @@ internal class CustomShaders2Example
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Custom Shaders");
+        AppWindow app = new(800, 600, "KoGL - Custom 2 Shaders");
         app.OnRender += RenderLoop;
 
         // wait for initialize to complete before creating shader

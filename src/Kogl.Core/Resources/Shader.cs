@@ -1,20 +1,6 @@
-using Kogl.Common;
 using Kogl.Common.Types;
 
 namespace Kogl.Core.Resources;
-
-/// <summary>The type of a shader property</summary>
-public enum ShaderPropertyType
-{
-    Int,
-    Float,
-    Bool,
-    Vec2,
-    Vec3,
-    Vec4,
-    Mat4,
-    Texture2D,
-}
 
 /// <summary>A shader property</summary>
 public sealed class ShaderProperty(string name, ShaderPropertyType type)
@@ -31,22 +17,21 @@ public sealed class Shader(ShaderHandle handle) : Resource
 
     private readonly List<ShaderProperty> _properties = [];
 
-    /// <summary>Adds a shader property</summary>
-    public void AddProperty(string name, ShaderPropertyType type)
-    {
-        _properties.Add(new ShaderProperty(name, type));
-    }
-
-    protected override void DisposeManaged()
-    {
-        Log.Info("Shader Disposed");
-        // TODO: KoRender.DeleteShader(Handle);
-    }
-
-    /// <summary>Creates a new shader</summary>
     public static Shader Create(string vertexSrc, string fragmentSrc)
     {
         ShaderHandle handle = KoRender.GetBackend().CreateShader(vertexSrc, fragmentSrc);
         return new Shader(handle);
     }
+
+    public void AddProperty(string name, ShaderPropertyType type)
+    {
+        _properties.Add(new ShaderProperty(name, type));
+    }
+
+    public void RemoveProperty(string name)
+    {
+        _properties.RemoveAll(p => p.Name == name);
+    }
+
+    protected override void DisposeManaged() { }
 }

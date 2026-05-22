@@ -2,7 +2,7 @@ using System.Numerics;
 using Kogl.Common;
 using Kogl.Common.Types;
 using Kogl.Core;
-using Kogl.Core.Graphics;
+using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
 using Kogl.Input;
 using Kogl.Windowing;

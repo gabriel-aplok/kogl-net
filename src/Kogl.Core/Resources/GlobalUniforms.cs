@@ -1,7 +1,7 @@
 using System.Numerics;
-using Kogl.Common;
+using Kogl.Common.Agnostics;
 
-namespace Kogl.Core.Graphics;
+namespace Kogl.Core.Resources;
 
 /// <summary>A collection of global uniforms</summary>
 public static class GlobalUniforms
@@ -51,7 +51,7 @@ public static class GlobalUniforms
     }
 
     /// <summary>Applies the global uniforms to a shader</summary>
-    public static void ApplyTo(Resources.Shader shader)
+    public static void ApplyTo(Shader shader)
     {
         IGraphicsBackend backend = KoRender.GetBackend();
         foreach (KeyValuePair<string, object> kvp in _globals)

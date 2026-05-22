@@ -1,7 +1,7 @@
 using System.Numerics;
 using Kogl.Common.Types;
 
-namespace Kogl.Common;
+namespace Kogl.Common.Agnostics;
 
 public interface IGraphicsBackend : IDisposable
 {
@@ -73,7 +73,7 @@ public interface IGraphicsBackend : IDisposable
     public void SetTextureCompareMode(TextureHandle texture, TextureCompare mode);
     public void SetTextureBorderColor(TextureHandle texture, Vector4 color);
 
-    // RenderTargets (Frame Buffers)
+    // RenderTargets
     public RenderTarget CreateRenderTarget(
         int width,
         int height,

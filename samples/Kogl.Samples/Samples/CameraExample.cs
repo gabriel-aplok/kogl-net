@@ -1,7 +1,7 @@
 using System.Numerics;
 using Kogl.Common.Types;
 using Kogl.Core;
-using Kogl.Core.Graphics;
+using Kogl.Core.Rendering;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;

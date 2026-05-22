@@ -96,7 +96,11 @@
         <TrimmerRootAssembly Include="Silk.NET.Windowing.Common" />
         <TrimmerRootAssembly Include="Silk.NET.Core" />
     </ItemGroup>
+
+    <!-- ========================================================================= -->
+    <!-- DEPENDENCIES                                                              -->
+    <!-- ========================================================================= -->
     <ItemGroup>
-      <PackageReference Include="Jitter2" Version="2.8.7" />
+        <PackageReference Include="Jitter2" Version="2.8.7" />
     </ItemGroup>
 </Project>

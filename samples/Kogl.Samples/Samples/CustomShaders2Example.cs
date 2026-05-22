@@ -13,7 +13,7 @@ internal class CustomShaders2Example
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Custom 2 Shaders");
+        AppWindow app = new(800, 600, "Kolpa - Custom 2 Shaders");
         app.OnRender += RenderLoop;
 
         // wait for initialize to complete before creating shader

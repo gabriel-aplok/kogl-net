@@ -11,7 +11,11 @@ namespace Kogl.Samples.Samples;
 
 internal class MultiTextureMaterialExample
 {
-    private static readonly AppWindow _app = new(800, 600, "KoGL - Multi-Texture Material Example");
+    private static readonly AppWindow _app = new(
+        800,
+        600,
+        "Kolpa - Multi-Texture Material Example"
+    );
     private static readonly Camera _camera = new();
     private static Font _uiFont = null!;
 

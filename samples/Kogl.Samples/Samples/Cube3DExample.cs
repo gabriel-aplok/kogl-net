@@ -13,7 +13,7 @@ internal class Cube3DExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - 3D Rotating Cube");
+        AppWindow app = new(800, 600, "Kolpa - 3D Rotating Cube");
         app.OnRender += RenderLoop;
         app.Run();
     }

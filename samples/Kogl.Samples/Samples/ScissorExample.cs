@@ -11,7 +11,7 @@ internal class ScissorExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Scissor Test");
+        AppWindow app = new(800, 600, "Kolpa - Scissor Test");
         app.OnRender += RenderLoop;
 
         app.Run();

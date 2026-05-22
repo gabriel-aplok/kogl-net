@@ -67,7 +67,7 @@ public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
         BindEboInternal(_ebo);
         _gl.BufferData(
             BufferTargetARB.ElementArrayBuffer,
-            (nuint)(8192 * 6 * sizeof(ushort)),
+            8192 * 6 * sizeof(ushort),
             null,
             BufferUsageARB.DynamicDraw
         );

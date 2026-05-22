@@ -9,7 +9,11 @@ namespace Kogl.Samples.Samples;
 
 internal class SpriteRenderingExample
 {
-    private static readonly AppWindow _app = new(800, 600, "KoGL - Multi-Texture Material Example");
+    private static readonly AppWindow _app = new(
+        800,
+        600,
+        "Kolpa - Multi-Texture Material Example"
+    );
     private static Font _uiFont = null!;
 
     private static SpriteAtlas _atlas = null!;

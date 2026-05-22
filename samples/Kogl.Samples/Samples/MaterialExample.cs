@@ -26,7 +26,7 @@ internal class MaterialExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Material");
+        AppWindow app = new(800, 600, "Kolpa - Material");
 
         app.OnLoad += () =>
         {

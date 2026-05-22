@@ -19,7 +19,7 @@ internal class JitterPhysicsDropExample
     private static readonly AppWindow _app = new(
         1200,
         800,
-        "KoGL - Jitter 2 BoxDrop Physics Simulation"
+        "Kolpa - Jitter 2 BoxDrop Physics Simulation"
     );
     private static readonly Camera _camera = new();
     private static Font _uiFont = null!;

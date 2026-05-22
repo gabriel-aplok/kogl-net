@@ -15,7 +15,7 @@ internal class PostProcessingExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Post-Processing");
+        AppWindow app = new(800, 600, "Kolpa - Post-Processing");
         app.OnRender += RenderLoop;
 
         // wait for initialize to complete before creating shader

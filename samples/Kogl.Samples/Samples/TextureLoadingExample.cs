@@ -12,7 +12,7 @@ internal class TextureLoadingExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Texture Loading");
+        AppWindow app = new(800, 600, "Kolpa - Texture Loading");
 
         app.OnLoad += static () =>
         {

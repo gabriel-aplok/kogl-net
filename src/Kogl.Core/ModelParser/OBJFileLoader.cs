@@ -37,7 +37,7 @@ public static class OBJFileLoader
     {
         if (!File.Exists(path))
         {
-            Log.Error("MODEL", $"Invalid path. Path = {path}");
+            LogCat.Error("MODEL", $"Invalid path. Path = {path}");
             return new Model();
         }
 

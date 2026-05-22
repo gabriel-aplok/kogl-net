@@ -24,7 +24,7 @@ public static class ImGuiConsole
         // top bar
         if (ImGui.Button("Clear"))
         {
-            Log.ClearHistory();
+            LogCat.ClearHistory();
         }
 
         ImGui.SameLine();
@@ -69,7 +69,7 @@ public static class ImGuiConsole
             ImGuiWindowFlags.HorizontalScrollbar
         );
 
-        LogEntry[] logs = Log.GetHistorySnapshot();
+        LogEntry[] logs = LogCat.GetHistorySnapshot();
         bool wasAtBottom = ImGui.GetScrollY() >= ImGui.GetScrollMaxY();
 
         foreach (LogEntry entry in logs)

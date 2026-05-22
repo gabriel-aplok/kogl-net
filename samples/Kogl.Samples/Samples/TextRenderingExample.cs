@@ -15,7 +15,7 @@ internal class TextRenderingExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - FreeType Text Rendering");
+        AppWindow app = new(800, 600, "Kolpa - FreeType Text Rendering");
 
         app.OnLoad += static () =>
         {

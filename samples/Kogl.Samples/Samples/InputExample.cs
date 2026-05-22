@@ -10,7 +10,7 @@ namespace Kogl.Samples.Samples;
 
 internal class InputExample
 {
-    private static readonly AppWindow _app = new(800, 600, "KoGL - Input & Action Mapping");
+    private static readonly AppWindow _app = new(800, 600, "Kolpa - Input & Action Mapping");
     private static readonly Camera _camera = new();
     private static readonly Camera _uiCamera = new();
     private static Font _uiFont = null!;

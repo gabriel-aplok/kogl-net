@@ -18,7 +18,7 @@ public class SpriteAtlas : IDisposable
             return region;
         }
 
-        Log.Warn(
+        LogCat.Warn(
             "SPRITE",
             $"Sprite region '{regionName}' not found in atlas. Returning fallback empty region."
         );

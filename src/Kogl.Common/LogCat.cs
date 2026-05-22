@@ -34,7 +34,7 @@ public readonly record struct LogEntry(
 );
 
 /// <summary>A logger</summary>
-public static class Log
+public static class LogCat
 {
     private static readonly Lock _lock = new();
     private static readonly List<LogEntry> _history = [];

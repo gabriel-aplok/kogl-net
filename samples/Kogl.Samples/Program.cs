@@ -7,8 +7,9 @@ internal class Program
 {
     private static void Main()
     {
-        Log.Info("KoGL - Samples");
+        LogCat.Info("Kolpa - Samples");
 
+        JitterCarBridgeExample.Start();
         JitterPhysicsDropExample.Start();
         MultiTextureMaterialExample.Start();
         SampleGizmo.Start();

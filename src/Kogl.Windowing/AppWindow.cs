@@ -249,10 +249,10 @@ public class AppWindow
         if (_gl == null || _input == null)
             return;
 
-        Log.Info("BACKEND", $"Rendering backend: {renderBackend.GetType().Name}");
-        Log.Info("BACKEND", $"Input backend: {inputBackend.GetType().Name}");
+        LogCat.Info("BACKEND", $"Rendering backend: {renderBackend.GetType().Name}");
+        LogCat.Info("BACKEND", $"Input backend: {inputBackend.GetType().Name}");
 
-        Log.Info(
+        LogCat.Info(
             "OPENGL",
             $"Vendor: {_gl.GetStringS(StringName.Vendor)}"
                 + $" | Renderer: {_gl.GetStringS(StringName.Renderer)}"
@@ -260,7 +260,7 @@ public class AppWindow
                 + $" | GLSL Version: {_gl.GetStringS(StringName.ShadingLanguageVersion)}"
         );
 
-        Log.Info(
+        LogCat.Info(
             "SYSTEM",
             $"OS: {Environment.OSVersion} ({(Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit")})"
                 + $" | CPU Cores: {Environment.ProcessorCount} threads"
@@ -268,13 +268,13 @@ public class AppWindow
         );
 
         IMonitor monitor = Silk.NET.Windowing.Monitor.GetMainMonitor(_window);
-        Log.Info(
+        LogCat.Info(
             "WINDOW",
             $"Display: {monitor.Name} ({monitor.Bounds.Size.X}x{monitor.Bounds.Size.Y} @ {monitor.VideoMode.RefreshRate}Hz)"
                 + $" | Viewport Created: {width}x{height}"
         );
 
-        Log.Info(
+        LogCat.Info(
             "INPUT",
             $"Keyboards: {_input.Keyboards.Count} | Mice: {_input.Mice.Count} | Gamepads: {_input.Mice.Count}"
         );

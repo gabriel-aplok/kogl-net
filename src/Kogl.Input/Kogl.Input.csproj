@@ -41,7 +41,7 @@
     <!-- ========================================================================= -->
     <PropertyGroup>
         <IsTrimmable>true</IsTrimmable>
-        <TrimMode>full</TrimMode>
+        <TrimMode>partial</TrimMode>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <IllinkToAllSymbols>false</IllinkToAllSymbols>
         <IsAotCompatible>true</IsAotCompatible>

@@ -15,7 +15,7 @@ internal class CustomShadersExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Custom Shaders And Textures");
+        AppWindow app = new(800, 600, "Kolpa - Custom Shaders And Textures");
 
         // Hook the OnLoad event properly so we don't have to load on frame 1 anymore lol
         app.OnLoad += static () =>

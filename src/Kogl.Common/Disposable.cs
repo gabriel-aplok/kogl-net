@@ -21,7 +21,7 @@ public abstract class Disposable : IDisposable
         }
         else
         {
-            Log.Warn($"Object of type [{_typeName}] has already been disposed.");
+            LogCat.Warn($"Object of type [{_typeName}] has already been disposed.");
         }
     }
 

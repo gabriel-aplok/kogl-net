@@ -97,7 +97,7 @@ public static class Assets
             if (!_registry.TryGetValue(virtualPath, out AssetEntry? entry) || !entry.IsLoaded)
                 return;
 
-            Log.Info("ASSETS", $"Hot-Reloading asset: {virtualPath}");
+            LogCat.Info("ASSETS", $"Hot-Reloading asset: {virtualPath}");
 
             // retain old instance handle to clear safely after replacement
             object? oldInstance = entry.AssetInstance;
@@ -124,7 +124,10 @@ public static class Assets
             }
             catch (Exception ex)
             {
-                Log.Error("ASSETS", $"Failed hot-reload sequence on {virtualPath}: {ex.Message}");
+                LogCat.Error(
+                    "ASSETS",
+                    $"Failed hot-reload sequence on {virtualPath}: {ex.Message}"
+                );
                 entry.AssetInstance = oldInstance; // fallback gracefully
             }
         }
@@ -174,14 +177,14 @@ public static class Assets
 
             entry.AssetInstance = CreateAssetInstance(entry.AssetType, entry.PhysicalPath);
             entry.IsLoaded = true;
-            Log.Trace(
+            LogCat.Trace(
                 "ASSETS",
                 $"Loaded resource: {entry.VirtualPath} (Refs: {entry.ReferenceCount})"
             );
         }
         catch (Exception ex)
         {
-            Log.Error(
+            LogCat.Error(
                 "ASSETS",
                 $"Parsing failure inside runtime registry loading {entry.VirtualPath}: {ex.Message}"
             );
@@ -218,7 +221,7 @@ public static class Assets
 
         entry.AssetInstance = null;
         entry.IsLoaded = false;
-        Log.Trace("ASSETS", $"Evicted object from physical layout cache: {entry.VirtualPath}");
+        LogCat.Trace("ASSETS", $"Evicted object from physical layout cache: {entry.VirtualPath}");
 
         // cascading unloads across orphaned dependencies
         foreach (string dependencyPath in entry.Dependencies)

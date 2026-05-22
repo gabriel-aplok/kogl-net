@@ -11,7 +11,7 @@ internal class SimpleExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Hello World");
+        AppWindow app = new(800, 600, "Kolpa - Hello World");
 
         // app.OnLoad += () => _font = Font.Load("assets/fonts/arial.ttf", 24);
         app.OnRender += RenderLoop;

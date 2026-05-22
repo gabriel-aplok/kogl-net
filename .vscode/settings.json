@@ -8,13 +8,13 @@
     "**/bin/**": true,
     "**/obj/**": true,
     // my mess
-    "**/assets/**": true,
+    "assets/**": true,
     "**/.editorconfig": true,
     "**/.gitattributes": true,
     "**/.gitignore": true,
     "**/dotnet-tools.json": true,
     "**/LICENSE.txt": true,
-    "**/website": true
+    "website": true
   },
   "search.exclude": {
     // basic
@@ -24,12 +24,12 @@
     "**/bin/**": true,
     "**/obj/**": true,
     // my mess
-    "**/files/**": true,
+    "files/**": true,
     "**/.editorconfig": true,
     "**/.gitattributes": true,
     "**/.gitignore": true,
     "**/dotnet-tools.json": true,
     "**/LICENSE.txt": true,
-    "**/website": true
+    "website": true
   }
 }

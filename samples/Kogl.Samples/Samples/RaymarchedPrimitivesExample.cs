@@ -18,7 +18,7 @@ internal class RaymarchedPrimitivesExample
 
     public static void Start()
     {
-        AppWindow app = new(_width, _height, "KoGL - Transparent Raymarched Primitives");
+        AppWindow app = new(_width, _height, "Kolpa - Transparent Raymarched Primitives");
         app.OnLoad += () =>
         {
             InputMap.Bind("ToggleMouse", Key.Escape);

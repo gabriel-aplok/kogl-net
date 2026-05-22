@@ -45,17 +45,18 @@
     <!-- ========================================================================= -->
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <!-- Core -->
-        <PublishAot>true</PublishAot>
+        <PublishAot>false</PublishAot>
         <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
         <!-- Trimming -->
         <IsTrimmable>true</IsTrimmable>
-        <TrimMode>full</TrimMode>
+        <TrimMode>partial</TrimMode>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <IllinkToAllSymbols>false</IllinkToAllSymbols>
         <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+        <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
 
         <!-- Core Performance Engine Optimization -->
         <OptimizationPreference>Speed</OptimizationPreference>

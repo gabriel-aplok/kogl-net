@@ -23,11 +23,11 @@ internal class ObjLoaderTestExample
 
     public static void Start()
     {
-        AppWindow app = new(1280, 720, "KoGL - Model Loader Example");
+        AppWindow app = new(1280, 720, "Kolpa - Model Loader Example");
 
         app.OnLoad += () =>
         {
-            Log.Info("SAMPLE", "Initializing...");
+            LogCat.Info("SAMPLE", "Initializing...");
 
             _camera = new Camera
             {
@@ -76,7 +76,7 @@ internal class ObjLoaderTestExample
 
         app.OnUnload += () =>
         {
-            Log.Info("SAMPLE", "Shutting down...");
+            LogCat.Info("SAMPLE", "Shutting down...");
             Assets.Unload("res://models/suzanne.obj");
             Assets.Unload("res://models/crate.png");
             Assets.Unload("res://shaders/model_shader.glsl");

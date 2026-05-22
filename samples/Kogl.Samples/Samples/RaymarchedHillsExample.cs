@@ -19,7 +19,7 @@ internal class RaymarchedHillsExample
 
     public static void Start()
     {
-        AppWindow app = new(_width, _height, "KoGL - Raymarched Hills Example");
+        AppWindow app = new(_width, _height, "Kolpa - Raymarched Hills Example");
         app.OnLoad += () =>
         {
             InputMap.Bind("ToggleMouse", Key.Escape);

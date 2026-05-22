@@ -42,7 +42,7 @@ internal class AssetManagerExample
             if (!_asyncLoadComplete && _backgroundLoadingTask.IsCompleted)
             {
                 _asyncLoadComplete = true;
-                Log.Info(
+                LogCat.Info(
                     "SAMPLE",
                     "Async operation resolved seamlessly without pipeline stalling."
                 );

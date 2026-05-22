@@ -13,7 +13,7 @@ internal class CameraExample
 
     public static void Start()
     {
-        AppWindow app = new(800, 600, "KoGL - Camera Example");
+        AppWindow app = new(800, 600, "Kolpa - Camera Example");
 
         _camera.Position = new Vector3(0, 3, 8);
         _camera.Projection = CameraProjection.Perspective;

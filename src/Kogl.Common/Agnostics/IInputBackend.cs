@@ -1,6 +1,7 @@
 using System.Numerics;
+using Kogl.Common.InputManagement;
 
-namespace Kogl.Input;
+namespace Kogl.Common.Agnostics;
 
 /// <summary>The input backend</summary>
 public interface IInputBackend

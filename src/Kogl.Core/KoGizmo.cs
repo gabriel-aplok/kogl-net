@@ -1,7 +1,7 @@
 using System.Numerics;
+using Kogl.Common.InputManagement;
 using Kogl.Common.Types;
 using Kogl.Core.Maths;
-using Kogl.Input;
 
 namespace Kogl.Core;
 

@@ -1,4 +1,4 @@
-namespace Kogl.Input;
+namespace Kogl.Common.InputManagement;
 
 public enum MouseButton
 {

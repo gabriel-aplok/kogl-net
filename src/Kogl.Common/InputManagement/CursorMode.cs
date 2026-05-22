@@ -1,4 +1,4 @@
-namespace Kogl.Input;
+namespace Kogl.Common.InputManagement;
 
 /// <summary>The cursor mode</summary>
 public enum CursorMode

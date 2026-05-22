@@ -19,7 +19,7 @@ public static class KoRender
 
     private static Material _defaultMaterial = null!;
     private static TextureHandle _defaultTexture;
-    private static ShaderHandle _defaultShader;
+    private static Shader _defaultShader;
 
     private static Material? _currentMaterial;
     private static Vector2 _currentTexCoord = Vector2.Zero;
@@ -65,38 +65,45 @@ public static class KoRender
         }
 
         // create default shader
-        string vs =
-            @"#version 330 core
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec2 aTex;
-layout(location = 2) in vec4 aCol;
-out vec2 fTex;
-out vec4 fCol;
-uniform mat4 uMVP;
-void main() {
-    gl_Position = uMVP * vec4(aPos, 1.0);
-    fTex = aTex;
-    fCol = aCol;
-}";
+        const string vs = """
+            #version 330 core
+            layout(location = 0) in vec3 aPos;
+            layout(location = 1) in vec2 aTex;
+            layout(location = 2) in vec4 aCol;
 
-        string fs =
-            @"#version 330 core
-in vec2 fTex;
-in vec4 fCol;
-out vec4 FragColor;
-uniform sampler2D uTex;
-void main() {
-    FragColor = texture(uTex, fTex) * fCol;
-}";
+            out vec2 fTex;
+            out vec4 fCol;
+
+            uniform mat4 uMVP;
+
+            void main() {
+                gl_Position = uMVP * vec4(aPos, 1.0);
+                fTex = aTex;
+                fCol = aCol;
+            }
+            """;
+
+        const string fs = """
+            #version 330 core
+            in vec2 fTex;
+            in vec4 fCol;
+
+            out vec4 FragColor;
+
+            uniform sampler2D uTex;
+
+            void main() {
+                FragColor = texture(uTex, fTex) * fCol;
+            }
+            """;
 
         // create default shader
-        _defaultShader = _backend.CreateShader(vs, fs);
-        _currentShaderHandle = _defaultShader;
+        _defaultShader = Shader.Create(vs, fs);
+        _currentShaderHandle = _defaultShader.Handle;
 
-        Shader defaultShader = new(_defaultShader) { Name = "DefaultShader" };
-        defaultShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
+        _defaultShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
 
-        _defaultMaterial = new Material(defaultShader);
+        _defaultMaterial = new Material(_defaultShader);
         _defaultMaterial.SetTexture("uTex", new Texture(_defaultTexture, 1, 1));
 
         ApplyMaterial(_defaultMaterial);
@@ -512,7 +519,7 @@ void main() {
     /// <summary>Uses the default shader</summary>
     public static void UseDefaultShader()
     {
-        _currentShaderHandle = _defaultShader;
+        _currentShaderHandle = _defaultShader.Handle;
     }
 
     /// <summary>Creates a shader</summary>
@@ -525,7 +532,7 @@ void main() {
     /// <summary>Uses a shader</summary>
     public static void UseShader(ShaderHandle shader)
     {
-        _currentShaderHandle = shader.Id == 0 ? _defaultShader : shader;
+        _currentShaderHandle = shader.Id == 0 ? _defaultShader.Handle : shader;
     }
 
     /// <summary>Creates a texture</summary>

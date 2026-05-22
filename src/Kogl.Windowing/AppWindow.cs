@@ -1,6 +1,7 @@
 // FILE: src/Kogl.Windowing/AppWindow.cs
 using ImGuiNET;
 using Kogl.Common;
+using Kogl.Common.InputManagement;
 using Kogl.Core;
 using Kogl.OpenGL;
 using Kogl.Windowing.ImGuiImpl;
@@ -126,7 +127,7 @@ public class AppWindow
             KoRender.Initialize(backend);
 
             InputBackend inputBackend = new(_input);
-            Input.InputManager.Initialize(inputBackend);
+            InputManager.Initialize(inputBackend);
 
             FirstLog(width, height, title, options, backend, inputBackend);
 
@@ -183,7 +184,7 @@ public class AppWindow
 
             _controller?.Render();
 
-            Input.InputManager.Update();
+            InputManager.Update();
         };
 
         _window.FramebufferResize += OnResize;

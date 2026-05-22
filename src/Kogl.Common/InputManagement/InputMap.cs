@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Kogl.Input;
+namespace Kogl.Common.InputManagement;
 
 public static class InputMap
 {

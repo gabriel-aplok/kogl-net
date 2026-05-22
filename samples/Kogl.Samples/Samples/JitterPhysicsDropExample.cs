@@ -4,12 +4,12 @@ using Jitter2;
 using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
 using Jitter2.LinearMath;
+using Kogl.Common.InputManagement;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
 using Kogl.FreeType;
-using Kogl.Input;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;

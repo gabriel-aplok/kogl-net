@@ -1,6 +1,7 @@
 using System.Numerics;
+using Kogl.Common.Agnostics;
 
-namespace Kogl.Input;
+namespace Kogl.Common.InputManagement;
 
 public static class InputManager
 {

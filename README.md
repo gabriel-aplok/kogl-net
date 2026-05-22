@@ -6,18 +6,18 @@
 
 </div>
 
-this stills a work in progress, but it's already usable for some tests, if you want to contribute or report any issue, feel free for open a pull request.
+this stills a work in progress, if you want to contribute or report any issue, feel free for open a pull request
 
-currently porting a library I created in pure C to C#.
+currently porting a library I created in pure C to C#
 
 > [!WARNING]
 > **status:** API is subject to change.
 
 ## features
 
-- modern backend with the opengl 1.1 immediate-mode style behind the scenes.
-- abstracted backend architecture
+- modern backend with the opengl 1.1 immediate-mode style behind the scenes
+- agnostic backend architecture
 
 ### license
 
-this project is licensed under the zlib/libpng license, mirroring raylib.
+this project is licensed under the zlib/libpng license, mirroring raylib

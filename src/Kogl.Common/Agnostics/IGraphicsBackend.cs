@@ -3,6 +3,7 @@ using Kogl.Common.Types;
 
 namespace Kogl.Common.Agnostics;
 
+/// <summary>The graphics backend</summary>
 public interface IGraphicsBackend : IDisposable
 {
     // Initialization

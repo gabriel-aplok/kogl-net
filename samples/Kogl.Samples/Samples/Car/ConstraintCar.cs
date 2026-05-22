@@ -7,8 +7,7 @@ using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
 using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
-using Kogl.Common;
-using Kogl.Input;
+using Kogl.Common.InputManagement;
 
 namespace Kogl.Samples.Samples.Car;
 
@@ -167,15 +166,9 @@ public class ConstraintCar
         float accelerate;
 
         if (InputMap.IsActionDown("Up"))
-        {
             accelerate = 1.0f;
-            LogCat.Info("Driving!");
-        }
         else if (InputMap.IsActionDown("Down"))
-        {
-            LogCat.Info("Not Driving!");
             accelerate = -1.0f;
-        }
         else
         {
             accelerate = 0.0f;

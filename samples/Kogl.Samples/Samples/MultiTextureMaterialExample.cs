@@ -1,10 +1,10 @@
 using System.Numerics;
+using Kogl.Common.InputManagement;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
 using Kogl.FreeType;
-using Kogl.Input;
 using Kogl.Windowing;
 
 namespace Kogl.Samples.Samples;

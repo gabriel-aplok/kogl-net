@@ -5,13 +5,11 @@ using Jitter2.Collision.Shapes;
 using Jitter2.Dynamics;
 using Jitter2.Dynamics.Constraints;
 using Jitter2.LinearMath;
-using Kogl.Common;
+using Kogl.Common.InputManagement;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
-using Kogl.FreeType;
-using Kogl.Input;
 using Kogl.Samples.Samples.Car;
 using Kogl.Windowing;
 
@@ -60,7 +58,6 @@ internal static class JitterCarBridgeExample
             InputMap.Bind("MoveForward", Key.W);
             InputMap.Bind("MoveBackward", Key.S);
 
-            // Updated Vertex Shader to accept and pass out raw UV coordinates
             const string vs = """
                 #version 330 core
                 layout(location = 0) in vec3 aPos;
@@ -79,7 +76,6 @@ internal static class JitterCarBridgeExample
                 }
                 """;
 
-            // Updated Fragment Shader computing Godot-like UV Scale and Offset parameters
             const string fs = """
                 #version 330 core
                 in vec2 fTex;
@@ -87,21 +83,18 @@ internal static class JitterCarBridgeExample
 
                 out vec4 FragColor;
 
-                uniform sampler2D uAlbedoTex;
-                uniform vec4 uTint;
+                uniform sampler2D uTex;
                 uniform vec2 uUVScale;
                 uniform vec2 uUVOffset;
 
                 void main() {
-                    // Godot-equivalent UV transformation: (uv * scale) + offset
                     vec2 transformedUV = (fTex * uUVScale) + uUVOffset;
-                    FragColor = texture(uAlbedoTex, transformedUV) * fCol * uTint;
+                    FragColor = texture(uTex, transformedUV) * fCol  ;
                 }
                 """;
 
             _prototypeShader = Shader.Create(vs, fs);
-            _prototypeShader.AddProperty("uAlbedoTex", ShaderPropertyType.Texture2D);
-            _prototypeShader.AddProperty("uTint", ShaderPropertyType.Vec4);
+            _prototypeShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
             _prototypeShader.AddProperty("uUVScale", ShaderPropertyType.Vec2);
             _prototypeShader.AddProperty("uUVOffset", ShaderPropertyType.Vec2);
 
@@ -109,29 +102,24 @@ internal static class JitterCarBridgeExample
             _protoGreenTex = Assets.Load<Texture>("res://textures/prototype/green/texture_10.png");
 
             Material baseMat = new(_prototypeShader) { DepthTest = true, Blending = false };
-            baseMat.SetTexture("uAlbedoTex", _protoWhiteTex);
-            baseMat.SetVector4("uTint", Vector4.One);
+            baseMat.SetTexture("uTex", _protoWhiteTex);
             baseMat.SetVector2("uUVScale", Vector2.One);
             baseMat.SetVector2("uUVOffset", Vector2.Zero);
 
             // floor
             _floorMat = baseMat.CreateInstance();
-            // _floorMat.SetVector4("uTint", new Vector4(0.4f, 0.4f, 0.4f, 1.0f));
-            //loops texture 25 times across the 50x50 box surface
             _floorMat.SetVector2("uUVScale", new Vector2(25.0f, 25.0f));
             _floorMat.SetVector2("uUVOffset", Vector2.Zero);
 
             _bridgeMat = baseMat.CreateInstance();
-            _bridgeMat.SetVector4("uTint", new Vector4(0.7f, 0.5f, 0.3f, 1.0f));
             _bridgeMat.SetVector2("uUVScale", new Vector2(1.0f, 1.0f));
 
             _carChassisMat = baseMat.CreateInstance();
-            _carChassisMat.SetTexture("uAlbedoTex", _protoGreenTex);
+            _carChassisMat.SetTexture("uTex", _protoGreenTex);
             _carChassisMat.SetVector2("uUVScale", new Vector2(1.0f, 1.0f));
 
             _wheelMat = baseMat.CreateInstance();
-            _wheelMat.SetTexture("uAlbedoTex", _protoGreenTex);
-            _wheelMat.SetVector4("uTint", new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+            _wheelMat.SetTexture("uTex", _protoGreenTex);
             _wheelMat.SetVector2("uUVScale", Vector2.One);
 
             _physicsWorld = new World { SubstepCount = 4, SolverIterations = (2, 2) };

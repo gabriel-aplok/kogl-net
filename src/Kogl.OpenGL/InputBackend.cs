@@ -1,5 +1,6 @@
 using System.Numerics;
-using Kogl.Input;
+using Kogl.Common.Agnostics;
+using Kogl.Common.InputManagement;
 using Silk.NET.Input;
 
 namespace Kogl.OpenGL;
@@ -22,9 +23,9 @@ public class InputBackend : IInputBackend
         {
             // due to our 1:1 mapping design, cast directly for 0-overhead translation
             _keyboard.KeyDown += static (kb, key, arg3) =>
-                InputManager.Internal_SetKeyState((Input.Key)key, true);
+                InputManager.Internal_SetKeyState((Common.InputManagement.Key)key, true);
             _keyboard.KeyUp += static (kb, key, arg3) =>
-                InputManager.Internal_SetKeyState((Input.Key)key, false);
+                InputManager.Internal_SetKeyState((Common.InputManagement.Key)key, false);
             _keyboard.KeyChar += static (kb, ch) => InputManager.Internal_OnKeyChar(ch);
         }
 
@@ -33,23 +34,26 @@ public class InputBackend : IInputBackend
             _mouse.MouseMove += static (m, pos) =>
                 InputManager.Internal_SetMousePosition(new Vector2(pos.X, pos.Y));
             _mouse.MouseDown += static (m, btn) =>
-                InputManager.Internal_SetMouseButton((Input.MouseButton)btn, true);
+                InputManager.Internal_SetMouseButton((Common.InputManagement.MouseButton)btn, true);
             _mouse.MouseUp += static (m, btn) =>
-                InputManager.Internal_SetMouseButton((Input.MouseButton)btn, false);
+                InputManager.Internal_SetMouseButton(
+                    (Common.InputManagement.MouseButton)btn,
+                    false
+                );
             _mouse.Scroll += static (m, wheel) =>
                 InputManager.Internal_SetMouseScroll(new Vector2(wheel.X, wheel.Y));
         }
     }
 
-    public void SetCursorMode(Input.CursorMode mode)
+    public void SetCursorMode(Common.InputManagement.CursorMode mode)
     {
         if (_mouse == null)
             return;
         _mouse.Cursor.CursorMode = mode switch
         {
-            Input.CursorMode.Normal => Silk.NET.Input.CursorMode.Normal,
-            Input.CursorMode.Hidden => Silk.NET.Input.CursorMode.Hidden,
-            Input.CursorMode.Locked => Silk.NET.Input.CursorMode.Raw,
+            Common.InputManagement.CursorMode.Normal => Silk.NET.Input.CursorMode.Normal,
+            Common.InputManagement.CursorMode.Hidden => Silk.NET.Input.CursorMode.Hidden,
+            Common.InputManagement.CursorMode.Locked => Silk.NET.Input.CursorMode.Raw,
             _ => Silk.NET.Input.CursorMode.Normal,
         };
     }

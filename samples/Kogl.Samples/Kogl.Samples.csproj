@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <OutputType>WinExe</OutputType>
+        <OutputType>Exe</OutputType>
         <RootNamespace>Kogl.Samples</RootNamespace>
         <AssemblyName>kolpa_smp</AssemblyName>
         <TargetFramework>net10.0</TargetFramework>

@@ -17,7 +17,7 @@
         <Version>1.0.0</Version>
         <Authors>Gabriel Aplok</Authors>
         <Company>FireWave Interactive</Company>
-        <Description>A lightweight, custom graphics abstraction layer inspired by OpenGL 1.1 immediate mode. Backend-agnostic, not limited to OpenGL.</Description>
+        <Description>backend-agnostic cross-platform lightweight graphics framework for c# and .net.</Description>
         <PackageCopyright>Copyright © $([System.DateTime]::Now.ToString('yyyy')) Gabriel Aplok</PackageCopyright>
 
         <PackageLicenseExpression>Zlib</PackageLicenseExpression>
@@ -117,6 +117,5 @@
     <ItemGroup>
         <ProjectReference Include="..\Kogl.Common\Kogl.Common.csproj" />
         <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />
-        <ProjectReference Include="..\Kogl.Input\Kogl.Input.csproj" />
     </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-namespace Kogl.Input;
+namespace Kogl.Common.InputManagement;
 
 /// <summary>The key, 1:1 to Silk.NET key</summary>
 public enum Key

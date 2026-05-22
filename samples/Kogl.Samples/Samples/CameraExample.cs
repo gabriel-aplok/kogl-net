@@ -1,6 +1,7 @@
 using System.Numerics;
 using Kogl.Common.Types;
 using Kogl.Core;
+using Kogl.Core.Maths;
 using Kogl.Core.Rendering;
 using Kogl.Core.Resources;
 using Kogl.Windowing;
@@ -11,6 +12,8 @@ internal class CameraExample
 {
     private static readonly Camera _camera = new();
     private static Shader _shader = null!;
+    private static Transform _myCubeTransform;
+
     private static float _time;
 
     public static void Start()
@@ -23,45 +26,52 @@ internal class CameraExample
 
         app.OnLoad += static () =>
         {
-            string vs =
-                @"#version 330 core
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec2 aTex;
-layout(location = 2) in vec4 aCol;
+            //             string vs =
+            //                 @"#version 330 core
+            // layout(location = 0) in vec3 aPos;
+            // layout(location = 1) in vec2 aTex;
+            // layout(location = 2) in vec4 aCol;
 
-out vec2 fTex;
-out vec4 fCol;
+            // out vec2 fTex;
+            // out vec4 fCol;
 
-uniform mat4 uMVP;
+            // uniform mat4 uMVP;
 
-void main() {
-    gl_Position = uMVP * vec4(aPos, 1.0);
-    fTex = aTex;
-    fCol = aCol;
-}";
+            // void main() {
+            //     gl_Position = uMVP * vec4(aPos, 1.0);
+            //     fTex = aTex;
+            //     fCol = aCol;
+            // }";
 
-            string fs =
-                @"#version 330 core
-in vec2 fTex;
-in vec4 fCol;
-out vec4 FragColor;
+            //             string fs =
+            //                 @"#version 330 core
+            // in vec2 fTex;
+            // in vec4 fCol;
+            // out vec4 FragColor;
 
-uniform float uTime;
+            // uniform float uTime;
 
-void main() {
-    // Procedural animation that doesn't rely on texture details
-    float wave = sin(fTex.x * 10.0 + uTime * 3.0) * 0.5 + 0.5;
-    vec3 colorA = vec3(0.1, 0.5, 0.8); // Blue
-    vec3 colorB = vec3(0.8, 0.2, 0.1); // Red
+            // void main() {
+            //     // Procedural animation that doesn't rely on texture details
+            //     float wave = sin(fTex.x * 10.0 + uTime * 3.0) * 0.5 + 0.5;
+            //     vec3 colorA = vec3(0.1, 0.5, 0.8); // Blue
+            //     vec3 colorB = vec3(0.8, 0.2, 0.1); // Red
 
-    vec3 finalRGB = mix(colorA, colorB, wave);
-    FragColor = vec4(finalRGB, 1.0) * fCol;
-}";
+            //     vec3 finalRGB = mix(colorA, colorB, wave);
+            //     FragColor = vec4(finalRGB, 1.0) * fCol;
+            // }";
 
             // _shader = Shader.Create(vs, fs);
             _shader = Assets.Load<Shader>("res://shaders/std.glsl");
+
+            _myCubeTransform = Transform.Identity;
+            _myCubeTransform.Translation = new Vector3(0, 1, 0);
         };
         app.OnRender += RenderLoop;
+        app.OnUnload += static () =>
+        {
+            Assets.UnloadAll();
+        };
         app.Run();
     }
 
@@ -72,8 +82,8 @@ void main() {
         KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
         KoRender.EnableDepthTest();
 
-        _camera.Position.X = MathF.Sin(_time) * 8f;
-        _camera.Position.Z = MathF.Cos(_time) * 8f;
+        // _camera.Position.X = MathF.Sin(_time) * 8f;
+        // _camera.Position.Z = MathF.Cos(_time) * 8f;
         _camera.LookAt(Vector3.Zero);
 
         KoRender.BeginCamera(_camera);
@@ -94,13 +104,17 @@ void main() {
         KoRender.End();
         KoRender.PopMatrix();
 
+        KoRender.UseDefaultShader();
+        KoGizmo.DrawGizmo3D(100, GizmoFlags.Translate, ref _myCubeTransform);
+
         // draw a cube
         KoRender.UseShader(_shader);
         KoRender.SetUniform("uTime", _time);
         KoRender.SetUniform("uTint", new Vector3(0.5f, 0.8f, 1.0f));
 
         KoRender.PushMatrix();
-        KoRender.Translate(0, 0.5f, 0);
+        // KoRender.Translate(0, 0.5f, 0);
+        KoRender.Multiply(_myCubeTransform.ToMatrix());
         DrawCube();
         KoRender.PopMatrix();
 
@@ -109,7 +123,7 @@ void main() {
 
     private static void DrawCube()
     {
-        KoRender.Begin(PrimitiveMode.Quads);
+        KoRender.Begin(PrimitiveMode.Lines);
 
         // ff (red)
         KoRender.Color4(1, 0, 0, 1);

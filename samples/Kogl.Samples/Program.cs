@@ -13,7 +13,6 @@ internal class Program
         // JitterCarBridgeExample.Start();
         // JitterPhysicsDropExample.Start();
         // MultiTextureMaterialExample.Start();
-        // SampleGizmo.Start();
         // ObjLoaderTestExample.Start();
         // CustomShadersExample.Start();
         // CustomShaders2Example.Start();
@@ -28,6 +27,7 @@ internal class Program
         // InputExample.Start();
         // TextRenderingExample.Start();
         CameraExample.Start();
+        SampleGizmo.Start();
         // Cube3DExample.Start();
         // ScissorExample.Start();
         // PostProcessingExample.Start();

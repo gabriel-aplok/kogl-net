@@ -21,7 +21,7 @@ internal struct UICommand
     public Font Font;
 
     // 0-allocation text references
-    public string TextStr;
+    public string? TextStr;
     public int TextStart;
     public int TextLen;
 }

@@ -14,17 +14,17 @@ public class InputBackend : IInputBackend
     public InputBackend(IInputContext input)
     {
         _input = input;
-#pragma warning disable CA1826
-        _mouse = _input.Mice.FirstOrDefault();
-        _keyboard = _input.Keyboards.FirstOrDefault();
-#pragma warning restore CA1826
+        _mouse = _input.Mice.Count > 0 ? _input.Mice[0] : null;
+        _keyboard = _input.Keyboards.Count > 0 ? _input.Keyboards[0] : null;
+
+        // _mouse = _input.Mice.FirstOrDefault();
+        // _keyboard = _input.Keyboards.FirstOrDefault();
 
         if (_keyboard != null)
         {
-            // due to our 1:1 mapping design, cast directly for 0-overhead translation
-            _keyboard.KeyDown += static (kb, key, arg3) =>
+            _keyboard.KeyDown += static (kb, key, _) =>
                 InputManager.Internal_SetKeyState((Common.InputManagement.Key)key, true);
-            _keyboard.KeyUp += static (kb, key, arg3) =>
+            _keyboard.KeyUp += static (kb, key, _) =>
                 InputManager.Internal_SetKeyState((Common.InputManagement.Key)key, false);
             _keyboard.KeyChar += static (kb, ch) => InputManager.Internal_OnKeyChar(ch);
         }
@@ -49,6 +49,7 @@ public class InputBackend : IInputBackend
     {
         if (_mouse == null)
             return;
+
         _mouse.Cursor.CursorMode = mode switch
         {
             Common.InputManagement.CursorMode.Normal => Silk.NET.Input.CursorMode.Normal,
@@ -60,6 +61,6 @@ public class InputBackend : IInputBackend
 
     public void SetCursorPosition(Vector2 position)
     {
-        _mouse?.Position = (Vector2)new Silk.NET.Maths.Vector2D<float>(position.X, position.Y);
+        _mouse?.Position = new Vector2(position.X, position.Y);
     }
 }

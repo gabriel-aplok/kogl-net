@@ -7,7 +7,7 @@ using Silk.NET.OpenGL;
 namespace Kogl.OpenGL;
 
 /// <summary>The OpenGL backend, focused on Desktop OpenGL</summary>
-public sealed unsafe class OpenGLBackend(GL glContext) : IGraphicsBackend
+public sealed unsafe class GLBackend(GL glContext) : IGraphicsBackend
 {
     private readonly GL _gl = glContext;
     private uint _vao,

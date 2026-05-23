@@ -3,28 +3,13 @@ namespace Kogl.Common.Types;
 /// <summary>Fixed set of texture handles for the first 8 texture slots/units</summary>
 public struct TextureSet : IEquatable<TextureSet>
 {
-    /// <summary>Texture in slot 0</summary>
     public TextureHandle Slot0;
-
-    /// <summary>Texture in slot 1</summary>
     public TextureHandle Slot1;
-
-    /// <summary>Texture in slot 2</summary>
     public TextureHandle Slot2;
-
-    /// <summary>Texture in slot 3</summary>
     public TextureHandle Slot3;
-
-    /// <summary>Texture in slot 4</summary>
     public TextureHandle Slot4;
-
-    /// <summary>Texture in slot 5</summary>
     public TextureHandle Slot5;
-
-    /// <summary>Texture in slot 6</summary>
     public TextureHandle Slot6;
-
-    /// <summary>Texture in slot 7</summary>
     public TextureHandle Slot7;
 
     public readonly bool Equals(TextureSet other)

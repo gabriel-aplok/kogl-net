@@ -9,9 +9,6 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-    <!-- ========================================================================= -->
-    <!-- DEBUG CONFIG PROFILE                                                      -->
-    <!-- ========================================================================= -->
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
         <PublishAot>false</PublishAot>
         <PublishSingleFile>false</PublishSingleFile>
@@ -24,17 +21,11 @@
         <DebugType>portable</DebugType>
     </PropertyGroup>
 
-    <!-- ========================================================================= -->
-    <!-- RELEASE CONFIG PROFILE                                                    -->
-    <!-- ========================================================================= -->
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <!-- Core -->
         <PublishAot>false</PublishAot>
         <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
-        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 
-        <!-- Trimming -->
         <IsTrimmable>true</IsTrimmable>
         <TrimMode>partial</TrimMode>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
@@ -42,54 +33,35 @@
         <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
         <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
 
-        <!-- Core Performance Engine Optimization -->
         <OptimizationPreference>Speed</OptimizationPreference>
         <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
         <TieredCompilation>false</TieredCompilation>
 
-        <!-- Aggressive Native Metadata Stripping -->
         <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
         <IlcTrimMetadata>true</IlcTrimMetadata>
         <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
 
-        <!-- Strips string data (Stack traces will show memory addresses, not names) -->
+        <!-- stack traces will show memory addresses, not names -->
         <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
 
-        <!-- Forces low-overhead invariant localization -->
         <InvariantGlobalization>true</InvariantGlobalization>
         <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
-
-        <!-- Forces low-overhead invariant culture -->
-        <InvariantGlobalization>true</InvariantGlobalization>
-        <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
-
-        <!-- Generates specific AVX/AVX2 instructions matching the CPU -->
-        <IlcInstructionSet>x86-64-v3</IlcInstructionSet>
-
-        <!-- De-bloat all traces of debugging/symbols -->
         <StripSymbols>true</StripSymbols>
         <DebugType>none</DebugType>
         <DebugSymbols>false</DebugSymbols>
         <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-
-        <!-- Block symbol packages from generating on release packing -->
         <IncludeSymbols>false</IncludeSymbols>
     </PropertyGroup>
 
-    <!-- ========================================================================= -->
-    <!-- DEPENDENCIES                                                              -->
-    <!-- ========================================================================= -->
-    <ItemGroup>
-        <PackageReference Include="Jitter2" Version="2.8.7" />
-    </ItemGroup>
-
-    <!-- ========================================================================= -->
-    <!-- ASSETS & DEPENDENCIES                                                     -->
-    <!-- ========================================================================= -->
     <ItemGroup>
         <Content Include="assets\**\*.*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Jitter2" Version="2.8.7" />
+        <PackageReference Include="NLua" Version="1.7.9" />
     </ItemGroup>
 
     <ItemGroup>

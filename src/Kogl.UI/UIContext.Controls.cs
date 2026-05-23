@@ -410,7 +410,7 @@ public partial class UIContext
     public UIResult BeginWindow(string title, UIRect rect, UIOpt opt = UIOpt.None)
     {
         uint id = GetId(title);
-        UIContainer cnt = GetContainerInternal(id, opt);
+        UIContainer? cnt = GetContainerInternal(id, opt);
         if (cnt == null || !cnt.Open)
             return UIResult.None;
 

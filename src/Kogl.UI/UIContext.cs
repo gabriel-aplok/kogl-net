@@ -19,14 +19,15 @@ public partial class UIContext
     private int _lastZIndex;
     private bool _updatedFocus;
     private int _frame;
-    private UIContainer _hoverRoot;
-    private UIContainer _nextHoverRoot;
-    private UIContainer _scrollTarget;
+    private UIContainer? _hoverRoot;
+    private UIContainer? _nextHoverRoot;
+    private UIContainer? _scrollTarget;
 
     // String edits
     private readonly char[] _numberEditBuf = new char[127];
-    private readonly int _numberEditLen;
-    private readonly uint _numberEdit;
+
+    // private readonly int _numberEditLen;
+    // private readonly uint _numberEdit;
 
     // Text command pool buffer to prevent formatting allocations
     internal char[] TextBuffer = new char[128 * 1024];
@@ -246,7 +247,7 @@ public partial class UIContext
         return _containerStack[^1];
     }
 
-    internal UIContainer GetContainer(string name)
+    internal UIContainer? GetContainer(string name)
     {
         return GetContainerInternal(GetId(name), UIOpt.None);
     }
@@ -256,7 +257,7 @@ public partial class UIContext
         cnt.ZIndex = ++_lastZIndex;
     }
 
-    private UIContainer GetContainerInternal(uint id, UIOpt opt)
+    private UIContainer? GetContainerInternal(uint id, UIOpt opt)
     {
         int idx = PoolGet(_containerPool, id);
         if (idx >= 0)

@@ -53,6 +53,34 @@
         />
     </ItemGroup>
 
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <IsTrimmable>true</IsTrimmable>
+        <TrimMode>partial</TrimMode>
+        <TrimmerSingleWarn>false</TrimmerSingleWarn>
+        <IllinkToAllSymbols>false</IllinkToAllSymbols>
+        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+        <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+
+        <OptimizationPreference>Speed</OptimizationPreference>
+        <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+        <TieredCompilation>false</TieredCompilation>
+
+        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+        <IlcTrimMetadata>true</IlcTrimMetadata>
+        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+
+        <!-- stack traces will show memory addresses, not names -->
+        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
+        <StripSymbols>true</StripSymbols>
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+        <IncludeSymbols>false</IncludeSymbols>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="StbImageSharp" Version="2.30.15" />
         <PackageReference Include="System.IO.Hashing" Version="10.0.8" />

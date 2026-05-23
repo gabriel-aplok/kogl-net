@@ -122,7 +122,7 @@ public class AppWindow
             _input = _window.CreateInput();
             _controller = new ImGuiController(_gl, _window, _input);
 
-            OpenGLBackend backend = new(_gl);
+            GLBackend backend = new(_gl);
             KoRender.Initialize(backend);
 
             InputBackend inputBackend = new(_input);
@@ -242,7 +242,7 @@ public class AppWindow
         int height,
         string title,
         WindowOptions options,
-        OpenGLBackend renderBackend,
+        GLBackend renderBackend,
         InputBackend inputBackend
     )
     {

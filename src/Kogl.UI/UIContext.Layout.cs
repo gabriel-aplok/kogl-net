@@ -54,7 +54,7 @@ public partial class UIContext
         UpdateLayout(a);
     }
 
-    public void LayoutRow(int items, int[] widths, int height)
+    public void LayoutRow(int items, int[]? widths, int height)
     {
         UILayout layout = GetLayout();
         if (widths != null)

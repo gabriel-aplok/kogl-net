@@ -10,7 +10,6 @@ public static class InputManager
     private const int _maxKeys = 512;
     private const int _maxButtons = 16;
 
-    // arrays guarantee 0-allocation tracking btw
     private static readonly bool[] _keysDown = new bool[_maxKeys];
     private static readonly bool[] _keysPressed = new bool[_maxKeys];
     private static readonly bool[] _keysReleased = new bool[_maxKeys];

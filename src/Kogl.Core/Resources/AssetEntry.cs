@@ -1,5 +1,6 @@
 namespace Kogl.Core.Resources;
 
+/// <summary>A loaded asset in the registry</summary>
 internal sealed class AssetEntry
 {
     public required string VirtualPath { get; init; }

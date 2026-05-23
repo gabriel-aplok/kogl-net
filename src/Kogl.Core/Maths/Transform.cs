@@ -2,6 +2,7 @@ using System.Numerics;
 
 namespace Kogl.Core.Maths;
 
+/// <summary>A transform</summary>
 public struct Transform
 {
     public Vector3 Translation;

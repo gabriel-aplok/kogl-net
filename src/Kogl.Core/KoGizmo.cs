@@ -15,6 +15,8 @@ public enum GizmoFlags
     All = Translate | Rotate | Scale,
     Local = 1 << 3,
     View = 1 << 4,
+    ConstantScreenSize = 1 << 5,
+    RenderOnTop = 1 << 6,
 }
 
 [Flags]
@@ -147,15 +149,29 @@ public static class KoGizmo
         };
 
         data.Forward = Vector3.Normalize(transform.Translation - data.CamPos);
-        data.GizmoSize = _gizmoSize * Vector3.Distance(data.CamPos, transform.Translation) * 0.1f;
+
+        if (flags.HasFlag(GizmoFlags.ConstantScreenSize))
+        {
+            data.GizmoSize =
+                _gizmoSize * Vector3.Distance(data.CamPos, transform.Translation) * 0.1f;
+        }
+        else
+        {
+            data.GizmoSize = _gizmoSize;
+        }
 
         ComputeAxisOrientation(ref data);
 
         // push explicit batch states ensuring non-conflicting visual outputs
         KoRender.Flush();
         KoRender.DisableCulling();
-        KoRender.DisableDepthTest();
-        KoRender.DepthMask(false);
+
+        if (flags.HasFlag(GizmoFlags.RenderOnTop))
+        {
+            KoRender.DisableDepthTest();
+            KoRender.DepthMask(false);
+        }
+
         KoRender.LineWidth(_lineWidth);
 
         for (int i = 0; i < 3; ++i)
@@ -177,8 +193,12 @@ public static class KoGizmo
         KoRender.Flush();
         KoRender.LineWidth(1.0f);
         KoRender.EnableCulling(CullFaceState.Back);
-        KoRender.EnableDepthTest();
-        KoRender.DepthMask(true);
+
+        if (flags.HasFlag(GizmoFlags.RenderOnTop))
+        {
+            KoRender.EnableDepthTest();
+            KoRender.DepthMask(true);
+        }
 
         if (!IsGizmoTransforming() || id == _activeGizmoId)
         {

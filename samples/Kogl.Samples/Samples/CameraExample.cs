@@ -114,26 +114,32 @@ internal class CameraExample
         KoRender.End();
         KoRender.PopMatrix();
 
-        KoRender.UseDefaultShader();
-        KoGizmo.DrawGizmo3D(100, GizmoFlags.All, ref _myCubeTransform);
-
         // draw a cube
         KoRender.UseShader(_shader);
         KoRender.SetUniform("uTime", _time);
         KoRender.SetUniform("uTint", new Vector3(0.5f, 0.8f, 1.0f));
 
         KoRender.PushMatrix();
-        // KoRender.Translate(0, 0.5f, 0);
         KoRender.Multiply(_myCubeTransform.ToMatrix());
         DrawCube();
         KoRender.PopMatrix();
+
+        KoRender.UseDefaultShader();
+        KoGizmo.DrawGizmo3D(
+            100,
+            GizmoFlags.Translate
+                | GizmoFlags.Scale
+                | GizmoFlags.ConstantScreenSize
+                | GizmoFlags.RenderOnTop,
+            ref _myCubeTransform
+        );
 
         KoRender.EndCamera();
     }
 
     private static void DrawCube()
     {
-        KoRender.Begin(PrimitiveMode.LineStrip);
+        KoRender.Begin(PrimitiveMode.Quads);
         KoRender.Color4(1, 1, 1, 1);
 
         // ff (red)

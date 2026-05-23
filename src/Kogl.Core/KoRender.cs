@@ -68,37 +68,37 @@ public static class KoRender
         }
 
         // create default shader
-        const string vs = """
-            #version 330 core
-            layout(location = 0) in vec3 aPos;
-            layout(location = 1) in vec2 aTex;
-            layout(location = 2) in vec4 aCol;
+        // const string vs = """
+        //     #version 330 core
+        //     layout(location = 0) in vec3 aPos;
+        //     layout(location = 1) in vec2 aTex;
+        //     layout(location = 2) in vec4 aCol;
 
-            out vec2 fTex;
-            out vec4 fCol;
+        //     out vec2 fTex;
+        //     out vec4 fCol;
 
-            uniform mat4 uMVP;
+        //     uniform mat4 uMVP;
 
-            void main() {
-                gl_Position = uMVP * vec4(aPos, 1.0);
-                fTex = aTex;
-                fCol = aCol;
-            }
-            """;
+        //     void main() {
+        //         gl_Position = uMVP * vec4(aPos, 1.0);
+        //         fTex = aTex;
+        //         fCol = aCol;
+        //     }
+        //     """;
 
-        const string fs = """
-            #version 330 core
-            in vec2 fTex;
-            in vec4 fCol;
+        // const string fs = """
+        //     #version 330 core
+        //     in vec2 fTex;
+        //     in vec4 fCol;
 
-            out vec4 FragColor;
+        //     out vec4 FragColor;
 
-            uniform sampler2D uTex;
+        //     uniform sampler2D uTex;
 
-            void main() {
-                FragColor = texture(uTex, fTex) * fCol;
-            }
-            """;
+        //     void main() {
+        //         FragColor = texture(uTex, fTex) * fCol;
+        //     }
+        //     """;
 
         // create default shader
         // _defaultShader = Shader.Create(vs, fs);

@@ -10,7 +10,7 @@ namespace Kogl.Samples.Samples;
 
 internal class CameraExample
 {
-    private static readonly Camera _camera = new();
+    private static Camera _camera = null!;
     private static Shader _shader = null!;
     private static Transform _myCubeTransform;
 
@@ -20,9 +20,14 @@ internal class CameraExample
     {
         AppWindow app = new(800, 600, "Kolpa - Camera Example");
 
-        _camera.Position = new Vector3(0, 3, 8);
-        _camera.Projection = CameraProjection.Perspective;
-        _camera.Fov = 60f;
+        _camera = new Camera
+        {
+            Position = new Vector3(0f, 4f, 8f),
+            Projection = CameraProjection.Perspective,
+            Fov = 60f,
+            Near = 0.1f,
+            Far = 1000f,
+        };
 
         app.OnLoad += static () =>
         {

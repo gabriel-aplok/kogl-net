@@ -1,5 +1,4 @@
 ﻿using Kogl.Common;
-using Kogl.Core.Resources;
 using Kogl.Samples.Samples;
 
 namespace Kogl.Samples;
@@ -10,7 +9,9 @@ internal class Program
     {
         LogCat.Info("Kolpa - Samples");
 
-        CameraExample.Start();
+        UiExample.Start();
+        // CameraExample.Start();
+        // TextRenderingExample.Start();
         // JitterPhysicsDropExample.Start();
         // JitterCarBridgeExample.Start();
         // MultiTextureMaterialExample.Start();
@@ -25,7 +26,6 @@ internal class Program
         // SimpleExample.Start();
         // MaterialExample.Start();
         // InputExample.Start();
-        // TextRenderingExample.Start();
         // SampleGizmo.Start();
         // Cube3DExample.Start();
         // ScissorExample.Start();

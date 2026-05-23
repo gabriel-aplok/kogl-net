@@ -9,9 +9,6 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-    <!-- ========================================================================= -->
-    <!-- PACK METADATA                                                          -->
-    <!-- ========================================================================= -->
     <PropertyGroup>
         <PackageId>Kogl.Windowing</PackageId>
         <Version>1.0.0</Version>
@@ -31,84 +28,37 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <IsTrimmable>true</IsTrimmable>
+        <IsAotCompatible>true</IsAotCompatible>
+
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+
     <ItemGroup>
         <None Include="../../README.md" Pack="true" PackagePath="\" />
         <None Include="../../assets/icon.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
-    <!-- ========================================================================= -->
-    <!-- NATIVE & TRIMMING COMPATIBILITY                                           -->
-    <!-- ========================================================================= -->
-    <PropertyGroup>
-        <IsTrimmable>true</IsTrimmable>
-        <TrimMode>partial</TrimMode>
-        <TrimmerSingleWarn>false</TrimmerSingleWarn>
-        <IllinkToAllSymbols>false</IllinkToAllSymbols>
-        <IsAotCompatible>true</IsAotCompatible>
-    </PropertyGroup>
-
-    <!-- ========================================================================= -->
-    <!-- DEBUG CONFIG PROFILE                                              -->
-    <!-- ========================================================================= -->
-    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-        <Optimize>false</Optimize>
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>portable</DebugType>
-
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    </PropertyGroup>
-
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-        <!-- SourceLink -->
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="all" />
+        <PackageReference
+            Include="Microsoft.SourceLink.GitHub"
+            Version="10.0.300"
+            PrivateAssets="all"
+        />
     </ItemGroup>
 
-    <!-- ========================================================================= -->
-    <!-- RELEASE CONFIG PROFILE                                                    -->
-    <!-- ========================================================================= -->
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <!-- Core Performance Engine Optimization -->
-        <OptimizationPreference>Speed</OptimizationPreference>
-        <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-        <TieredCompilation>false</TieredCompilation>
-
-        <!-- Aggressive Native Metadata Stripping -->
-        <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
-        <IlcTrimMetadata>true</IlcTrimMetadata>
-        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
-
-        <!-- Strips string data (Stack traces will show memory addresses, not names) -->
-        <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
-
-        <!-- Forces low-overhead invariant culture -->
-        <InvariantGlobalization>true</InvariantGlobalization>
-        <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
-
-        <!-- De-bloat all traces of debugging/symbols -->
-        <StripSymbols>true</StripSymbols>
-        <DebugType>none</DebugType>
-        <DebugSymbols>false</DebugSymbols>
-        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-
-        <!-- Block symbol packages from generating on release packing -->
-        <IncludeSymbols>false</IncludeSymbols>
-    </PropertyGroup>
-
-    <!-- ========================================================================= -->
-    <!-- DEPENDENCIES                                                              -->
-    <!-- ========================================================================= -->
     <ItemGroup>
         <PackageReference Include="Silk.NET.Windowing" Version="2.23.0" />
         <PackageReference Include="Silk.NET.Input" Version="2.23.0" />
         <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.23.0" />
     </ItemGroup>
 
-    <!-- ========================================================================= -->
-    <!-- PROJECT REFERENCES                                                        -->
-    <!-- ========================================================================= -->
     <ItemGroup>
         <ProjectReference Include="..\Kogl.Common\Kogl.Common.csproj" />
         <ProjectReference Include="..\Kogl.Core\Kogl.Core.csproj" />

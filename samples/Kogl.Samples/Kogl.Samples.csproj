@@ -10,22 +10,6 @@
     </PropertyGroup>
 
     <!-- ========================================================================= -->
-    <!-- ASSETS & DEPENDENCIES                                                     -->
-    <!-- ========================================================================= -->
-    <ItemGroup>
-        <Content Include="assets\**\*.*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\Kogl.Core\Kogl.Core.csproj" />
-        <ProjectReference Include="..\..\src\Kogl.FreeType\Kogl.FreeType.csproj" />
-        <ProjectReference Include="..\..\src\Kogl.OpenGL\Kogl.OpenGL.csproj" />
-        <ProjectReference Include="..\..\src\Kogl.Windowing\Kogl.Windowing.csproj" />
-    </ItemGroup>
-
-    <!-- ========================================================================= -->
     <!-- DEBUG CONFIG PROFILE                                                      -->
     <!-- ========================================================================= -->
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -34,7 +18,7 @@
         <SelfContained>false</SelfContained>
         <IsTrimmable>false</IsTrimmable>
 
-        <Optimize>false</Optimize>
+        <Optimize>true</Optimize>
         <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
         <DebugSymbols>true</DebugSymbols>
         <DebugType>portable</DebugType>
@@ -92,16 +76,27 @@
         <IncludeSymbols>false</IncludeSymbols>
     </PropertyGroup>
 
-    <!-- Trimming Root Assemblies -->
-    <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <TrimmerRootAssembly Include="Silk.NET.Windowing.Common" />
-        <TrimmerRootAssembly Include="Silk.NET.Core" />
-    </ItemGroup>
-
     <!-- ========================================================================= -->
     <!-- DEPENDENCIES                                                              -->
     <!-- ========================================================================= -->
     <ItemGroup>
         <PackageReference Include="Jitter2" Version="2.8.7" />
+    </ItemGroup>
+
+    <!-- ========================================================================= -->
+    <!-- ASSETS & DEPENDENCIES                                                     -->
+    <!-- ========================================================================= -->
+    <ItemGroup>
+        <Content Include="assets\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Kogl.Core\Kogl.Core.csproj" />
+        <ProjectReference Include="..\..\src\Kogl.FreeType\Kogl.FreeType.csproj" />
+        <ProjectReference Include="..\..\src\Kogl.OpenGL\Kogl.OpenGL.csproj" />
+        <ProjectReference Include="..\..\src\Kogl.UI\Kogl.UI.csproj" />
+        <ProjectReference Include="..\..\src\Kogl.Windowing\Kogl.Windowing.csproj" />
     </ItemGroup>
 </Project>

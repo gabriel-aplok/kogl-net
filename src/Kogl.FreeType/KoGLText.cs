@@ -8,7 +8,7 @@ namespace Kogl.FreeType;
 
 public static class KoGLText
 {
-    private static Shader _sdfShader;
+    private static Shader _sdfShader = null!;
     private static bool _sdfShaderInitialized;
 
     private static void EnsureSdfShader()
@@ -71,6 +71,22 @@ void main() {
         if (string.IsNullOrEmpty(text))
             return;
 
+        DrawText(font, text.AsSpan(), position, color, alignment, scale);
+    }
+
+    /// <summary>Draws a string to the screen from a char span (allocation-free)</summary>
+    public static void DrawText(
+        Font font,
+        ReadOnlySpan<char> text,
+        Vector2 position,
+        Vector4 color,
+        TextAlignment alignment = TextAlignment.Left,
+        float scale = 1.0f
+    )
+    {
+        if (text.IsEmpty)
+            return;
+
         KoRender.UseTexture(font.AtlasTexture);
 
         if (font.IsSdf)
@@ -97,10 +113,9 @@ void main() {
         KoRender.Scale(scale, scale, 1.0f);
 
         // handle alignment offset
-        ReadOnlySpan<char> span = text.AsSpan();
         if (alignment != TextAlignment.Left)
         {
-            Vector2 size = Measure(font, span);
+            Vector2 size = Measure(font, text);
             if (alignment == TextAlignment.Center)
                 position.X -= size.X * 0.5f;
             if (alignment == TextAlignment.Right)
@@ -112,8 +127,9 @@ void main() {
         KoRender.Begin(PrimitiveMode.Quads);
 
         float cursorX = 0;
-        float cursorY = font.Size; // base alignment
+        float cursorY = font.Size;
 
+        ReadOnlySpan<char> span = text;
         while (span.Length > 0)
         {
             Rune.DecodeFromUtf16(span, out Rune rune, out int charsConsumed);
@@ -169,6 +185,7 @@ void main() {
             {
                 if (cursorX > maxWidth)
                     maxWidth = cursorX;
+
                 cursorX = 0;
                 cursorY += font.LineHeight;
                 continue;

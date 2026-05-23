@@ -294,6 +294,12 @@ public static class KoRender
         return (float)_screenWidth / _screenHeight;
     }
 
+    /// <summary>Sets the scissor enabled state</summary>
+    public static void SetScissorEnabled(bool enabled)
+    {
+        _backend.SetScissorEnabled(enabled);
+    }
+
     /// <summary>Begins a scissor</summary>
     public static void BeginScissor(int x, int y, int width, int height)
     {

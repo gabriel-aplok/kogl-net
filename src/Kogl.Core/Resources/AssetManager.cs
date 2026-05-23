@@ -3,7 +3,7 @@ using Kogl.Common;
 
 namespace Kogl.Core.Resources;
 
-public static class Assets
+public static class AssetManager
 {
     private static readonly ConcurrentDictionary<string, AssetEntry> _registry = new(
         StringComparer.OrdinalIgnoreCase

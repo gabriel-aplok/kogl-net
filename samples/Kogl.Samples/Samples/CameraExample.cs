@@ -62,15 +62,20 @@ internal class CameraExample
             // }";
 
             // _shader = Shader.Create(vs, fs);
-            _shader = Assets.Load<Shader>("res://shaders/std.glsl");
+            _shader = AssetManager.Load<Shader>("res://shaders/std.glsl");
 
             _myCubeTransform = Transform.Identity;
             _myCubeTransform.Translation = new Vector3(0, 1, 0);
         };
         app.OnRender += RenderLoop;
+        app.OnResizeEvent += (width, height) =>
+        {
+            _camera.AspectRatio = height == 0 ? 1f : (float)width / height;
+        };
         app.OnUnload += static () =>
         {
-            Assets.UnloadAll();
+            AssetManager.UnloadAll();
+            ResourceManager.UnloadAll();
         };
         app.Run();
     }
@@ -105,7 +110,7 @@ internal class CameraExample
         KoRender.PopMatrix();
 
         KoRender.UseDefaultShader();
-        KoGizmo.DrawGizmo3D(100, GizmoFlags.Translate, ref _myCubeTransform);
+        KoGizmo.DrawGizmo3D(100, GizmoFlags.All, ref _myCubeTransform);
 
         // draw a cube
         KoRender.UseShader(_shader);
@@ -123,45 +128,46 @@ internal class CameraExample
 
     private static void DrawCube()
     {
-        KoRender.Begin(PrimitiveMode.Lines);
+        KoRender.Begin(PrimitiveMode.LineStrip);
+        KoRender.Color4(1, 1, 1, 1);
 
         // ff (red)
-        KoRender.Color4(1, 0, 0, 1);
+        // KoRender.Color4(1, 0, 0, 1);
         KoRender.Vertex3(-1, -1, 1);
         KoRender.Vertex3(1, -1, 1);
         KoRender.Vertex3(1, 1, 1);
         KoRender.Vertex3(-1, 1, 1);
 
         // bf (orange)
-        KoRender.Color4(1, 0.5f, 0, 1);
+        // KoRender.Color4(1, 0.5f, 0, 1);
         KoRender.Vertex3(-1, -1, -1);
         KoRender.Vertex3(-1, 1, -1);
         KoRender.Vertex3(1, 1, -1);
         KoRender.Vertex3(1, -1, -1);
 
         // tf (blue)
-        KoRender.Color4(0, 0, 1, 1);
+        // KoRender.Color4(0, 0, 1, 1);
         KoRender.Vertex3(-1, 1, -1);
         KoRender.Vertex3(-1, 1, 1);
         KoRender.Vertex3(1, 1, 1);
         KoRender.Vertex3(1, 1, -1);
 
         // bf (yellow)
-        KoRender.Color4(1, 1, 0, 1);
+        // KoRender.Color4(1, 1, 0, 1);
         KoRender.Vertex3(-1, -1, -1);
         KoRender.Vertex3(1, -1, -1);
         KoRender.Vertex3(1, -1, 1);
         KoRender.Vertex3(-1, -1, 1);
 
         // rf (green)
-        KoRender.Color4(0, 1, 0, 1);
+        // KoRender.Color4(0, 1, 0, 1);
         KoRender.Vertex3(1, -1, -1);
         KoRender.Vertex3(1, 1, -1);
         KoRender.Vertex3(1, 1, 1);
         KoRender.Vertex3(1, -1, 1);
 
         // lf (purple)
-        KoRender.Color4(1, 0, 1, 1);
+        // KoRender.Color4(1, 0, 1, 1);
         KoRender.Vertex3(-1, -1, -1);
         KoRender.Vertex3(-1, -1, 1);
         KoRender.Vertex3(-1, 1, 1);

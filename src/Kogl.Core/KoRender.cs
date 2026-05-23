@@ -102,7 +102,7 @@ public static class KoRender
 
         // create default shader
         // _defaultShader = Shader.Create(vs, fs);
-        _defaultShader = Assets.Load<Shader>("res://shaders/std.glsl");
+        _defaultShader = AssetManager.Load<Shader>("res://shaders/std_textured.glsl");
         _currentShader = _defaultShader;
 
         _defaultShader.AddProperty("uTex", ShaderPropertyType.Texture2D);

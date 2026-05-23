@@ -1,4 +1,3 @@
-// FILE: src/Kogl.Samples/Samples/AssetManagerExample.cs
 using System.Numerics;
 using Kogl.Common;
 using Kogl.Core;
@@ -21,8 +20,10 @@ internal class AssetManagerExample
 
         app.OnLoad += () =>
         {
-            _logoTexture = Assets.Load<Texture>("res://textures/logo.png");
-            _backgroundLoadingTask = Assets.LoadAsync<Texture>("res://textures/container.jpg");
+            _logoTexture = AssetManager.Load<Texture>("res://textures/logo.png");
+            _backgroundLoadingTask = AssetManager.LoadAsync<Texture>(
+                "res://textures/container.jpg"
+            );
         };
 
         app.OnRender += (dt) =>
@@ -67,8 +68,8 @@ internal class AssetManagerExample
         app.OnUnload += () =>
         {
             // unload cleanly decrements reference counts and releases the assets when they are no longer needed
-            Assets.Unload("res://textures/logo.png");
-            Assets.Unload("res://textures/container.jpg");
+            AssetManager.Unload("res://textures/logo.png");
+            AssetManager.Unload("res://textures/container.jpg");
         };
 
         app.Run();

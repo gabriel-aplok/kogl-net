@@ -98,8 +98,12 @@ internal static class JitterCarBridgeExample
             _prototypeShader.AddProperty("uUVScale", ShaderPropertyType.Vec2);
             _prototypeShader.AddProperty("uUVOffset", ShaderPropertyType.Vec2);
 
-            _protoWhiteTex = Assets.Load<Texture>("res://textures/prototype/light/texture_08.png");
-            _protoGreenTex = Assets.Load<Texture>("res://textures/prototype/green/texture_10.png");
+            _protoWhiteTex = AssetManager.Load<Texture>(
+                "res://textures/prototype/light/texture_08.png"
+            );
+            _protoGreenTex = AssetManager.Load<Texture>(
+                "res://textures/prototype/green/texture_10.png"
+            );
 
             Material baseMat = new(_prototypeShader) { DepthTest = true, Blending = false };
             baseMat.SetTexture("uTex", _protoWhiteTex);

@@ -1,4 +1,3 @@
-// FILE: src/Kogl.Windowing/AppWindow.cs
 using ImGuiNET;
 using Kogl.Common;
 using Kogl.Common.InputManagement;

@@ -1,5 +1,4 @@
-﻿// FILE: src/Kogl.Samples/Samples/CustomShadersExample.cs
-using System.Numerics;
+﻿using System.Numerics;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Rendering;
@@ -20,7 +19,7 @@ internal class CustomShadersExample
         // Hook the OnLoad event properly so we don't have to load on frame 1 anymore lol
         app.OnLoad += static () =>
         {
-            _customShader = Assets.Load<Shader>("res://shaders/custom_wave.glsl");
+            _customShader = AssetManager.Load<Shader>("res://shaders/custom_wave.glsl");
             // _customShader = ResourceManager.Load<Shader>("assets/shaders/custom_wave.glsl");
         };
 
@@ -28,7 +27,7 @@ internal class CustomShadersExample
 
         app.OnUnload += static () =>
         {
-            Assets.Unload("res://shaders/custom_wave.glsl");
+            AssetManager.Unload("res://shaders/custom_wave.glsl");
             // ResourceManager.Unload("assets/shaders/custom_wave.glsl");
         };
 

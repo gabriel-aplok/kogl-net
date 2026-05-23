@@ -10,15 +10,15 @@ internal class Program
     {
         LogCat.Info("Kolpa - Samples");
 
-        // JitterCarBridgeExample.Start();
+        CameraExample.Start();
         // JitterPhysicsDropExample.Start();
+        // JitterCarBridgeExample.Start();
         // MultiTextureMaterialExample.Start();
         // ObjLoaderTestExample.Start();
         // CustomShadersExample.Start();
         // CustomShaders2Example.Start();
         // AssetManagerExample.Start();
         // TextureLoadingExample.Start();
-        // // ShadowMappingExample.Start();
         // RaymarchedHillsExample.Start();
         // RaymarchedPrimitivesExample.Start();
         // SpriteRenderingExample.Start();
@@ -26,13 +26,9 @@ internal class Program
         // MaterialExample.Start();
         // InputExample.Start();
         // TextRenderingExample.Start();
-        CameraExample.Start();
-        SampleGizmo.Start();
+        // SampleGizmo.Start();
         // Cube3DExample.Start();
         // ScissorExample.Start();
         // PostProcessingExample.Start();
-
-        // Assets.UnloadAll();
-        // LogCat.Info("Kolpa - Samples Complete");
     }
 }

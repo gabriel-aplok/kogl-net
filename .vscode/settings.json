@@ -13,7 +13,6 @@
     "**/.gitattributes": true,
     "**/.gitignore": true,
     "**/dotnet-tools.json": true,
-    "**/LICENSE.txt": true,
     "website": true
   },
   "search.exclude": {
@@ -29,7 +28,6 @@
     "**/.gitattributes": true,
     "**/.gitignore": true,
     "**/dotnet-tools.json": true,
-    "**/LICENSE.txt": true,
     "website": true
   }
 }

@@ -1,4 +1,3 @@
-// FILE: src/Kogl.Core/Rendering/SpriteRenderer.cs
 using System.Numerics;
 using Kogl.Common.Types;
 using Kogl.Core.Resources;

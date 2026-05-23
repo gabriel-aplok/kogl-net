@@ -40,9 +40,9 @@ internal class ObjLoaderTestExample
 
             InputManager.CursorMode = CursorMode.Locked;
 
-            _testModel = Assets.Load<Model>("res://models/suzanne.obj");
-            _modelTexture = Assets.Load<Texture>("res://models/crate.png");
-            _modelShader = Assets.Load<Shader>("res://shaders/model_shader.glsl");
+            _testModel = AssetManager.Load<Model>("res://models/suzanne.obj");
+            _modelTexture = AssetManager.Load<Texture>("res://models/crate.png");
+            _modelShader = AssetManager.Load<Shader>("res://shaders/std.glsl");
 
             _modelMaterial = new Material(_modelShader);
             _modelMaterial.SetTexture("uMainTex", _modelTexture);
@@ -77,9 +77,9 @@ internal class ObjLoaderTestExample
         app.OnUnload += () =>
         {
             LogCat.Info("SAMPLE", "Shutting down...");
-            Assets.Unload("res://models/suzanne.obj");
-            Assets.Unload("res://models/crate.png");
-            Assets.Unload("res://shaders/model_shader.glsl");
+            AssetManager.Unload("res://models/suzanne.obj");
+            AssetManager.Unload("res://models/crate.png");
+            AssetManager.Unload("res://shaders/std.glsl");
         };
 
         app.Run();

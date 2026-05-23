@@ -117,9 +117,9 @@ void main() {
             _pbrShader.AddProperty("uNormalTex", ShaderPropertyType.Texture2D);
             _pbrShader.AddProperty("uTint", ShaderPropertyType.Vec4);
 
-            _brickAlbedoTex = Assets.Load<Texture>("res://brickwall.jpg");
-            _brickNormalTex = Assets.Load<Texture>("res://brickwall_normal.jpg");
-            _containerAlbedoTex = Assets.Load<Texture>("res://container.jpg");
+            _brickAlbedoTex = AssetManager.Load<Texture>("res://brickwall.jpg");
+            _brickNormalTex = AssetManager.Load<Texture>("res://brickwall_normal.jpg");
+            _containerAlbedoTex = AssetManager.Load<Texture>("res://container.jpg");
 
             Material baseMat = new(_pbrShader);
             baseMat.SetTexture("uAlbedoTex", _brickAlbedoTex);

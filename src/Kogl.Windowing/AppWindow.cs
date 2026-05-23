@@ -98,7 +98,7 @@ public class AppWindow
         Width = width;
         Height = height;
 
-        GlfwWindowing.RegisterPlatform();
+        GlfwWindowing.Use();
         GlfwInput.RegisterPlatform();
 
         WindowOptions options = WindowOptions.Default;

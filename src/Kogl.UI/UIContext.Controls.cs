@@ -32,9 +32,9 @@ public partial class UIContext
         int tw = (int)KoGLText.Measure(font, str.AsSpan()).X;
 
         PushClipRect(rect);
-        pos.Y = rect.Y + (rect.H - font.LineHeight) / 2;
+        pos.Y = rect.Y + ((rect.H - font.LineHeight) / 2);
         if ((opt & UIOpt.AlignCenter) != 0)
-            pos.X = rect.X + (rect.W - tw) / 2;
+            pos.X = rect.X + ((rect.W - tw) / 2);
         else if ((opt & UIOpt.AlignRight) != 0)
             pos.X = rect.X + rect.W - tw - Style.Padding;
         else
@@ -57,9 +57,9 @@ public partial class UIContext
         int tw = (int)KoGLText.Measure(font, new ReadOnlySpan<char>(TextBuffer, start, len)).X;
 
         PushClipRect(rect);
-        pos.Y = rect.Y + (rect.H - font.LineHeight) / 2;
+        pos.Y = rect.Y + ((rect.H - font.LineHeight) / 2);
         if ((opt & UIOpt.AlignCenter) != 0)
-            pos.X = rect.X + (rect.W - tw) / 2;
+            pos.X = rect.X + ((rect.W - tw) / 2);
         else if ((opt & UIOpt.AlignRight) != 0)
             pos.X = rect.X + rect.W - tw - Style.Padding;
         else
@@ -208,9 +208,9 @@ public partial class UIContext
 
         if (_focus == id && (_mouseDown || _mousePressed))
         {
-            v = low + (_mousePos.X - baseRect.X) * (high - low) / baseRect.W;
+            v = low + ((_mousePos.X - baseRect.X) * (high - low) / baseRect.W);
             if (step > 0)
-                v = (float)Math.Round((v + step / 2) / step) * step;
+                v = (float)Math.Round((v + (step / 2)) / step) * step;
         }
 
         value = Math.Clamp(v, low, high);
@@ -382,8 +382,8 @@ public partial class UIContext
         {
             int sz = Style.ScrollbarSize;
             Vector2 cs = new(
-                cnt.ContentSize.X + Style.Padding * 2,
-                cnt.ContentSize.Y + Style.Padding * 2
+                cnt.ContentSize.X + (Style.Padding * 2),
+                cnt.ContentSize.Y + (Style.Padding * 2)
             );
             PushClipRect(body);
             if (cs.Y > cnt.Body.H)
@@ -399,8 +399,8 @@ public partial class UIContext
             new UIRect(
                 body.X + Style.Padding,
                 body.Y + Style.Padding,
-                body.W - Style.Padding * 2,
-                body.H - Style.Padding * 2
+                body.W - (Style.Padding * 2),
+                body.H - (Style.Padding * 2)
             ),
             cnt.Scroll
         );

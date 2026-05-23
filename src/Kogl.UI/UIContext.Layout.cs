@@ -122,9 +122,9 @@ public partial class UIContext
             res.H = (int)layout.Size.Y;
 
             if (res.W == 0)
-                res.W = (int)Style.Size.X + Style.Padding * 2;
+                res.W = (int)Style.Size.X + (Style.Padding * 2);
             if (res.H == 0)
-                res.H = (int)Style.Size.Y + Style.Padding * 2;
+                res.H = (int)Style.Size.Y + (Style.Padding * 2);
             if (res.W < 0)
                 res.W += layout.Body.W - res.X + 1;
             if (res.H < 0)

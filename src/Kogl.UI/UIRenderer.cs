@@ -114,9 +114,9 @@ public static class UIRenderer
             case UIIcon.Check:
                 KoRender.LineWidth(2.0f);
                 KoRender.Begin(PrimitiveMode.Lines);
-                KoRender.Vertex2(rect.X + 4, rect.Y + rect.H / 2);
-                KoRender.Vertex2(rect.X + rect.W / 2, rect.Y + rect.H - 4);
-                KoRender.Vertex2(rect.X + rect.W / 2, rect.Y + rect.H - 4);
+                KoRender.Vertex2(rect.X + 4, rect.Y + (rect.H / 2));
+                KoRender.Vertex2(rect.X + (rect.W / 2), rect.Y + rect.H - 4);
+                KoRender.Vertex2(rect.X + (rect.W / 2), rect.Y + rect.H - 4);
                 KoRender.Vertex2(rect.X + rect.W - 4, rect.Y + 4);
                 KoRender.End();
                 KoRender.LineWidth(1.0f);
@@ -125,7 +125,7 @@ public static class UIRenderer
             case UIIcon.Collapsed:
                 KoRender.Begin(PrimitiveMode.Triangles);
                 KoRender.Vertex2(rect.X + 4, rect.Y + 4);
-                KoRender.Vertex2(rect.X + rect.W - 4, rect.Y + rect.H / 2);
+                KoRender.Vertex2(rect.X + rect.W - 4, rect.Y + (rect.H / 2));
                 KoRender.Vertex2(rect.X + 4, rect.Y + rect.H - 4);
                 KoRender.End();
                 break;
@@ -134,7 +134,7 @@ public static class UIRenderer
                 KoRender.Begin(PrimitiveMode.Triangles);
                 KoRender.Vertex2(rect.X + 4, rect.Y + 4);
                 KoRender.Vertex2(rect.X + rect.W - 4, rect.Y + 4);
-                KoRender.Vertex2(rect.X + rect.W / 2, rect.Y + rect.H - 4);
+                KoRender.Vertex2(rect.X + (rect.W / 2), rect.Y + rect.H - 4);
                 KoRender.End();
                 break;
         }

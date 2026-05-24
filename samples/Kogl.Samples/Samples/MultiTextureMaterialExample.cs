@@ -143,7 +143,7 @@ void main() {
         _app.OnRender += RenderLoop;
         _app.OnResizeEvent += (width, height) =>
         {
-            _camera.AspectRatio = height == 0 ? 1f : (float)width / height;
+            _camera.UpdateViewport(width, height);
         };
         _app.OnUnload += () =>
         {

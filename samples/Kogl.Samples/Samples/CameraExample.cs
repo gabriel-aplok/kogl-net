@@ -1,4 +1,5 @@
 using System.Numerics;
+using Kogl.Common.InputManagement;
 using Kogl.Common.Types;
 using Kogl.Core;
 using Kogl.Core.Maths;
@@ -12,9 +13,12 @@ internal class CameraExample
 {
     private static Camera _camera = null!;
     private static Shader _shader = null!;
-    private static Transform _myCubeTransform;
+    private static Material _mat = null!;
+    private static Texture _texture = null!;
+    private static Transform _transform = Transform.Identity;
 
-    private static float _time;
+    private static float _yaw = 0f;
+    private static float _pitch = 0f;
 
     public static void Start()
     {
@@ -28,100 +32,53 @@ internal class CameraExample
             Near = 0.1f,
             Far = 1000f,
         };
+        _camera.LookAt(new Vector3(0f, 1f, 0f));
 
         app.OnLoad += static () =>
         {
-            //             string vs =
-            //                 @"#version 330 core
-            // layout(location = 0) in vec3 aPos;
-            // layout(location = 1) in vec2 aTex;
-            // layout(location = 2) in vec4 aCol;
+            _texture = AssetManager.Load<Texture>("res://textures/texel_checker.png");
+            _shader = AssetManager.Load<Shader>("res://shaders/std_textured.glsl");
+            _shader.AddProperty("uTex", ShaderPropertyType.Texture2D);
 
-            // out vec2 fTex;
-            // out vec4 fCol;
+            _mat = new Material(_shader);
+            _mat.SetTexture("uTex", _texture);
 
-            // uniform mat4 uMVP;
-
-            // void main() {
-            //     gl_Position = uMVP * vec4(aPos, 1.0);
-            //     fTex = aTex;
-            //     fCol = aCol;
-            // }";
-
-            //             string fs =
-            //                 @"#version 330 core
-            // in vec2 fTex;
-            // in vec4 fCol;
-            // out vec4 FragColor;
-
-            // uniform float uTime;
-
-            // void main() {
-            //     // Procedural animation that doesn't rely on texture details
-            //     float wave = sin(fTex.x * 10.0 + uTime * 3.0) * 0.5 + 0.5;
-            //     vec3 colorA = vec3(0.1, 0.5, 0.8); // Blue
-            //     vec3 colorB = vec3(0.8, 0.2, 0.1); // Red
-
-            //     vec3 finalRGB = mix(colorA, colorB, wave);
-            //     FragColor = vec4(finalRGB, 1.0) * fCol;
-            // }";
-
-            // _shader = Shader.Create(vs, fs);
-            _shader = AssetManager.Load<Shader>("res://shaders/std.glsl");
-
-            _myCubeTransform = Transform.Identity;
-            _myCubeTransform.Translation = new Vector3(0, 1, 0);
+            InputMap.Bind("MoveLeft", Key.A);
+            InputMap.Bind("MoveRight", Key.D);
+            InputMap.Bind("MoveForward", Key.W);
+            InputMap.Bind("MoveBackward", Key.S);
         };
         app.OnRender += RenderLoop;
         app.OnResizeEvent += (width, height) =>
         {
-            _camera.AspectRatio = height == 0 ? 1f : (float)width / height;
+            _camera.UpdateViewport(width, height);
         };
         app.OnUnload += static () =>
         {
             AssetManager.UnloadAll();
-            ResourceManager.UnloadAll();
         };
         app.Run();
     }
 
     private static void RenderLoop(double dt)
     {
-        _time += (float)dt;
+        UpdateInput((float)dt);
 
         KoRender.Clear(0.1f, 0.1f, 0.15f, 1.0f);
         KoRender.EnableDepthTest();
-
-        // _camera.Position.X = MathF.Sin(_time) * 8f;
-        // _camera.Position.Z = MathF.Cos(_time) * 8f;
-        _camera.LookAt(Vector3.Zero);
+        KoRender.DisableBlending();
 
         KoRender.BeginCamera(_camera);
 
-        // draw a reference grid (lines)
-        KoRender.UseDefaultShader();
-
-        KoRender.PushMatrix();
-        KoRender.Begin(PrimitiveMode.Lines);
-        KoRender.Color4(0.3f, 0.3f, 0.3f, 1.0f);
-        for (int i = -5; i <= 5; i++)
-        {
-            KoRender.Vertex3(i, 0, -5);
-            KoRender.Vertex3(i, 0, 5);
-            KoRender.Vertex3(-5, 0, i);
-            KoRender.Vertex3(5, 0, i);
-        }
-        KoRender.End();
-        KoRender.PopMatrix();
+        // draw a reference grid
+        DrawGrid(10, 1.0f);
 
         // draw a cube
-        KoRender.UseShader(_shader);
-        KoRender.SetUniform("uTime", _time);
-        KoRender.SetUniform("uTint", new Vector3(0.5f, 0.8f, 1.0f));
+        KoRender.ApplyMaterial(_mat);
 
         KoRender.PushMatrix();
-        KoRender.Multiply(_myCubeTransform.ToMatrix());
-        DrawCube();
+        KoRender.Multiply(_transform.ToMatrix());
+        DrawCube(2.0f, 2.0f, 2.0f);
         KoRender.PopMatrix();
 
         KoRender.UseDefaultShader();
@@ -131,58 +88,145 @@ internal class CameraExample
                 | GizmoFlags.Scale
                 | GizmoFlags.ConstantScreenSize
                 | GizmoFlags.RenderOnTop,
-            ref _myCubeTransform
+            ref _transform
         );
 
         KoRender.EndCamera();
     }
 
-    private static void DrawCube()
+    private static void UpdateInput(float dt)
     {
+        if (InputManager.IsMouseButtonDown(MouseButton.Right))
+        {
+            InputManager.CursorMode = CursorMode.Locked;
+
+            Vector2 delta = InputManager.MouseDelta;
+            _yaw -= delta.X * 0.15f;
+            _pitch -= delta.Y * 0.15f;
+            _pitch = Math.Clamp(_pitch, -89f, 89f);
+            _camera.Rotation = new Vector3(_pitch, _yaw, 0);
+
+            Vector2 inputDir = InputMap.GetVector(
+                "MoveLeft",
+                "MoveRight",
+                "MoveBackward",
+                "MoveForward"
+            );
+
+            Vector3 horizontalFront = Vector3.Normalize(
+                new Vector3(_camera.Front.X, 0, _camera.Front.Z)
+            );
+
+            _camera.Position += horizontalFront * inputDir.Y * 8.0f * dt;
+            _camera.Position += _camera.Right * inputDir.X * 8.0f * dt;
+
+            if (InputManager.IsKeyDown(Key.Space))
+            {
+                _camera.Position += Vector3.UnitY * 8.0f * dt;
+            }
+            if (InputManager.IsKeyDown(Key.ShiftLeft))
+            {
+                _camera.Position -= Vector3.UnitY * 8.0f * dt;
+            }
+        }
+        else
+        {
+            InputManager.CursorMode = CursorMode.Normal;
+        }
+    }
+
+    private static void DrawGrid(int size, float spacing)
+    {
+        KoRender.UseDefaultShader();
+        KoRender.Begin(PrimitiveMode.Lines);
+        float halfSize = size * spacing / 2.0f;
+        for (int i = 0; i <= size; i++)
+        {
+            float coord = -halfSize + (i * spacing);
+
+            KoRender.Vertex3(coord, 0.0f, -halfSize);
+            KoRender.Vertex3(coord, 0.0f, halfSize);
+
+            KoRender.Vertex3(-halfSize, 0.0f, coord);
+            KoRender.Vertex3(halfSize, 0.0f, coord);
+        }
+        KoRender.End();
+    }
+
+    private static void DrawCube(float w, float h, float d)
+    {
+        float x = w / 2.0f;
+        float y = h / 2.0f;
+        float z = d / 2.0f;
+
         KoRender.Begin(PrimitiveMode.Quads);
         KoRender.Color4(1, 1, 1, 1);
 
-        // ff (red)
-        // KoRender.Color4(1, 0, 0, 1);
-        KoRender.Vertex3(-1, -1, 1);
-        KoRender.Vertex3(1, -1, 1);
-        KoRender.Vertex3(1, 1, 1);
-        KoRender.Vertex3(-1, 1, 1);
+        // Front Face (Normal +Z)
+        KoRender.Normal3(0.0f, 0.0f, 1.0f);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-x, -y, z);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(x, -y, z);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(x, y, z);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-x, y, z);
 
-        // bf (orange)
-        // KoRender.Color4(1, 0.5f, 0, 1);
-        KoRender.Vertex3(-1, -1, -1);
-        KoRender.Vertex3(-1, 1, -1);
-        KoRender.Vertex3(1, 1, -1);
-        KoRender.Vertex3(1, -1, -1);
+        // Back Face (Normal -Z)
+        KoRender.Normal3(0.0f, 0.0f, -1.0f);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-x, -y, -z);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-x, y, -z);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(x, y, -z);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(x, -y, -z);
 
-        // tf (blue)
-        // KoRender.Color4(0, 0, 1, 1);
-        KoRender.Vertex3(-1, 1, -1);
-        KoRender.Vertex3(-1, 1, 1);
-        KoRender.Vertex3(1, 1, 1);
-        KoRender.Vertex3(1, 1, -1);
+        // Top Face (Normal +Y)
+        KoRender.Normal3(0.0f, 1.0f, 0.0f);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-x, y, -z);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-x, y, z);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(x, y, z);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(x, y, -z);
 
-        // bf (yellow)
-        // KoRender.Color4(1, 1, 0, 1);
-        KoRender.Vertex3(-1, -1, -1);
-        KoRender.Vertex3(1, -1, -1);
-        KoRender.Vertex3(1, -1, 1);
-        KoRender.Vertex3(-1, -1, 1);
+        // Bottom Face (Normal -Y)
+        KoRender.Normal3(0.0f, -1.0f, 0.0f);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-x, -y, -z);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(x, -y, -z);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(x, -y, z);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-x, -y, z);
 
-        // rf (green)
-        // KoRender.Color4(0, 1, 0, 1);
-        KoRender.Vertex3(1, -1, -1);
-        KoRender.Vertex3(1, 1, -1);
-        KoRender.Vertex3(1, 1, 1);
-        KoRender.Vertex3(1, -1, 1);
+        // Right Face (Normal +X)
+        KoRender.Normal3(1.0f, 0.0f, 0.0f);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(x, -y, -z);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(x, y, -z);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(x, y, z);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(x, -y, z);
 
-        // lf (purple)
-        // KoRender.Color4(1, 0, 1, 1);
-        KoRender.Vertex3(-1, -1, -1);
-        KoRender.Vertex3(-1, -1, 1);
-        KoRender.Vertex3(-1, 1, 1);
-        KoRender.Vertex3(-1, 1, -1);
+        // Left Face (Normal -X)
+        KoRender.Normal3(-1.0f, 0.0f, 0.0f);
+        KoRender.TexCoord2(1, 1);
+        KoRender.Vertex3(-x, -y, -z);
+        KoRender.TexCoord2(0, 1);
+        KoRender.Vertex3(-x, -y, z);
+        KoRender.TexCoord2(0, 0);
+        KoRender.Vertex3(-x, y, z);
+        KoRender.TexCoord2(1, 0);
+        KoRender.Vertex3(-x, y, -z);
 
         KoRender.End();
     }

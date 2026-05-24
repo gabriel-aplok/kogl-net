@@ -1,9 +1,6 @@
-using ImGuiNET;
-using Kogl.Common;
 using Kogl.Common.InputManagement;
 using Kogl.Core;
 using Kogl.OpenGL;
-using Kogl.Windowing.ImGuiImpl;
 using Silk.NET.Input;
 using Silk.NET.Input.Glfw;
 using Silk.NET.Maths;
@@ -130,6 +127,7 @@ public class AppWindow
 
             // FirstLog(width, height, title, options, backend, inputBackend);
 
+            OnResize(_window.FramebufferSize);
             OnLoad?.Invoke();
         };
 

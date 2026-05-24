@@ -14,7 +14,7 @@ public class ExampleList
     private static readonly ExampleInfo[] _allExamples =
     [
         new ExampleInfo("Camera", CameraExample.Start),
-        new ExampleInfo("BasicLighting", BasicLightingExample.Start),
+        // new ExampleInfo("BasicLighting", BasicLightingExample.Start),
         // new ExampleInfo("Ui", UiExample.Start),
         // new ExampleInfo("TextRendering", TextRenderingExample.Start),
         // new ExampleInfo("JitterPhysicsDrop", JitterPhysicsDropExample.Start),

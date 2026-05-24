@@ -19,7 +19,7 @@ internal class BasicLightingExample
     private static Shader _lightingShader = null!;
     private static Material _lightingMaterial = null!;
     private static Material _gridMaterial = null!;
-    private static Texture _containerTex = null!;
+    private static Texture _texelChecerTex = null!;
 
     private static readonly Light[] _lights = new Light[4];
     private static float _yaw = -90f;
@@ -36,59 +36,54 @@ internal class BasicLightingExample
 
             _uiFont = Font.Load("assets/fonts/arial.ttf", 20);
 
-            // bind inputs
             InputMap.Bind("MoveLeft", Key.A);
             InputMap.Bind("MoveRight", Key.D);
             InputMap.Bind("MoveForward", Key.W);
             InputMap.Bind("MoveBackward", Key.S);
             InputMap.Bind("ToggleMouse", Key.Escape);
 
-            // load shader & texture
             _lightingShader = AssetManager.Load<Shader>("res://shaders/lighting.glsl");
             _lightingShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
             _lightingShader.AddProperty("colDiffuse", ShaderPropertyType.Vec4);
 
-            _containerTex = AssetManager.Load<Texture>("res://textures/container.jpg");
+            _texelChecerTex = AssetManager.Load<Texture>("res://textures/texel_checker.png");
 
-            // setup lighted material
             _lightingMaterial = new Material(_lightingShader);
-            _lightingMaterial.SetTexture("uTex", _containerTex);
+            _lightingMaterial.SetTexture("uTex", _texelChecerTex);
             _lightingMaterial.SetVector4("colDiffuse", Vector4.One);
             _lightingMaterial.DepthTest = true;
             _lightingMaterial.Blending = false;
 
-            // setup a simple grid material
             _gridMaterial = new Material(KoRender.DefaultShader);
             _gridMaterial.SetTexture("uTex", new Texture(KoRender.DefaultTexture, 1, 1));
             _gridMaterial.SetVector4("uTint", new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
             _gridMaterial.DepthTest = true;
             _gridMaterial.Blending = false;
 
-            // position, target, color (vector4)
             _lights[0] = Light.Create(
                 LightType.Point,
                 new Vector3(-2, 1, -2),
                 Vector3.Zero,
                 new Vector4(1f, 0.9f, 0f, 1f)
-            ); // Yellow
+            );
             _lights[1] = Light.Create(
                 LightType.Point,
                 new Vector3(2, 1, 2),
                 Vector3.Zero,
                 new Vector4(1f, 0f, 0f, 1f)
-            ); // Red
+            );
             _lights[2] = Light.Create(
                 LightType.Point,
                 new Vector3(-2, 1, 2),
                 Vector3.Zero,
                 new Vector4(0f, 1f, 0f, 1f)
-            ); // Green
+            );
             _lights[3] = Light.Create(
                 LightType.Point,
                 new Vector3(2, 1, -2),
                 Vector3.Zero,
                 new Vector4(0f, 0f, 1f, 1f)
-            ); // Blue
+            );
 
             InputManager.CursorMode = CursorMode.Locked;
         };
@@ -103,7 +98,7 @@ internal class BasicLightingExample
         {
             _uiFont?.Dispose();
             AssetManager.Unload("res://shaders/lighting.glsl");
-            AssetManager.Unload("res://textures/container.jpg");
+            AssetManager.Unload("res://textures/texel_checker.png");
         };
 
         _app.Run();
@@ -119,37 +114,31 @@ internal class BasicLightingExample
 
         KoRender.BeginCamera(_camera);
 
-        // bind lighting material and update lights
         KoRender.ApplyMaterial(_lightingMaterial);
-        KoRender.SetUniform("viewPos", Vector3.Zero); // viewPos is origin in View Space
+        KoRender.SetUniform("viewPos", _camera.Position);
         KoRender.SetUniform("ambient", new Vector4(0.1f, 0.1f, 0.1f, 1.0f));
 
         for (int i = 0; i < 4; i++)
         {
-            _lights[i].UpdateValues(_lightingShader, i, _camera.GetViewMatrix());
+            _lights[i].UpdateValues(_lightingShader, i);
         }
 
-        // draw plane
         DrawPlane(10.0f, 10.0f);
 
-        // draw cube
         KoRender.PushMatrix();
         KoRender.Translate(0.0f, 1.0f, 0.0f);
         DrawCube(2.0f, 2.0f, 2.0f);
         KoRender.PopMatrix();
 
-        // draw light source spheres
         for (int i = 0; i < 4; i++)
         {
             DrawSphere(_lights[i].Position, 0.2f, 8, 8, _lights[i].Color, !_lights[i].Enabled);
         }
 
-        // draw grid
         DrawGrid(10, 1.0f);
 
         KoRender.EndCamera();
 
-        // ui
         DrawUI();
 
         KoRender.Flush();
@@ -187,7 +176,6 @@ internal class BasicLightingExample
             _camera.Position += _camera.Right * inputDir.X * 8.0f * dt;
         }
 
-        // toggle lights
         if (InputManager.IsKeyPressed(Key.Y))
             _lights[0].Enabled = !_lights[0].Enabled;
         if (InputManager.IsKeyPressed(Key.R))

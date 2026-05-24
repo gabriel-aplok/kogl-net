@@ -132,7 +132,7 @@ public static class KoGizmo
             return false;
 
         Matrix4x4 matProj = KoRender.GetProjectionMatrix();
-        Matrix4x4 matView = KoRender.GetModelViewMatrix();
+        Matrix4x4 matView = KoRender.GetViewMatrix();
 
         Matrix4x4.Invert(matView, out Matrix4x4 invMat);
         Matrix4x4.Invert(matView * matProj, out Matrix4x4 invViewProj);

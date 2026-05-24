@@ -94,7 +94,10 @@ void main() {
             EnsureSdfShader();
             KoRender.UseShader(_sdfShader);
 
-            Matrix4x4 mvp = KoRender.GetModelViewMatrix() * KoRender.GetProjectionMatrix();
+            Matrix4x4 mvp =
+                KoRender.GetModelViewMatrix()
+                * KoRender.GetViewMatrix()
+                * KoRender.GetProjectionMatrix();
             KoRender.SetUniform("uMVP", mvp);
 
             // smoothing should scale with the font size/zoom to keep edges crisp

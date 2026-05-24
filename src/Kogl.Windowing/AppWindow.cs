@@ -128,7 +128,7 @@ public class AppWindow
             InputBackend inputBackend = new(_input);
             InputManager.Initialize(inputBackend);
 
-            FirstLog(width, height, title, options, backend, inputBackend);
+            // FirstLog(width, height, title, options, backend, inputBackend);
 
             OnLoad?.Invoke();
         };
@@ -149,11 +149,11 @@ public class AppWindow
             _controller?.Update((float)dt);
             OnRender?.Invoke(dt);
 
-            ImGuiConsole.DrawConsoleWindow();
+            // ImGuiConsole.DrawConsoleWindow();
 
-            ImGui.Begin("fps");
-            ImGui.Text($"fps: {Fps}");
-            ImGui.End();
+            // ImGui.Begin("fps");
+            // ImGui.Text($"fps: {Fps}");
+            // ImGui.End();
 
             // if (ImGui.BeginMainMenuBar())
             // {
@@ -237,61 +237,62 @@ public class AppWindow
         OnResizeEvent?.Invoke(size.X, size.Y);
     }
 
-    private void FirstLog(
-        int width,
-        int height,
-        string title,
-        WindowOptions options,
-        GLBackend renderBackend,
-        InputBackend inputBackend
-    )
-    {
-        if (_gl == null || _input == null)
-            return;
+    // not being used at the moment, but may be useful in the future, idk
+    // private void FirstLog(
+    //     int width,
+    //     int height,
+    //     string title,
+    //     WindowOptions options,
+    //     GLBackend renderBackend,
+    //     InputBackend inputBackend
+    // )
+    // {
+    //     if (_gl == null || _input == null)
+    //         return;
 
-        LogCat.Info("BACKEND", $"Rendering backend: {renderBackend.GetType().Name}");
-        LogCat.Info("BACKEND", $"Input backend: {inputBackend.GetType().Name}");
+    //     LogCat.Info("BACKEND", $"Rendering backend: {renderBackend.GetType().Name}");
+    //     LogCat.Info("BACKEND", $"Input backend: {inputBackend.GetType().Name}");
 
-        LogCat.Info(
-            "OPENGL",
-            $"Vendor: {_gl.GetStringS(StringName.Vendor)}"
-                + $" | Renderer: {_gl.GetStringS(StringName.Renderer)}"
-                + $" | Version: {_gl.GetStringS(StringName.Version)}"
-                + $" | GLSL Version: {_gl.GetStringS(StringName.ShadingLanguageVersion)}"
-        );
+    //     LogCat.Info(
+    //         "OPENGL",
+    //         $"Vendor: {_gl.GetStringS(StringName.Vendor)}"
+    //             + $" | Renderer: {_gl.GetStringS(StringName.Renderer)}"
+    //             + $" | Version: {_gl.GetStringS(StringName.Version)}"
+    //             + $" | GLSL Version: {_gl.GetStringS(StringName.ShadingLanguageVersion)}"
+    //     );
 
-        LogCat.Info(
-            "SYSTEM",
-            $"OS: {Environment.OSVersion} ({(Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit")})"
-                + $" | CPU Cores: {Environment.ProcessorCount} threads"
-                + $" | Runtime: .NET {Environment.Version}"
-        );
+    //     LogCat.Info(
+    //         "SYSTEM",
+    //         $"OS: {Environment.OSVersion} ({(Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit")})"
+    //             + $" | CPU Cores: {Environment.ProcessorCount} threads"
+    //             + $" | Runtime: .NET {Environment.Version}"
+    //     );
 
-        IMonitor monitor = Silk.NET.Windowing.Monitor.GetMainMonitor(_window);
-        LogCat.Info(
-            "WINDOW",
-            $"Display: {monitor.Name} ({monitor.Bounds.Size.X}x{monitor.Bounds.Size.Y} @ {monitor.VideoMode.RefreshRate}Hz)"
-                + $" | Viewport Created: {width}x{height}"
-        );
+    //     IMonitor monitor = Silk.NET.Windowing.Monitor.GetMainMonitor(_window);
+    //     LogCat.Info(
+    //         "WINDOW",
+    //         $"Display: {monitor.Name} ({monitor.Bounds.Size.X}x{monitor.Bounds.Size.Y} @ {monitor.VideoMode.RefreshRate}Hz)"
+    //             + $" | Viewport Created: {width}x{height}"
+    //     );
 
-        LogCat.Info(
-            "INPUT",
-            $"Keyboards: {_input.Keyboards.Count} | Mice: {_input.Mice.Count} | Gamepads: {_input.Mice.Count}"
-        );
+    //     LogCat.Info(
+    //         "INPUT",
+    //         $"Keyboards: {_input.Keyboards.Count} | Mice: {_input.Mice.Count} | Gamepads: {_input.Mice.Count}"
+    //     );
 
-        // _gl.GetInteger(GetPName.MaxTextureImageUnits, out int maxTextureSlots);
-        // _gl.GetInteger(GetPName.MaxTextureSize, out int maxTextureSize);
-        // _gl.GetInteger(GetPName.MaxUniformBlockSize, out int maxUniformBlockSize);
-        // Log.Info(
-        //     "OPENGL",
-        //     $"Max Texture Slots: {maxTextureSlots} | Max Texture Dimension: {maxTextureSize}px | Uniform Buffer Max: {maxUniformBlockSize / 1024}KB"
-        // );
+    //     // _gl.GetInteger(GetPName.MaxTextureImageUnits, out int maxTextureSlots);
+    //     // _gl.GetInteger(GetPName.MaxTextureSize, out int maxTextureSize);
+    //     // _gl.GetInteger(GetPName.MaxUniformBlockSize, out int maxUniformBlockSize);
+    //     // Log.Info(
+    //     //     "OPENGL",
+    //     //     $"Max Texture Slots: {maxTextureSlots} | Max Texture Dimension: {maxTextureSize}px | Uniform Buffer Max: {maxUniformBlockSize / 1024}KB"
+    //     // );
 
-        // just testing
-        // bool hasDirectStateAccess = _gl.IsExtensionPresent("GL_ARB_direct_state_access");
-        // Log.Info(
-        //     "OPENGL",
-        //     $"Features -> ARB_direct_state_access (DSA): {(hasDirectStateAccess ? "SUPPORTED" : "NOT SUPPORTED")}"
-        // );
-    }
+    //     // just testing
+    //     // bool hasDirectStateAccess = _gl.IsExtensionPresent("GL_ARB_direct_state_access");
+    //     // Log.Info(
+    //     //     "OPENGL",
+    //     //     $"Features -> ARB_direct_state_access (DSA): {(hasDirectStateAccess ? "SUPPORTED" : "NOT SUPPORTED")}"
+    //     // );
+    // }
 }

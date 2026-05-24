@@ -19,6 +19,7 @@ public static class KoRender
     private static IGraphicsBackend _backend = null!;
     private static Batcher _batcher = null!;
     private static readonly MatrixStack _matrices = new();
+    private static Matrix4x4 _viewMatrix = Matrix4x4.Identity;
 
     private static Material _defaultMaterial = null!;
     private static Shader _defaultShader = null!;
@@ -102,7 +103,7 @@ public static class KoRender
 
         // create default shader
         // _defaultShader = Shader.Create(vs, fs);
-        _defaultShader = AssetManager.Load<Shader>("res://shaders/std_textured.glsl");
+        _defaultShader = AssetManager.Load<Shader>("res://shaders/std.glsl");
         _currentShader = _defaultShader;
 
         _defaultShader.AddProperty("uTex", ShaderPropertyType.Texture2D);
@@ -234,6 +235,18 @@ public static class KoRender
         return _matrices.Projection;
     }
 
+    /// <summary>Returns the active camera view matrix</summary>
+    public static Matrix4x4 GetViewMatrix()
+    {
+        return _viewMatrix;
+    }
+
+    /// <summary>Returns the active view-projection matrix</summary>
+    public static Matrix4x4 GetViewProjectionMatrix()
+    {
+        return _viewMatrix * _matrices.Projection;
+    }
+
     /// <summary>Returns the current model view matrix</summary>
     public static Matrix4x4 GetModelViewMatrix()
     {
@@ -251,13 +264,14 @@ public static class KoRender
 
         MatrixMode(MatrixState.ModelView);
         LoadIdentity();
-        Multiply(camera.GetViewMatrix());
+        _viewMatrix = camera.GetViewMatrix();
     }
 
     /// <summary>Ends a camera</summary>
     public static void EndCamera()
     {
         Flush();
+        _viewMatrix = Matrix4x4.Identity;
 
         MatrixMode(MatrixState.Projection);
         LoadIdentity();
@@ -348,7 +362,7 @@ public static class KoRender
     /// <summary>Flushes the batcher</summary>
     public static void Flush()
     {
-        _batcher.Flush(_matrices.Projection);
+        _batcher.Flush(GetViewProjectionMatrix());
     }
 
     #endregion
@@ -397,7 +411,7 @@ public static class KoRender
 
         ApplyMaterial(material);
 
-        Matrix4x4 mvp = transform * _matrices.ModelView * _matrices.Projection;
+        Matrix4x4 mvp = transform * _matrices.ModelView * _viewMatrix * _matrices.Projection;
         _backend.SetUniformMatrix4x4(material.Shader.Handle, "uMVP", mvp);
 
         _backend.DrawMesh(mesh.Handle, mesh.IndexCount);

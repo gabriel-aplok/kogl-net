@@ -65,7 +65,7 @@ internal class Batcher(IGraphicsBackend backend)
             ShaderHandle savedShader = _currentShader;
 
             End();
-            Flush(KoRender.GetProjectionMatrix());
+            Flush(KoRender.GetViewProjectionMatrix());
 
             Begin(savedMode, in savedTextures, savedShader);
         }
@@ -134,7 +134,7 @@ internal class Batcher(IGraphicsBackend backend)
     }
 
     /// <summary>Flushes the current batch</summary>
-    public void Flush(in Matrix4x4 projectionMatrix)
+    public void Flush(in Matrix4x4 viewProjectionMatrix)
     {
         if (_isBuildingBatch)
             End();
@@ -154,7 +154,7 @@ internal class Batcher(IGraphicsBackend backend)
             // check against localized context execution boundaries before uniform updates
             if (lastBoundShader == null || lastBoundShader.Value.Id != batch.Shader.Id)
             {
-                _backend.SetUniformMatrix4x4(batch.Shader, "uMVP", projectionMatrix);
+                _backend.SetUniformMatrix4x4(batch.Shader, "uMVP", viewProjectionMatrix);
                 lastBoundShader = batch.Shader;
             }
 
@@ -171,7 +171,7 @@ internal class Batcher(IGraphicsBackend backend)
     {
         if (_batchCount >= _maxBatches)
         {
-            Flush(KoRender.GetProjectionMatrix());
+            Flush(KoRender.GetViewProjectionMatrix());
         }
 
         _batches[_batchCount] = new RenderBatch

@@ -30,22 +30,16 @@ public struct Light
     }
 
     /// <summary>
-    /// Updates the shader uniforms for this light.
-    /// Transforms position and target to View Space using the active camera's view matrix.
+    /// Updates the shader uniforms for this light in world space.
     /// </summary>
-    public readonly void UpdateValues(Shader shader, int index, Matrix4x4 viewMatrix)
+    public readonly void UpdateValues(Shader shader, int index)
     {
         string prefix = $"lights[{index}].";
 
-        // Transform position to view space
-        Vector3 viewPos = Vector3.Transform(Position, viewMatrix);
-        // Transform target to view space (for directional lights)
-        Vector3 viewTarget = Vector3.Transform(Target, viewMatrix);
-
         KoRender.SetUniform(prefix + "enabled", Enabled ? 1 : 0);
         KoRender.SetUniform(prefix + "type", (int)Type);
-        KoRender.SetUniform(prefix + "position", viewPos);
-        KoRender.SetUniform(prefix + "target", viewTarget);
+        KoRender.SetUniform(prefix + "position", Position);
+        KoRender.SetUniform(prefix + "target", Target);
         KoRender.SetUniform(prefix + "color", Color);
     }
 }

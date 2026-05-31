@@ -107,7 +107,8 @@ public class AppWindow
             ContextFlags.Default,
             new APIVersion(4, 6)
         );
-        options.VSync = false;
+        options.FramesPerSecond = 60;
+        options.VSync = true;
 
         _window = Window.Create(options);
 
